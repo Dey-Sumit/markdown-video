@@ -30,12 +30,12 @@ function XEditor() {
 
     /* --------- ON DEV: comment below  code block to make the hot reload faster -------- */
 
-    configureJSX(monaco);
+    /*    configureJSX(monaco);
     configureKeyboardShortcuts(editor, monaco);
     configureLinting(editor, monaco);
     monaco.languages.register({ id: "markdown" });
     configureCompletions(monaco);
-
+ */
     /* --------- ON DEV : comment above code block to make the hot reload faster --------- */
 
     configureContextMenu(editor, monaco);

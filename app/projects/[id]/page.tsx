@@ -1,5 +1,7 @@
 import XEditor from "@/components/x-editor";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { X } from "lucide-react";
+import XPlayer from "@/components/x-player";
 
 function Project() {
   return (
@@ -10,9 +12,7 @@ function Project() {
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={10}>
-          <div className="flex h-full items-center justify-center p-6">
-            <span className="font-semibold">asd =</span>
-          </div>
+          <XPlayer />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

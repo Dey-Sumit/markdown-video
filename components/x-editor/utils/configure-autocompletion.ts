@@ -44,7 +44,7 @@ export const configureCompletions = (monaco: Monaco) => {
             {
               label: "transition",
               kind: monaco.languages.CompletionItemKind.Keyword,
-              insertText: "transition ",
+              insertText: "transition",
               range: {
                 startLineNumber: position.lineNumber,
                 startColumn: wordUntilPosition.startColumn,
@@ -55,7 +55,7 @@ export const configureCompletions = (monaco: Monaco) => {
             {
               label: "duration",
               kind: monaco.languages.CompletionItemKind.Keyword,
-              insertText: "duration ",
+              insertText: "duration",
               range: {
                 startLineNumber: position.lineNumber,
                 startColumn: wordUntilPosition.startColumn,
@@ -104,7 +104,8 @@ export const configureCompletions = (monaco: Monaco) => {
 
       if (propMatch) {
         const [, prop] = propMatch;
-        const values = TRANSITION_PROPERTIES[prop] || [];
+        //@ts-ignore
+        const values = (TRANSITION_PROPERTIES[prop] as string[]) || [];
         return {
           suggestions: values.map((value) => ({
             label: value,
