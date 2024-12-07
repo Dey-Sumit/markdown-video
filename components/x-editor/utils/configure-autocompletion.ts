@@ -1,141 +1,126 @@
 import { languages, type Position } from "monaco-editor";
 import { type Monaco } from "@monaco-editor/react";
 
-export const configureCompletions = (monaco: Monaco) => {
-  const provider = monaco.languages.registerCompletionItemProvider("markdown", {
-    triggerCharacters: ["!", "#", " ", ":", "n"],
-    provideCompletionItems: (model, position, context) => {
-      const lineContent = model
-        .getLineContent(position.lineNumber)
-        .substring(0, position.column - 1);
-      return getMarkdownSuggestions(monaco, lineContent, position);
-    },
-  });
-
-  return provider;
+const TRANSITION_PROPERTIES = {
+  name: ["slide-in-left", "slide-in-right", "fade-in", "zoom-in"],
+  duration: ["300ms", "500ms", "1s"],
+  delay: ["0ms", "200ms", "500ms"],
 };
 
-const getMarkdownSuggestions = (
-  monaco: Monaco,
-  lineContent: string,
-  position: Position
-): { suggestions: languages.CompletionItem[] } => {
-  const trimmedLine = lineContent.trim();
+export const configureCompletions = (monaco: Monaco) => {
+  return monaco.languages.registerCompletionItemProvider("markdown", {
+    triggerCharacters: ["!", " ", ":"],
+    provideCompletionItems: (model, position, context) => {
+      const lineContent = model.getLineContent(position.lineNumber);
+      const wordUntilPosition = model.getWordUntilPosition(position);
 
-  // First-level suggestions
-  if (/!$/.test(trimmedLine)) {
-    console.log("top level", trimmedLine);
+      /*   if (context.triggerCharacter === " " && lineContent.endsWith("!transition ")) {
+        console.log("triggered");
 
-    return {
-      suggestions: [
-        {
-          label: "!transition",
-          kind: monaco.languages.CompletionItemKind.Keyword,
-          insertText: "!transition ",
-          range: {
-            startLineNumber: position.lineNumber,
-            startColumn: position.column - 1,
-            endLineNumber: position.lineNumber,
-            endColumn: position.column,
-          },
-          detail: "Add a transition directive",
-          sortText: "a",
-        },
-        {
-          label: "!duration",
-          kind: monaco.languages.CompletionItemKind.Keyword,
-          insertText: "!duration ",
-          range: {
-            startLineNumber: position.lineNumber,
-            startColumn: position.column - 1,
-            endLineNumber: position.lineNumber,
-            endColumn: position.column,
-          },
-          detail: "Add a duration directive",
-          sortText: "b",
-        },
-      ],
-    };
-  }
-  console.log();
+        const usedProps: string[] = [];
+        const availableProps = Object.keys(TRANSITION_PROPERTIES).filter(
+          (p) => !usedProps.includes(p)
+        );
 
-  // Suggest transition `name:` values (no trailing spaces required)
-  if (/!transition\s+name:.*$/.test(trimmedLine)) {
-    console.log("first if", trimmedLine);
-
-    const match = lineContent.match(/!transition\s+name:(.*)$/);
-    const value = match?.[1]?.trim() ?? "";
-    console.log({ value });
-
-    // Only suggest if there's no existing value or partial value
-    if (!value || value === "") {
-      return {
-        suggestions: [
-          {
-            label: "fade",
-            kind: monaco.languages.CompletionItemKind.Value,
-            insertText: "fade",
+        return {
+          suggestions: availableProps.map((prop) => ({
+            label: prop + ":",
+            kind: monaco.languages.CompletionItemKind.Property,
+            insertText: prop + ":",
             range: {
               startLineNumber: position.lineNumber,
               startColumn: position.column,
               endLineNumber: position.lineNumber,
               endColumn: position.column,
             },
-            detail: "Fade transition",
-            sortText: "a",
-          },
-          {
-            label: "slide",
-            kind: monaco.languages.CompletionItemKind.Value,
-            insertText: "slide",
+          })),
+        };
+      } */
+
+      // First-level directives
+      if (lineContent.match(/!$/)) {
+        return {
+          suggestions: [
+            {
+              label: "transition",
+              kind: monaco.languages.CompletionItemKind.Keyword,
+              insertText: "transition ",
+              range: {
+                startLineNumber: position.lineNumber,
+                startColumn: wordUntilPosition.startColumn,
+                endLineNumber: position.lineNumber,
+                endColumn: wordUntilPosition.endColumn,
+              },
+            },
+            {
+              label: "duration",
+              kind: monaco.languages.CompletionItemKind.Keyword,
+              insertText: "duration ",
+              range: {
+                startLineNumber: position.lineNumber,
+                startColumn: wordUntilPosition.startColumn,
+                endLineNumber: position.lineNumber,
+                endColumn: wordUntilPosition.endColumn,
+              },
+            },
+          ],
+        };
+      }
+
+      if (lineContent.match(/!transition(?:\s+\w+:[^:]*)*\s+$/)) {
+        const usedProps: string[] = [];
+        const propsRegex = /(\w+):/g;
+        let match;
+
+        while ((match = propsRegex.exec(lineContent)) !== null) {
+          usedProps.push(match[1]);
+        }
+
+        const availableProps = Object.keys(TRANSITION_PROPERTIES).filter(
+          (p) => !usedProps.includes(p)
+        );
+
+        return {
+          suggestions: availableProps.map((prop) => ({
+            label: prop + ":",
+            kind: monaco.languages.CompletionItemKind.Property,
+            insertText: prop + ":",
             range: {
               startLineNumber: position.lineNumber,
               startColumn: position.column,
               endLineNumber: position.lineNumber,
               endColumn: position.column,
             },
-            detail: "Slide transition",
-            sortText: "b",
-          },
-        ],
-      };
-    }
-  }
+          })),
+        };
+      }
 
-  // Dynamic suggestions for `delay:` or `duration:`
-  if (/!transition\s+.*(delay:|duration:)$/i.test(trimmedLine)) {
-    const keyMatch = trimmedLine.match(/(delay:|duration:)$/i);
-    const key = keyMatch ? keyMatch[0] : null;
+      // Property values
+      // Property values - updated to handle multiple properties
+      const propMatch = lineContent.match(/!transition(?:\s+\w+:[^:]*)*\s+(\w+):\s*/);
+      // This regex:
+      // - Matches completed properties: (?:\s+\w+:[^:\s]+)*
+      // - Then matches the current property being typed: \s+(\w+):\s*
 
-    const values =
-      key === "delay:"
-        ? [
-            { label: "500ms", detail: "Delay in milliseconds" },
-            { label: "1s", detail: "Delay in seconds" },
-          ]
-        : key === "duration:"
-          ? [
-              { label: "2s", detail: "Duration in seconds" },
-              { label: "3s", detail: "Duration in seconds" },
-            ]
-          : [];
+      if (propMatch) {
+        const [, prop] = propMatch;
+        const values = TRANSITION_PROPERTIES[prop] || [];
+        return {
+          suggestions: values.map((value) => ({
+            label: value,
+            kind: monaco.languages.CompletionItemKind.Value,
+            insertText: value,
+            range: {
+              startLineNumber: position.lineNumber,
+              startColumn: position.column,
+              endLineNumber: position.lineNumber,
+              endColumn: position.column,
+            },
+          })),
+        };
+      }
 
-    return {
-      suggestions: values.map((value, idx) => ({
-        label: value.label,
-        kind: monaco.languages.CompletionItemKind.Value,
-        insertText: value.label,
-        range: {
-          startLineNumber: position.lineNumber,
-          startColumn: position.column,
-          endLineNumber: position.lineNumber,
-          endColumn: position.column,
-        },
-        detail: value.detail,
-        sortText: String.fromCharCode(97 + idx), // Sort by 'a', 'b', 'c', ...
-      })),
-    };
-  }
-
-  return { suggestions: [] };
+      return { suggestions: [] };
+    },
+  });
 };

@@ -5,11 +5,11 @@ function Project() {
   return (
     <div className="h-screen w-full">
       <ResizablePanelGroup direction="horizontal" className="min-h-[200px]  md:min-w-[450px]">
-        <ResizablePanel defaultSize={50}>
+        <ResizablePanel defaultSize={90}>
           <XEditor />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={50}>
+        <ResizablePanel defaultSize={10}>
           <div className="flex h-full items-center justify-center p-6">
             <span className="font-semibold">asd =</span>
           </div>

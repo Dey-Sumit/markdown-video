@@ -33,6 +33,7 @@ function XEditor() {
     configureJSX(monaco);
     configureKeyboardShortcuts(editor, monaco);
     configureLinting(editor, monaco);
+    monaco.languages.register({ id: "markdown" });
     configureCompletions(monaco);
 
     /* --------- ON DEV : comment above code block to make the hot reload faster --------- */
@@ -44,99 +45,12 @@ function XEditor() {
     });
   };
 
-  const _handleEditorMount: OnMount = (editor, monaco) => {
-    editorRef.current = editor;
-
-    // Define the custom theme
-    monaco.editor.defineTheme("custom", monacoCustomTheme);
-    monaco.editor.setTheme("custom");
-
-    // Register a completion item provider for Markdown
-    monaco.languages.registerCompletionItemProvider("markdown", {
-      provideCompletionItems: (model, position) => {
-        const suggestions = [
-          {
-            label: "# Heading 1",
-            kind: monaco.languages.CompletionItemKind.Snippet,
-            insertText: "# Heading 1\n",
-            detail: "Add a level 1 heading",
-            range: new monaco.Range(
-              position.lineNumber,
-              position.column,
-              position.lineNumber,
-              position.column
-            ),
-          },
-          {
-            label: "## Heading 2",
-            kind: monaco.languages.CompletionItemKind.Snippet,
-            insertText: "## Heading 2\n",
-            detail: "Add a level 2 heading",
-            range: new monaco.Range(
-              position.lineNumber,
-              position.column,
-              position.lineNumber,
-              position.column
-            ),
-          },
-          {
-            label: "Link",
-            kind: monaco.languages.CompletionItemKind.Snippet,
-            insertText: "[Link text](https://example.com)",
-            detail: "Add a link",
-            range: new monaco.Range(
-              position.lineNumber,
-              position.column,
-              position.lineNumber,
-              position.column
-            ),
-          },
-          {
-            label: "Bold Text",
-            kind: monaco.languages.CompletionItemKind.Snippet,
-            insertText: "**Bold Text**",
-            detail: "Add bold text",
-            range: new monaco.Range(
-              position.lineNumber,
-              position.column,
-              position.lineNumber,
-              position.column
-            ),
-          },
-          {
-            label: "Code Block",
-            kind: monaco.languages.CompletionItemKind.Snippet,
-            insertText: "```\nCode block\n```",
-            detail: "Insert a code block",
-            range: new monaco.Range(
-              position.lineNumber,
-              position.column,
-              position.lineNumber,
-              position.column
-            ),
-          },
-        ];
-
-        return { suggestions };
-      },
-    });
-  };
-  const __handleEditorMount: OnMount = (editor, monaco) => {
-    editorRef.current = editor;
-
-    // Define the custom theme
-    monaco.editor.defineTheme("custom", monacoCustomTheme);
-    monaco.editor.setTheme("custom");
-  };
-
   return (
     <Editor
       height="100%"
       defaultLanguage="markdown"
-      // theme="vs-dark"
       value={editorContent}
       onChange={(value) => setEditorContent(value ?? "")}
-      // onMount={handleEditorMount}
       onMount={handleEditorMount}
       options={monacoCustomOptions}
     />
