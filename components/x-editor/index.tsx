@@ -1,14 +1,12 @@
 "use client";
 
-import { Editor, OnMount, Theme } from "@monaco-editor/react";
+import { Editor, type OnMount } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
 import { monacoCustomOptions } from "./editor-config";
-import { configureJSX, configureKeyboardShortcuts, configureLinting } from "./utils";
-import { provideCodeActions } from "./utils/quick-fixes";
-import { configureContextMenu } from "./utils/configure-context-menu";
 import { monacoCustomTheme } from "./theme";
-import { configureCompletions } from "./utils/configure-autocompletion";
+import { configureContextMenu } from "./utils/configure-context-menu";
+import { provideCodeActions } from "./utils/quick-fixes";
 
 function XEditor() {
   const [mounted, setMounted] = useState(false);
@@ -29,7 +27,6 @@ function XEditor() {
     // monaco.languages.register({ id: "markdown" });
 
     /* --------- ON DEV: comment below  code block to make the hot reload faster -------- */
-
     /*    configureJSX(monaco);
     configureKeyboardShortcuts(editor, monaco);
     configureLinting(editor, monaco);

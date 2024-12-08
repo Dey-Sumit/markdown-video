@@ -14,6 +14,8 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "verbatimModuleSyntax": true, // ts : 4.5+
+
     "plugins": [
       {
         "name": "next"
