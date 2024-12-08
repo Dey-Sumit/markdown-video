@@ -1,5 +1,7 @@
 "use client";
 
+import { useMdxProcessor } from "@/hooks/codehike/useMDXProcessor";
+import useCompositionStore from "@/store/composition-store";
 import { Editor, type OnMount } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
@@ -10,8 +12,10 @@ import { provideCodeActions } from "./utils/quick-fixes";
 
 function XEditor() {
   const [mounted, setMounted] = useState(false);
-  const [editorContent, setEditorContent] = useState("");
+  const { content, setContent, loading, error, steps, duration } =
+    useCompositionStore();
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  useMdxProcessor();
 
   // Prevent hydration mismatch
   useEffect(() => {
@@ -46,8 +50,8 @@ function XEditor() {
     <Editor
       height="100%"
       defaultLanguage="markdown"
-      value={editorContent}
-      onChange={(value) => setEditorContent(value ?? "")}
+      value={content}
+      onChange={(value) => setContent(value ?? "")}
       onMount={handleEditorMount}
       options={monacoCustomOptions}
     />

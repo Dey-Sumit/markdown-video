@@ -11,8 +11,6 @@ import React, { useCallback, useEffect } from "react";
 export const PlayPauseButton: React.FC<{
   playerRef: React.RefObject<PlayerRef>;
 }> = ({ playerRef }) => {
-  console.log("PlayPauseButton", playerRef);
-
   const [playing, setPlaying] = React.useState(
     () => playerRef.current?.isPlaying() ?? false,
   );
@@ -41,8 +39,6 @@ export const PlayPauseButton: React.FC<{
   }, [playerRef]);
 
   const onToggle = useCallback(() => {
-    console.log("onToggle", playerRef);
-
     playerRef.current?.toggle();
   }, [playerRef]);
 

@@ -8,7 +8,7 @@ import { slide } from "@remotion/transitions/slide";
 import { wipe } from "@remotion/transitions/wipe";
 import { CompositionSlide } from "./composition-slide";
 import { CODE_COMP_TRANSITION_DURATION } from "./config";
-import {
+import type {
   CodeTransitionCompositionProps,
   TransitionType,
 } from "./types.composition";
