@@ -71,3 +71,17 @@
 }
 
 
+
+/* ----------------------------- X EDITOR STYLES starts ---------------------------- */
+.decorationsOverviewRuler,
+.invisible.scrollbar
+{
+  width: 10px;
+}
+
+
+
+
+
+
+/* ----------------------------- X EDITOR STYLES ends ---------------------------- */

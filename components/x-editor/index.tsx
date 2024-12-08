@@ -8,14 +8,19 @@ import { useEffect, useRef, useState } from "react";
 import { monacoCustomOptions } from "./editor-config";
 import { monacoCustomTheme } from "./theme";
 import { configureContextMenu } from "./utils/configure-context-menu";
+import { configureHoverProvider } from "./utils/configure-hover-provider";
 import { provideCodeActions } from "./utils/quick-fixes";
 
 function XEditor() {
   const [mounted, setMounted] = useState(false);
-  const { content, setContent, loading, error, steps, duration } =
-    useCompositionStore();
+  const { content, setContent, loadSavedContent } = useCompositionStore();
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   useMdxProcessor();
+  // useEditorShortcuts({ editor: editorRef.current, monaco: editor });
+
+  useEffect(() => {
+    loadSavedContent(); // TODO : need to check this, sometimes it's not able to parse the content on mount in useMdxProcessor hook.
+  }, [loadSavedContent]);
 
   // Prevent hydration mismatch
   useEffect(() => {
@@ -38,7 +43,7 @@ function XEditor() {
     configureCompletions(monaco);
  */
     /* --------- ON DEV : comment above code block to make the hot reload faster --------- */
-
+    configureHoverProvider(monaco);
     configureContextMenu(editor, monaco);
 
     monaco.languages.registerCodeActionProvider("markdown", {

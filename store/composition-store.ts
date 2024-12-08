@@ -72,12 +72,17 @@ const useCompositionStore = create<CompositionStore>()(
         });
       },
       duration: FALLBACK_DURATION,
-      loadSavedContent: () => {
-        const savedContent = localStorage.getItem("code-transition-content");
-        if (savedContent) {
-          set((state) => {
-            state.content = savedContent;
-          });
+      loadSavedContent: async () => {
+        try {
+          const savedContent = await db.editorContent.get(1);
+          if (savedContent) {
+            set((state) => {
+              state.content = savedContent.content;
+            });
+          }
+        } catch (error) {
+          console.error("Failed to load saved content:", error);
+          toast.error("Failed to load saved content");
         }
       },
     })),
