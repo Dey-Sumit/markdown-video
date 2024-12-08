@@ -2,12 +2,14 @@
 
 import { useMdxProcessor } from "@/hooks/codehike/useMDXProcessor";
 import useCompositionStore from "@/store/composition-store";
-import { Editor, type OnMount } from "@monaco-editor/react";
+import { Editor, type Monaco, type OnMount } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
 import { monacoCustomOptions } from "./editor-config";
+import { useEditorShortcuts } from "./hooks/use-editor-shortcuts";
 import { monacoCustomTheme } from "./theme";
 import { configureContextMenu } from "./utils/configure-context-menu";
+import { configureFoldingProvider } from "./utils/configure-folding-provider";
 import { configureHoverProvider } from "./utils/configure-hover-provider";
 import { provideCodeActions } from "./utils/quick-fixes";
 
@@ -15,9 +17,13 @@ function XEditor() {
   const [mounted, setMounted] = useState(false);
   const { content, setContent, loadSavedContent } = useCompositionStore();
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const monacoRef = useRef<Monaco | null>(null);
   useMdxProcessor();
-  // useEditorShortcuts({ editor: editorRef.current, monaco: editor });
-
+  useEditorShortcuts({
+    content,
+    editor: editorRef.current,
+    monaco: monacoRef.current,
+  });
   useEffect(() => {
     loadSavedContent(); // TODO : need to check this, sometimes it's not able to parse the content on mount in useMdxProcessor hook.
   }, [loadSavedContent]);
@@ -31,6 +37,8 @@ function XEditor() {
 
   const handleEditorMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
+    monacoRef.current = monaco;
+
     monaco.editor.defineTheme("custom", monacoCustomTheme);
     monaco.editor.setTheme("custom");
     // monaco.languages.register({ id: "markdown" });
@@ -43,9 +51,9 @@ function XEditor() {
     configureCompletions(monaco);
  */
     /* --------- ON DEV : comment above code block to make the hot reload faster --------- */
-    configureHoverProvider(monaco);
+    configureHoverProvider(editor, monaco);
     configureContextMenu(editor, monaco);
-
+    configureFoldingProvider(monaco);
     monaco.languages.registerCodeActionProvider("markdown", {
       provideCodeActions: provideCodeActions,
     });

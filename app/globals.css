@@ -74,11 +74,15 @@
 
 /* ----------------------------- X EDITOR STYLES starts ---------------------------- */
 .decorationsOverviewRuler,
-.invisible.scrollbar
+.vertical.scrollbar
 {
-  width: 10px;
+  width: 10px !important;
 }
 
+.hover-decoration {
+  border-bottom: 1px dotted #666666;
+  pointer-events: none;
+}
 
 
 

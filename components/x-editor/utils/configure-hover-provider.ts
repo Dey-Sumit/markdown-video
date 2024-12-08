@@ -1,4 +1,9 @@
 import type { Monaco } from "@monaco-editor/react";
+import { editor } from "monaco-editor";
+
+const DEFAULT_HOVER_CONFIG = {
+  showHoverIndicator: false,
+};
 
 const HOVER_DOCS = {
   steps: {
@@ -31,15 +36,91 @@ const HOVER_DOCS = {
     description: "Highlights specific code with annotations",
     example: "// !callout[/pattern/] Your description here",
   },
-};
+} as const;
 
-export const configureHoverProvider = (monaco: Monaco) => {
-  monaco.languages.register({ id: "markdown" });
+function getTransitionPropDescription(prop: string): string {
+  const descriptions: Record<string, string> = {
+    name: "The type of transition effect (e.g., fade, slide-from-top)",
+    duration: "How long the transition takes to complete",
+    delay: "Time to wait before starting the transition",
+  };
+  return descriptions[prop] || "Transition property";
+}
 
+export const configureHoverProvider = (
+  editorInstance: editor.IStandaloneCodeEditor,
+  monaco: Monaco,
+) => {
+  if (DEFAULT_HOVER_CONFIG.showHoverIndicator) {
+    // Handle decorations for hoverable elements
+    const updateDecorations = () => {
+      const model = editorInstance.getModel();
+      if (!model) return;
+
+      const text = model.getValue();
+      const lines = text.split("\n");
+      const decorations: editor.IModelDeltaDecoration[] = [];
+
+      lines.forEach((line, index) => {
+        // Step declarations
+        const stepsMatch = line.match(/##\s*!!steps\s+(.+)/);
+        if (stepsMatch) {
+          decorations.push({
+            range: new monaco.Range(
+              index + 1,
+              stepsMatch.index || 0,
+              index + 1,
+              line.length,
+            ),
+            options: { inlineClassName: "hover-decoration" },
+          });
+        }
+
+        // Directives
+        const directiveMatch = line.match(
+          /!(duration|transition|fontUtils|codeBlockUtils)/,
+        );
+        if (directiveMatch) {
+          decorations.push({
+            range: new monaco.Range(
+              index + 1,
+              directiveMatch.index || 0,
+              index + 1,
+              line.length,
+            ),
+            options: { inlineClassName: "hover-decoration" },
+          });
+        }
+
+        // Callouts
+        const calloutMatch = line.match(/!callout\[(.+?)\]/);
+        if (calloutMatch) {
+          decorations.push({
+            range: new monaco.Range(
+              index + 1,
+              calloutMatch.index || 0,
+              index + 1,
+              (calloutMatch.index || 0) + calloutMatch[0].length,
+            ),
+            options: { inlineClassName: "hover-decoration" },
+          });
+        }
+      });
+
+      editorInstance.createDecorationsCollection(decorations);
+    };
+
+    // Update decorations on content change
+    editorInstance.onDidChangeModelContent(updateDecorations);
+
+    // Initial decoration update
+    updateDecorations();
+  }
+
+  // Register hover provider
   monaco.languages.registerHoverProvider("markdown", {
     provideHover: (model, position) => {
       const line = model.getLineContent(position.lineNumber);
-      const word = model.getWordAtPosition(position);
 
       // Step declaration hover
       const stepsMatch = line.match(/##\s*!!steps\s+(.+)/);
@@ -58,7 +139,7 @@ export const configureHoverProvider = (monaco: Monaco) => {
         /!(duration|transition|fontUtils|codeBlockUtils)/,
       );
       if (directiveMatch) {
-        const directive = directiveMatch[1];
+        const directive = directiveMatch[1] as keyof typeof HOVER_DOCS;
         const doc = HOVER_DOCS[directive];
         return {
           contents: [
@@ -99,12 +180,3 @@ export const configureHoverProvider = (monaco: Monaco) => {
     },
   });
 };
-
-function getTransitionPropDescription(prop: string): string {
-  const descriptions = {
-    name: "The type of transition effect (e.g., fade, slide-from-top)",
-    duration: "How long the transition takes to complete",
-    delay: "Time to wait before starting the transition",
-  };
-  return descriptions[prop] || "Transition property";
-}

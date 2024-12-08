@@ -1,20 +1,20 @@
 import { db } from "@/lib/dexie-db";
-import useCompositionStore from "@/store/composition-store";
-import type { editor } from "monaco-editor";
+import type { Monaco } from "@monaco-editor/react";
+import { type editor, type IDisposable } from "monaco-editor";
 import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
 
 interface EditorShortcutsProps {
-  editor: editor.IStandaloneCodeEditor;
-  monaco: typeof import("monaco-editor");
+  editor: editor.IStandaloneCodeEditor | null;
+  monaco: Monaco | null;
   content: string;
 }
 
 export const useEditorShortcuts = ({
   editor,
   monaco,
+  content,
 }: EditorShortcutsProps) => {
-  const content = useCompositionStore((state) => state.content);
   const handleSave = useCallback(async () => {
     try {
       await db.editorContent.put({
@@ -22,9 +22,7 @@ export const useEditorShortcuts = ({
         content,
         updatedAt: new Date(),
       });
-      toast.success("Saved successfully", {
-        duration: 1000,
-      });
+      toast.success("Saved successfully", { duration: 1000 });
     } catch (error) {
       console.error("Manual save failed:", error);
       toast.error("Failed to save");
@@ -34,15 +32,32 @@ export const useEditorShortcuts = ({
   useEffect(() => {
     if (!editor || !monaco) return;
 
-    // Save Command (Ctrl/Cmd + S)
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, handleSave);
+    const disposables: IDisposable[] = [];
 
-    // Command Palette (Ctrl/Cmd + P)
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyP, () => {
-      editor.trigger("", "editor.action.quickCommand", null);
-    });
+    // Save Command
+    const saveDisposable = editor.addCommand(
+      monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+      handleSave,
+    );
+    if (saveDisposable)
+      disposables.push({
+        dispose: () => {
+          saveDisposable;
+        },
+      });
 
-    // Prevent browser defaults
+    // Command Palette
+    const paletteDisposable = editor.addCommand(
+      monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyP,
+      () => editor.trigger("", "editor.action.quickCommand", null),
+    );
+    if (paletteDisposable)
+      disposables.push({
+        dispose: () => {
+          paletteDisposable;
+        },
+      });
+
     const preventDefaults = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && (e.key === "s" || e.key === "p")) {
         e.preventDefault();
@@ -50,6 +65,10 @@ export const useEditorShortcuts = ({
     };
 
     window.addEventListener("keydown", preventDefaults);
-    return () => window.removeEventListener("keydown", preventDefaults);
+
+    return () => {
+      disposables.forEach((d) => d.dispose());
+      window.removeEventListener("keydown", preventDefaults);
+    };
   }, [editor, monaco, handleSave]);
 };

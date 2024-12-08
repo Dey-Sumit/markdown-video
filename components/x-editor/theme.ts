@@ -43,5 +43,23 @@ export const monacoCustomTheme: editor.IStandaloneThemeData = {
     "editorIndentGuide.background": "#404040",
     "editorIndentGuide.activeBackground": "#707070",
     "menu.background": "#1e1e1e",
+    "quickInput.background": "#1e1e1e", // Command palette bg
+    "quickInput.foreground": "#d4d4d4", // Command palette text
+    "quickInputList.focusBackground": "#2a2d2e", // Selected item bg
+    "quickInputList.focusForeground": "#ffffff", // Selected item text
+    "quickInput.list.focusBackground": "#2a2d2e", // Alternative focused bg
+
+    // Hover widget
+    "editorHoverWidget.background": "#1e1e1e",
+    "editorHoverWidget.foreground": "#d4d4d4",
+    "editorHoverWidget.border": "#454545",
+
+    // Quick fix/actions popup
+    "editorSuggestWidget.background": "#1e1e1e",
+    "editorSuggestWidget.foreground": "#d4d4d4",
+    "editorSuggestWidget.selectedBackground": "#2a2d2e",
+    "editorSuggestWidget.selectedForeground": "#ffffff",
+    "editorSuggestWidget.highlightForeground": "#89d1dc",
+    "editorSuggestWidget.border": "#454545",
   },
 };
