@@ -24,6 +24,14 @@
     --input: 262.1 30% 18%;
     --ring: 262.1 88.3% 57.8%;
     --radius: 0.5rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 262.1 88.3% 57.8%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .dark {
     --background: 0 0% 4%;
@@ -38,7 +46,7 @@
     --secondary-foreground: 0 0% 100%;
     --muted: 224.10000000000002 30% 15%;
     --muted-foreground: 262.1 5% 60%;
-    --accent: 224.10000000000002 30% 15%;
+    --accent: 262 30% 15%;
     --accent-foreground: 262.1 5% 90%;
     --destructive: 0 100% 30%;
     --destructive-foreground: 262.1 5% 90%;
@@ -46,6 +54,14 @@
     --input: 262.1 30% 18%;
     --ring: 262.1 88.3% 57.8%;
     --radius: 0.5rem;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 262.1 88.3% 57.8%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -70,12 +86,9 @@
   cursor: col-resize;
 }
 
-
-
 /* ----------------------------- X EDITOR STYLES starts ---------------------------- */
 .decorationsOverviewRuler,
-.vertical.scrollbar
-{
+.vertical.scrollbar {
   width: 10px !important;
 }
 
@@ -83,9 +96,5 @@
   border-bottom: 1px dotted #666666;
   pointer-events: none;
 }
-
-
-
-
 
 /* ----------------------------- X EDITOR STYLES ends ---------------------------- */

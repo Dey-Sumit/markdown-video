@@ -1,4 +1,3 @@
-import { ThemeSwitcher } from "@/components/theme-switcher";
 import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
@@ -44,7 +43,7 @@ export default function RootLayout({
               </nav> */}
             <>{children}</>
 
-            <footer className="mx-auto flex w-full items-center justify-center gap-8 border-t py-16 text-center text-xs">
+            {/* <footer className="mx-auto flex w-full items-center justify-center gap-8 border-t py-16 text-center text-xs">
               <p>
                 Powered by{" "}
                 <a
@@ -57,7 +56,7 @@ export default function RootLayout({
                 </a>
               </p>
               <ThemeSwitcher />
-            </footer>
+            </footer> */}
           </main>
         </ThemeProvider>
       </body>

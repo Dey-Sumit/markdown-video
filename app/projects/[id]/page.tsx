@@ -28,4 +28,53 @@ function Project() {
   );
 }
 
-export default Project;
+// export default Project;
+
+import { AppSidebar } from "@/components/app-sidebar";
+import { Separator } from "@/components/ui/separator";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+
+function Page() {
+  return (
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "350px",
+        } as React.CSSProperties
+      }
+    >
+      <AppSidebar />
+      <SidebarInset>
+        <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-3">
+          <SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="mr-1 h-4" />
+
+          <p className="text-sm font-medium">The Ox Oven Project</p>
+        </header>
+        <div className="h-full w-full">
+          <ResizablePanelGroup
+            direction="horizontal"
+            className="min-h-[200px] md:min-w-[450px]"
+          >
+            <ResizablePanel defaultSize={50} minSize={20}>
+              {/* <XEditor /> */}
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={50} minSize={20}>
+              {/* <XPlayer /> */}
+              {/* <div className="h-full w-full border">
+            <CSSModifyTabs />
+          </div> */}
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  );
+}
+
+export default Page;

@@ -15,7 +15,7 @@ import type {
 
 const CodeVideoComposition = ({ steps }: CodeTransitionCompositionProps) => {
   return (
-    <AbsoluteFill className="bg-gradient-to-r from-indigo-500 to-purple-800">
+    <AbsoluteFill className="_to-red-700 _from-orange-600 bg-gradient-to-r from-indigo-500 to-purple-800">
       {/* <ProgressBar steps={steps} /> */}
 
       <TransitionSeries className="!inset-10 !h-auto !w-auto overflow-hidden rounded-xl border bg-gray-950 shadow-2xl">
