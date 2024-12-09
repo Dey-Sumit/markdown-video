@@ -3,5 +3,13 @@
     "prettier-plugin-organize-imports",
     "prettier-plugin-tailwindcss"
   ],
-   "tailwindFunctions": ["cn"]
+  "organizeImports": {
+    "sortOrder": "asc",
+    "ignoreCase": true,
+    "ignoreDeclarationSort": true,
+    "ignoreMemberSort": false,
+    "memberSyntaxSortOrder": ["none", "all", "multiple", "single"],
+    "organizeImportsSkipDestructiveCodeActions": true
+  },
+  "tailwindFunctions": ["cn"]
 }
