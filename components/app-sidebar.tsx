@@ -30,7 +30,6 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import BackgroundCustomiser from "./background-customiser";
-import SidebarOptInForm from "./sidebar-opt-in-form";
 import {
   Select,
   SelectContent,
@@ -266,17 +265,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </div>
         </SidebarHeader> */}
         {/* <SidebarInput placeholder="Type to search..." /> */}
-        <SidebarContent>
-          {/* <SidebarGroup className="p-3">
-            <SidebarGroupContent> */}
-          {/* {sidebarContents[activeItem.title]?.component ?? null} */}
-          {/* </SidebarGroupContent>
-          </SidebarGroup> */}
+        <SidebarContent className="w-[calc(var(--sidebar-width)_-var(--sidebar-width-icon))] p-3">
+          {sidebarContents[activeItem.title]?.component ?? null}
         </SidebarContent>
         <SidebarFooter>
-          <div className="p-1">
+          {/* <div className="p-1">
             <SidebarOptInForm />
-          </div>
+          </div> */}
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
