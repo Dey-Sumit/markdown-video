@@ -17,26 +17,26 @@ interface BackgroundSettings {
 }
 
 const gradientPresets = [
-  { from: "#ff0000", to: "#00ff00" },
-  { from: "#0000ff", to: "#ffff00" },
-  { from: "#ff00ff", to: "#00ffff" },
-  { from: "#ff8000", to: "#0080ff" },
-  { from: "#8000ff", to: "#ff0080" },
-  { from: "#00ff80", to: "#8000ff" },
-  { from: "#ff0080", to: "#80ff00" },
-  { from: "#0080ff", to: "#ff8000" },
-  { from: "#80ff00", to: "#ff0080" },
-  { from: "#ff00ff", to: "#ffff00" },
-  { from: "#00ffff", to: "#ff00ff" },
-  { from: "#ffff00", to: "#00ffff" },
-  { from: "#ff8080", to: "#8080ff" },
-  { from: "#80ff80", to: "#ff8080" },
-  { from: "#8080ff", to: "#80ff80" },
-  { from: "#ff80ff", to: "#ffff80" },
-  { from: "#80ffff", to: "#ff80ff" },
-  { from: "#ffff80", to: "#80ffff" },
-  { from: "#ff4000", to: "#00ff40" },
-  { from: "#4000ff", to: "#ff4000" },
+  { from: "#FF6F61", to: "#6B5B95" }, // Warm coral to deep violet
+  { from: "#88B04B", to: "#F7CAC9" }, // Olive green to soft pink
+  { from: "#92A8D1", to: "#034F84" }, // Cool blue to deep navy
+  { from: "#F7786B", to: "#DEDDDD" }, // Vibrant red to light gray
+  { from: "#955251", to: "#D65076" }, // Earthy brown to magenta
+  { from: "#45B8AC", to: "#EFC050" }, // Teal green to mustard yellow
+  { from: "#5B9BD5", to: "#ED7D31" }, // Bright blue to orange
+  { from: "#B565A7", to: "#FFD662" }, // Royal purple to sunflower yellow
+  { from: "#6C4F3D", to: "#C48F65" }, // Chocolate brown to sandy beige
+  { from: "#DD4124", to: "#009473" }, // Fiery red to emerald green
+  { from: "#55A8D4", to: "#A0DAA9" }, // Sky blue to mint green
+  { from: "#FDDB27", to: "#F77F00" }, // Golden yellow to bright orange
+  { from: "#D72638", to: "#3B3355" }, // Crimson red to dark plum
+  { from: "#11999E", to: "#30E3CA" }, // Deep teal to aquamarine
+  { from: "#EE7752", to: "#E73C7E" }, // Sunset orange to magenta
+  { from: "#23A6D5", to: "#23D5AB" }, // Bright blue to sea green
+  { from: "#C6FFDD", to: "#FBD786" }, // Mint to soft yellow
+  { from: "#FDBB2D", to: "#22C1C3" }, // Honey gold to turquoise
+  { from: "#F953C6", to: "#B91D73" }, // Vibrant pink to dark rose
+  { from: "#36D1DC", to: "#5B86E5" }, // Cool aqua to deep blue
 ];
 
 export default function BackgroundCustomiser() {
