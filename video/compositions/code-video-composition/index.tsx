@@ -1,66 +1,99 @@
 import React from "react";
 
-import { linearTiming, TransitionSeries } from "@remotion/transitions";
-import { AbsoluteFill } from "remotion";
+import { TransitionSeries } from "@remotion/transitions";
+import { AbsoluteFill, useVideoConfig } from "remotion";
 
-import { fade } from "@remotion/transitions/fade";
-import { slide } from "@remotion/transitions/slide";
-import { wipe } from "@remotion/transitions/wipe";
 import { CompositionSlide } from "./composition-slide";
-import { CODE_COMP_TRANSITION_DURATION } from "./config";
+import { CODE_COMP_TRANSITION_DURATION_IN_SECONDS } from "./config";
 import type {
   CodeTransitionCompositionProps,
   TransitionType,
 } from "./types.composition";
+import {
+  convertSecondsToFramerate,
+  createTransitionConfig,
+} from "../composition.utils";
+import propsParser from "./utils/props-parser";
 
 const CodeVideoComposition = ({ scenes }: CodeTransitionCompositionProps) => {
+  const { fps } = useVideoConfig();
   return (
     <AbsoluteFill className="_to-red-700 _from-orange-600 bg-gradient-to-r from-indigo-500 to-purple-800">
       {/* <ProgressBar steps={steps} /> */}
 
       <TransitionSeries className="!inset-10 !h-auto !w-auto overflow-hidden rounded-xl border bg-gray-950 shadow-2xl">
-        {scenes.map((currentStep, index) => {
+        {scenes.map((currentScene, index) => {
           const nextStep = scenes[index + 1];
-          const nextSceneTransition = nextStep?.transition;
+
+          let transitionType: TransitionType;
+          let transitionDuration: number;
+
+          try {
+            const result = propsParser.transition(currentScene.transition);
+            transitionType = result.type;
+            transitionDuration = result.duration;
+          } catch (e) {
+            transitionType = "none";
+            transitionDuration = 3;
+          }
+
+          let nextSceneTransitionType: TransitionType | undefined;
+          if (nextStep) {
+            try {
+              const result = propsParser.transition(nextStep.transition);
+              nextSceneTransitionType = result.type;
+            } catch (e) {
+              nextSceneTransitionType = "none";
+            }
+          }
 
           return (
             <React.Fragment key={index}>
               {index === 0 && (
+                //@ts-ignore
                 <TransitionSeries.Transition
-                  timing={linearTiming({
-                    durationInFrames: CODE_COMP_TRANSITION_DURATION,
-                  })}
-                  presentation={wipe({
+                  {...createTransitionConfig({
                     direction: "from-top",
+                    durationInSeconds: CODE_COMP_TRANSITION_DURATION_IN_SECONDS,
+                    fps,
+                    type: transitionType,
                   })}
                 />
               )}
               <TransitionSeries.Sequence
                 key={index}
-                durationInFrames={
-                  index === 0
-                    ? currentStep.duration
-                    : currentStep.duration + CODE_COMP_TRANSITION_DURATION
-                }
+                durationInFrames={convertSecondsToFramerate(
+                  currentScene.duration,
+                  fps,
+                )}
               >
                 <CompositionSlide
-                  step={currentStep}
+                  scene={currentScene}
                   oldCode={scenes[index - 1]?.code}
-                  newCode={currentStep.code}
-                  slideDuration={currentStep.duration}
-                  disableTransition={currentStep.transition !== "magic"}
+                  newCode={currentScene.code}
+                  slideDurationInFrames={convertSecondsToFramerate(
+                    currentScene.duration,
+                    fps,
+                  )}
+                  tokenTransitionDurationInFrames={convertSecondsToFramerate(
+                    currentScene.transitionDuration,
+                    fps,
+                  )}
+                  disableTransition={currentScene.transition !== "magic"}
                 />
               </TransitionSeries.Sequence>
 
-              {nextSceneTransition &&
-                nextSceneTransition !== "magic" &&
-                nextSceneTransition !== "none" && (
+              {nextSceneTransitionType &&
+                nextSceneTransitionType !== "magic" &&
+                nextSceneTransitionType !== "none" && (
+                  //@ts-ignore
                   <TransitionSeries.Transition
-                    timing={linearTiming({
-                      durationInFrames: CODE_COMP_TRANSITION_DURATION,
+                    {...createTransitionConfig({
+                      direction: "from-top",
+                      durationInSeconds: transitionDuration,
+                      fps,
+                      type: nextSceneTransitionType,
                     })}
-                    //@ts-ignore
-                    presentation={renderTransition(nextSceneTransition)}
                   />
                 )}
             </React.Fragment>
@@ -72,24 +105,3 @@ const CodeVideoComposition = ({ scenes }: CodeTransitionCompositionProps) => {
 };
 
 export default CodeVideoComposition;
-
-const renderTransition = (transition: TransitionType) => {
-  switch (transition) {
-    case "slide-from-left":
-      return slide({ direction: "from-left" });
-    case "slide-from-right":
-      return slide({ direction: "from-right" });
-    case "slide-from-top":
-      return slide({ direction: "from-top" });
-    case "slide-from-bottom":
-      return slide({ direction: "from-bottom" });
-    case "magic":
-      return;
-    case "fade":
-      return fade();
-    case "wipe":
-      return wipe();
-    case "none":
-      return;
-  }
-};

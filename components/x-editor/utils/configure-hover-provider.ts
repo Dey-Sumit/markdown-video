@@ -21,10 +21,10 @@ const HOVER_DOCS = {
     description: "Configures how this step transitions in",
     example: "!transition name:fade duration:500ms delay:0ms",
   },
-  fontUtils: {
+  font: {
     title: "Font Utilities",
     description: "Controls text appearance in this step",
-    example: "!fontUtils fontSize:54px",
+    example: "!font fontSize:54px",
   },
   codeBlockUtils: {
     title: "Code Block Utilities",
@@ -78,7 +78,7 @@ export const configureHoverProvider = (
 
         // Directives
         const directiveMatch = line.match(
-          /!(duration|transition|fontUtils|codeBlockUtils)/,
+          /!(duration|transition|font|codeBlockUtils)/,
         );
         if (directiveMatch) {
           decorations.push({
@@ -136,7 +136,7 @@ export const configureHoverProvider = (
 
       // Directive hovers
       const directiveMatch = line.match(
-        /!(duration|transition|fontUtils|codeBlockUtils)/,
+        /!(duration|transition|font|codeBlockUtils)/,
       );
       if (directiveMatch) {
         const directive = directiveMatch[1] as keyof typeof HOVER_DOCS;

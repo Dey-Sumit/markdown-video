@@ -5,7 +5,7 @@
 
 !duration 6s 
 !transition name:fade duration:3s
-!fontUtils fontSize:54px
+!font fontSize:54px
 !codeBlockUtils centered
 
 
@@ -21,7 +21,7 @@ const IMAGES = {
 ## !!steps 2
 !duration 4.5s
 !transition name:slide-from-top duration:3s delay:500ms
-!fontUtils fontSize:38px
+!font fontSize:38px
 !codeBlockUtils centered
 
 ```js !
@@ -37,7 +37,7 @@ const Page = () => {
 ## !!steps 3
 !duration 4.5s
 !transition name:magic 
-!fontUtils fontSize:38px
+!font fontSize:38px
 !codeBlockUtils centered
 
 ```js !

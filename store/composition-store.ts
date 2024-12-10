@@ -2,7 +2,10 @@ import { validateMarkdown } from "@/components/x-editor/utils";
 import { db } from "@/lib/dexie-db";
 import { toast } from "sonner";
 
-import { compositionMetaData } from "@/video/compositions/code-video-composition/config";
+import {
+  compositionMetaData,
+  FALLBACK_COMPOSITION_DURATION_IN_SECONDS,
+} from "@/video/compositions/code-video-composition/config";
 import type { CompositionStore } from "@/video/compositions/code-video-composition/types.composition";
 import { calculateCompositionDuration } from "@/video/compositions/composition.utils";
 import { editor } from "monaco-editor";
@@ -10,9 +13,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
-const AUTO_SAVE_INTERVAL = 5000; // 5 seconds
-
-const FALLBACK_DURATION = 3 * compositionMetaData.fps; // 3 seconds
+const AUTO_SAVE_INTERVAL = 5 * 1000; // 5 seconds
 
 const useCompositionStore = create<CompositionStore>()(
   devtools(
@@ -58,7 +59,8 @@ const useCompositionStore = create<CompositionStore>()(
         set((state) => {
           state.scenes = scenes;
           state.duration =
-            calculateCompositionDuration(scenes) || FALLBACK_DURATION;
+            calculateCompositionDuration(scenes) ||
+            FALLBACK_COMPOSITION_DURATION_IN_SECONDS;
         });
       },
       setLoading: (loading) => {
@@ -71,7 +73,7 @@ const useCompositionStore = create<CompositionStore>()(
           state.error = error;
         });
       },
-      duration: FALLBACK_DURATION,
+      duration: FALLBACK_COMPOSITION_DURATION_IN_SECONDS,
       loadSavedContent: async () => {
         try {
           const savedContent = await db.editorContent.get(1);

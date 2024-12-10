@@ -58,6 +58,7 @@ export const useMdxProcessor = () => {
           compiledContent!,
           Block.extend({
             scene: z.array(SceneSchema),
+            
           }),
         );
         console.log("parsed steps", scenes);

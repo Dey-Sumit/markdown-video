@@ -5,7 +5,7 @@ import { XMONACO_CONSTANTS } from "../const";
 const VALID_DIRECTIVES = [
   "duration",
   "transition",
-  "fontUtils",
+  "font",
   "codeBlockUtils",
   "media",
   "transitionDuration",
@@ -17,14 +17,17 @@ interface DirectiveValidators {
     value: string,
     context: ValidationContext,
     line: string,
-    lineNumber: number
+    lineNumber: number,
   ) => void;
 }
 
 const directiveValidators: DirectiveValidators = {
   duration: (value, context, line, lineNumber) => {
     const duration = parseInt(value);
-    if (isNaN(duration) || duration < XMONACO_CONSTANTS.CODE_COMP_TRANSITION_DURATION) {
+    if (
+      isNaN(duration) ||
+      duration < XMONACO_CONSTANTS.CODE_COMP_TRANSITION_DURATION
+    ) {
       addDirectiveIssue(context, {
         code: "invalid-duration",
         message: `Duration must be a number >= ${XMONACO_CONSTANTS.CODE_COMP_TRANSITION_DURATION}`,
@@ -48,7 +51,11 @@ const directiveValidators: DirectiveValidators = {
   },
 };
 
-export const validateDirective = (line: string, lineNumber: number, context: ValidationContext) => {
+export const validateDirective = (
+  line: string,
+  lineNumber: number,
+  context: ValidationContext,
+) => {
   if (!line.startsWith("!") || line.startsWith("!!steps")) return;
 
   const [directiveWithBang, value] = line.split(" ");
@@ -79,7 +86,10 @@ interface DirectiveIssueParams {
   lineContent: string;
 }
 
-function addDirectiveIssue(context: ValidationContext, params: DirectiveIssueParams) {
+function addDirectiveIssue(
+  context: ValidationContext,
+  params: DirectiveIssueParams,
+) {
   const { code, message, line, value, lineContent } = params;
 
   context.markers.push({
