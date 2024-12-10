@@ -3,7 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { SidebarBlock } from "./app-sidebar";
+import { SidebarBlock } from "./project-sidebar";
 import { Button } from "./ui/button";
 import { ColorPicker } from "./ui/color-picker";
 import { Input } from "./ui/input";
