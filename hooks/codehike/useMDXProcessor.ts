@@ -1,7 +1,7 @@
 import { validateMarkdown } from "@/components/x-editor/utils";
 import { chConfig } from "@/lib/config/config.codehike";
 import useCompositionStore from "@/store/composition-store";
-import { StepSchema } from "@/video/compositions/code-video-composition/types.composition";
+import { SceneSchema } from "@/video/compositions/code-video-composition/types.composition";
 import { compile, run } from "@mdx-js/mdx";
 import { Block, parseRoot } from "codehike/blocks";
 import { recmaCodeHike, remarkCodeHike } from "codehike/mdx";
@@ -11,9 +11,11 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 export const useMdxProcessor = () => {
-  const { content, setSteps, setLoading, setError } = useCompositionStore();
+  const { content, setScenes, setLoading, setError } = useCompositionStore();
 
   const compileAndRun = useCallback(async (mdxContent: string) => {
+    console.log("compiling and running", mdxContent);
+
     try {
       const runtime = await import("react/jsx-runtime");
       const compiled = await compile(mdxContent, {
@@ -24,6 +26,7 @@ export const useMdxProcessor = () => {
       const result = await run(String(compiled), runtime);
       return { content: result.default, error: undefined };
     } catch (e) {
+      console.error("Error compiling and running", e);
       return { content: undefined, error: (e as Error).message };
     }
   }, []);
@@ -46,20 +49,26 @@ export const useMdxProcessor = () => {
 
         const { content: compiledContent, error: compileError } =
           await compileAndRun(content);
+        console.log("compiled content", compiledContent);
+        console.log("compiled error", compileError);
+
         if (compileError) throw new Error(compileError);
 
-        const { steps } = parseRoot(
+        const { scene: scenes } = parseRoot(
           compiledContent!,
           Block.extend({
-            steps: z.array(StepSchema),
+            scene: z.array(SceneSchema),
           }),
         );
+        console.log("parsed steps", scenes);
 
         if (!cancelled) {
-          setSteps(steps);
+          setScenes(scenes);
           setError(null);
         }
       } catch (err) {
+        console.log("Error processing content", err);
+
         if (!cancelled) {
           setError((err as Error).message);
         }
@@ -77,5 +86,5 @@ export const useMdxProcessor = () => {
       clearTimeout(debounceTimer);
       model.dispose();
     };
-  }, [content, setSteps, setLoading, setError, compileAndRun]);
+  }, [content, setScenes, setLoading, setError, compileAndRun]);
 };

@@ -18,7 +18,7 @@ const useCompositionStore = create<CompositionStore>()(
   devtools(
     immer((set) => ({
       content: "",
-      steps: [],
+      scenes: [],
       loading: false,
       error: null,
       setContent: (content) =>
@@ -54,11 +54,11 @@ const useCompositionStore = create<CompositionStore>()(
             }
           }, AUTO_SAVE_INTERVAL);
         }),
-      setSteps: (steps) => {
+      setScenes: (scenes) => {
         set((state) => {
-          state.steps = steps;
+          state.scenes = scenes;
           state.duration =
-            calculateCompositionDuration(steps) || FALLBACK_DURATION;
+            calculateCompositionDuration(scenes) || FALLBACK_DURATION;
         });
       },
       setLoading: (loading) => {

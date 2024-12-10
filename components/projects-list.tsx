@@ -8,7 +8,7 @@ const getRandomEmoji = () => {
 
 const ProjectsList = () => {
   return (
-    <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+    <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-4">
       <button
         type="button"
         className="group flex min-h-52 gap-y-2 rounded-2xl border border-dashed border-gray-300 bg-gray-100 p-1 hover:border-gray-400 focus:border-gray-400 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600 dark:focus:border-neutral-600"
@@ -41,9 +41,9 @@ const ProjectsList = () => {
         <Link href={`/projects/${project.id}`} key={project.id}>
           <div
             key={project.id}
-            className="flex min-h-52 cursor-pointer flex-col rounded-2xl border border-gray-200 bg-gray-100 p-1 dark:border-neutral-700 dark:bg-neutral-800"
+            className="flex min-h-52 cursor-pointer flex-col rounded-lg border border-gray-200 bg-gray-100 p-1 dark:border-neutral-700 dark:bg-neutral-800"
           >
-            <div className="flex h-full min-h-40 flex-col justify-between rounded-xl bg-white p-4 shadow-sm dark:bg-neutral-900">
+            <div className="flex h-full min-h-40 flex-col justify-between rounded-md bg-white p-4 shadow-sm dark:bg-neutral-900">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <div className="grow">
                   <h5 className="font-semibold text-gray-800 dark:text-neutral-200">
@@ -83,8 +83,8 @@ const ProjectsList = () => {
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     >
                       <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>

@@ -13,14 +13,14 @@ import type {
   TransitionType,
 } from "./types.composition";
 
-const CodeVideoComposition = ({ steps }: CodeTransitionCompositionProps) => {
+const CodeVideoComposition = ({ scenes }: CodeTransitionCompositionProps) => {
   return (
     <AbsoluteFill className="_to-red-700 _from-orange-600 bg-gradient-to-r from-indigo-500 to-purple-800">
       {/* <ProgressBar steps={steps} /> */}
 
       <TransitionSeries className="!inset-10 !h-auto !w-auto overflow-hidden rounded-xl border bg-gray-950 shadow-2xl">
-        {steps.map((currentStep, index) => {
-          const nextStep = steps[index + 1];
+        {scenes.map((currentStep, index) => {
+          const nextStep = scenes[index + 1];
           const nextSceneTransition = nextStep?.transition;
 
           return (
@@ -45,7 +45,7 @@ const CodeVideoComposition = ({ steps }: CodeTransitionCompositionProps) => {
               >
                 <CompositionSlide
                   step={currentStep}
-                  oldCode={steps[index - 1]?.code}
+                  oldCode={scenes[index - 1]?.code}
                   newCode={currentStep.code}
                   slideDuration={currentStep.duration}
                   disableTransition={currentStep.transition !== "magic"}

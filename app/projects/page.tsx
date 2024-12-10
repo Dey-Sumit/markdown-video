@@ -37,7 +37,7 @@ export default function Page() {
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-6 px-4 pb-4 pt-0">
+        <div className="flex flex-1 flex-col gap-4 px-4 pb-4 pt-0">
           <div className="h-48 rounded-md bg-neutral-900"></div>
 
           <ProjectsList />

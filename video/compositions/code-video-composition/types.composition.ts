@@ -16,20 +16,20 @@ export const VALID_TRANSITIONS = [
 export const TransitionType = z.enum(VALID_TRANSITIONS);
 export type TransitionType = z.infer<typeof TransitionType>;
 
-export const StepSchema = z.object({
+export const SceneSchema = z.object({
   code: HighlightedCodeBlock,
   duration: z.string().transform((v) => parseInt(v, 10)),
   fontUtils: z.string().optional(),
-  transition: TransitionType,
+  transition: TransitionType.optional(),
   codeBlockUtils: z.string().optional(),
   media: z.string().optional(),
   transitionDuration: z.number().optional(),
 });
 
-export type Step = z.infer<typeof StepSchema>;
+export type Scene = z.infer<typeof SceneSchema>;
 
 export const CodeTransitionCompositionPropsSchema = z.object({
-  steps: z.array(StepSchema),
+  scenes: z.array(SceneSchema),
 });
 
 export type CodeTransitionCompositionProps = z.infer<
@@ -38,11 +38,11 @@ export type CodeTransitionCompositionProps = z.infer<
 
 export interface CompositionStore {
   content: string;
-  steps: Step[];
+  scenes: Scene[];
   loading: boolean;
   error: string | null;
   setContent: (content: string) => void;
-  setSteps: (steps: Step[]) => void;
+  setScenes: (scenes: Scene[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   duration: number;

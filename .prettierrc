@@ -1,15 +1,8 @@
 {
   "plugins": [
-    "prettier-plugin-organize-imports",
     "prettier-plugin-tailwindcss"
   ],
-  "organizeImports": {
-    "sortOrder": "asc",
-    "ignoreCase": true,
-    "ignoreDeclarationSort": true,
-    "ignoreMemberSort": false,
-    "memberSyntaxSortOrder": ["none", "all", "multiple", "single"],
-    "organizeImportsSkipDestructiveCodeActions": true
-  },
+ 
   "tailwindFunctions": ["cn"]
+  
 }

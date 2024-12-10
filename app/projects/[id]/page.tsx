@@ -4,37 +4,15 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 
-// function Project() {
-//   return (
-//     <div className="h-screen w-full">
-//       <ResizablePanelGroup
-//         direction="horizontal"
-//         className="min-h-[200px] md:min-w-[450px]"
-//       >
-//         <ResizablePanel defaultSize={50} minSize={20}>
-//           <XEditor />
-//         </ResizablePanel>
-//         <ResizableHandle withHandle />
-//         <ResizablePanel defaultSize={50} minSize={20}>
-//           <XPlayer />
-//           {/* <div className="h-full w-full border">
-//             <CSSModifyTabs />
-//           </div> */}
-//         </ResizablePanel>
-//       </ResizablePanelGroup>
-//     </div>
-//   );
-// }
-
-// export default Project;
-
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/project-sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import XEditor from "@/components/x-editor";
+import XPlayer from "@/components/x-player";
 
 function Page() {
   return (
@@ -59,11 +37,11 @@ function Page() {
             className="min-h-[200px] md:min-w-[450px]"
           >
             <ResizablePanel defaultSize={50} minSize={20}>
-              {/* <XEditor /> */}
+              <XEditor />
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={50} minSize={20}>
-              {/* <XPlayer /> */}
+              <XPlayer />
               {/* <div className="h-full w-full border">
             <CSSModifyTabs />
           </div> */}

@@ -10,7 +10,7 @@ import PlayerControls from "./player-controls";
 const XPlayer = () => {
   const playerRef = useRef<PlayerRef>(null);
   const duration = useCompositionStore((state) => state.duration);
-  const steps = useCompositionStore((state) => state.steps);
+  const scenes = useCompositionStore((state) => state.scenes);
   const { width, height, fps } = compositionMetaData;
 
   return (
@@ -35,7 +35,7 @@ const XPlayer = () => {
           initiallyMuted
           overflowVisible
           inputProps={{
-            steps: steps,
+            scenes: scenes,
           }}
           ref={playerRef}
         />

@@ -8,7 +8,7 @@ import {
   useTokenTransitions,
 } from "./annotations/token-transitions";
 import { MAX_TOKEN_TRANSITION_DURATION } from "./config";
-import { Step } from "./types.composition";
+import { Scene } from "./types.composition";
 
 const { fontFamily } = loadFont();
 
@@ -25,7 +25,7 @@ export function CompositionSlide({
   durationInFrames?: number;
   disableTransition?: boolean;
   slideDuration: number;
-  step: Step;
+  step: Scene;
 }) {
   const { code, ref } = useTokenTransitions(
     disableTransition ? newCode : oldCode,
