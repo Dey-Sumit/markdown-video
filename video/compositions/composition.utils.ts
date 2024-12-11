@@ -1,10 +1,14 @@
 import { fade } from "@remotion/transitions/fade";
 import { type SlideDirection, slide } from "@remotion/transitions/slide";
 import { type WipeDirection, wipe } from "@remotion/transitions/wipe";
-import { CODE_COMP_TRANSITION_DURATION_IN_SECONDS } from "./code-video-composition/config";
+import {
+  CODE_COMP_TRANSITION_DURATION_IN_SECONDS,
+  FALLBACK_PROPS_RAW_FORMAT,
+} from "./code-video-composition/config";
 import type { Scene } from "./code-video-composition/types.composition";
 import { linearTiming } from "@remotion/transitions";
 import { none } from "@remotion/transitions/none";
+import propsParser from "./code-video-composition/utils/props-parser";
 
 export const calculateCompositionDuration = (
   steps: Scene[],
@@ -13,7 +17,11 @@ export const calculateCompositionDuration = (
   return steps.reduce((acc, step) => {
     return (
       acc +
-      convertSecondsToFramerate(step.duration, fps) -
+      convertSecondsToFramerate(
+        propsParser.sceneMeta(step.title || FALLBACK_PROPS_RAW_FORMAT.sceneMeta)
+          .duration,
+        fps,
+      ) -
       (step.transition && step.transition !== "magic"
         ? convertSecondsToFramerate(
             CODE_COMP_TRANSITION_DURATION_IN_SECONDS,

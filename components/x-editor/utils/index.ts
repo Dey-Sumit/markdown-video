@@ -1,7 +1,11 @@
 import { type Monaco } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { MarkerSeverity } from "monaco-editor";
-import { MarkerData, ValidationContext, ValidationIssue } from "../types";
+import type {
+  MarkerData,
+  ValidationContext,
+  ValidationIssue,
+} from "../types.x-editor";
 import { validateDirective } from "./directive-validators";
 
 export const configureJSX = (monaco: Monaco) => {
@@ -29,7 +33,10 @@ export const configureJSX = (monaco: Monaco) => {
         [/<(\w+)/, "tag"],
         [/<\/(\w+)/, "tag"],
         [/>/, "tag"],
-        [/[a-z_$][\w$]*/, { cases: { "@keywords": "keyword", "@default": "identifier" } }],
+        [
+          /[a-z_$][\w$]*/,
+          { cases: { "@keywords": "keyword", "@default": "identifier" } },
+        ],
         [/[{}()\[\]]/, "@brackets"],
         [/[\+\-\*\/\%]/, "operator"],
         [/\d+/, "number"],
@@ -64,7 +71,7 @@ export const configureKeyboardShortcuts = (
   options?: {
     onSave?: () => void;
     preventBrowserShortcuts?: boolean;
-  }
+  },
 ) => {
   // Save command
   editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
@@ -113,7 +120,10 @@ export function validateMarkdown(model: editor.ITextModel) {
   return context;
 }
 
-export const configureLinting = (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
+export const configureLinting = (
+  editor: editor.IStandaloneCodeEditor,
+  monaco: Monaco,
+) => {
   const updateMarkers = () => {
     const model = editor.getModel();
     if (!model) return;
@@ -133,7 +143,11 @@ export const configureLinting = (editor: editor.IStandaloneCodeEditor, monaco: M
   return disposable;
 };
 
-export const validateStep = (line: string, lineNumber: number, context: ValidationContext) => {
+export const validateStep = (
+  line: string,
+  lineNumber: number,
+  context: ValidationContext,
+) => {
   const stepMatch = line.match(/^##\s*!!steps\s*(.*?)\s*$/);
   if (!stepMatch) return;
 
@@ -155,7 +169,7 @@ export const validateStep = (line: string, lineNumber: number, context: Validati
         code: "missing-step-name",
         severity: MarkerSeverity.Error,
         message: "Step name is required after !!steps",
-      }
+      },
     );
     return;
   }
@@ -177,7 +191,7 @@ export const validateStep = (line: string, lineNumber: number, context: Validati
         code: "duplicate-step-name",
         severity: MarkerSeverity.Error,
         message: `Duplicate step name: "${stepName}"`,
-      }
+      },
     );
     return;
   }
@@ -185,7 +199,11 @@ export const validateStep = (line: string, lineNumber: number, context: Validati
   context.usedStepNames.add(stepName);
 };
 
-function addIssue(context: ValidationContext, issue: ValidationIssue, marker: MarkerData) {
+function addIssue(
+  context: ValidationContext,
+  issue: ValidationIssue,
+  marker: MarkerData,
+) {
   const existing = context.issues.get(issue.code) || [];
   existing.push(issue);
   context.issues.set(issue.code, existing);
@@ -196,7 +214,11 @@ function addIssue(context: ValidationContext, issue: ValidationIssue, marker: Ma
   context.markers.push(marker);
 }
 
-export const validateCodeBlock = (line: string, lineNumber: number, context: ValidationContext) => {
+export const validateCodeBlock = (
+  line: string,
+  lineNumber: number,
+  context: ValidationContext,
+) => {
   const codeBlockStart = line.match(/^```(\w+)\s*(!)?$/);
   const codeBlockWithMarker = line.match(/^```(\w+)\s+!$/);
 

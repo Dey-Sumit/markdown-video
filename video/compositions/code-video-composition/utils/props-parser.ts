@@ -2,6 +2,17 @@ import type { TransitionType } from "../types.composition";
 
 type PostProcessor = (value: string) => string | number;
 
+interface SceneMetaResult {
+  name?: string;
+  duration: number;
+}
+
+/* interface ZoomResult {
+  level: number;
+  delay: number;
+  point: { x: number; y: number };
+} */
+
 // TODO : add direction here
 interface TransitionResult {
   type: TransitionType;
@@ -37,9 +48,12 @@ class ParseError extends Error {
   }
 }
 
-const configs: Record<"transition" | "fonts" | "media", TypeConfig> = {
+const configs: Record<
+  "transition" | "fonts" | "media" | "sceneMeta",
+  TypeConfig
+> = {
   transition: {
-    defaults: { type: "fade", duration: "1" },
+    defaults: { type: "magic", duration: "0.3" },
     validKeys: ["type", "duration", "delay", "easing"],
     processors: {
       duration: (value) => Number(value),
@@ -62,6 +76,25 @@ const configs: Record<"transition" | "fonts" | "media", TypeConfig> = {
       duration: (value) => Number(value),
     },
   },
+  sceneMeta: {
+    defaults: { title: "", duration: "3" },
+    validKeys: ["title", "duration"],
+    processors: {
+      duration: (value) => Number(value),
+    },
+  },
+  /*  zoom: {
+    defaults: { level: "1", delay: "0", point: "(0,0)" },
+    validKeys: ["level", "delay", "point"],
+    processors: {
+      level: Number,
+      delay: Number,
+      point: (value) => {
+        const [x, y] = value.slice(1, -1).split(",").map(Number);
+        return { x, y };
+      },
+    },
+  }, */
 };
 
 class PropsParser {
@@ -130,6 +163,12 @@ class PropsParser {
   media(input: string): MediaResult {
     return this.parseArgs("media", input) as unknown as MediaResult;
   }
+  sceneMeta(input: string): SceneMetaResult {
+    return this.parseArgs("sceneMeta", input) as unknown as SceneMetaResult;
+  }
+  /* zoom(input: string): ZoomResult {
+    return this.parseArgs("zoom", input) as unknown as ZoomResult;
+  } */
 }
 
 const propsParser = new PropsParser();

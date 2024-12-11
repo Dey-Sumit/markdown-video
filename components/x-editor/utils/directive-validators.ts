@@ -1,5 +1,5 @@
 import { MarkerSeverity } from "monaco-editor";
-import { type ValidationContext } from "../types";
+import { type ValidationContext } from "../types.x-editor";
 import { XMONACO_CONSTANTS } from "../const";
 
 const VALID_DIRECTIVES = [

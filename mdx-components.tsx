@@ -38,12 +38,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         </pre>
       );
     },
-    // pre: (props) => {
-    //   console.log("pre->", props);
 
-    //   return "HELLO";
-    // },
-    // code:
     ...components,
   };
 }

@@ -4,17 +4,19 @@ import useCompositionStore from "@/store/composition-store";
 import CodeVideoComposition from "@/video/compositions/code-video-composition";
 import { compositionMetaData } from "@/video/compositions/code-video-composition/config";
 import { Player, type PlayerRef } from "@remotion/player";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import PlayerControls from "./player-controls";
+import { Button } from "../ui/button";
 
 const XPlayer = () => {
   const playerRef = useRef<PlayerRef>(null);
   const duration = useCompositionStore((state) => state.duration);
   const scenes = useCompositionStore((state) => state.scenes);
   const { width, height, fps } = compositionMetaData;
+  const [reloadKey, setReloadKey] = useState(1);
 
   return (
-    <div>
+    <section>
       <div
         style={{
           aspectRatio: `${width} / ${height}`,
@@ -37,18 +39,28 @@ const XPlayer = () => {
           inputProps={{
             scenes: scenes,
           }}
+          key={reloadKey}
           ref={playerRef}
           errorFallback={({ error }) => {
             return (
-              <div className="h-full w-full text-4xl">
-                There was an error: {JSON.stringify(error)}{" "}
+              <div className="flex h-full w-full flex-col items-center justify-center gap-8 p-10 text-4xl">
+                <pre className="whitespace-pre-line leading-10">
+                  There was an error: {JSON.stringify(error.message)}{" "}
+                </pre>
+
+                <Button
+                  size={"lg"}
+                  onClick={() => setReloadKey((prev) => prev + 1)}
+                >
+                  Reload Player
+                </Button>
               </div>
             );
           }}
         />
       </div>
       <PlayerControls duration={duration} playerRef={playerRef} />
-    </div>
+    </section>
   );
 };
 

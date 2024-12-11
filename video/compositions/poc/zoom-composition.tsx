@@ -16,6 +16,7 @@ const ZoomIntoPosition: React.FC<{
   });
 
   // Determine visible bounds after zooming
+  // FIX: this is triggering the distortion on center around zoom
   const visibleWidth = width / scale;
   const visibleHeight = height / scale;
 

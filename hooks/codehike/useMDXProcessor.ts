@@ -3,7 +3,7 @@ import { chConfig } from "@/lib/config/config.codehike";
 import useCompositionStore from "@/store/composition-store";
 import { SceneSchema } from "@/video/compositions/code-video-composition/types.composition";
 import { compile, run } from "@mdx-js/mdx";
-import { Block, parseRoot } from "codehike/blocks";
+import { Block, HighlightedCodeBlock, parseRoot } from "codehike/blocks";
 import { recmaCodeHike, remarkCodeHike } from "codehike/mdx";
 import { editor } from "monaco-editor";
 import { useCallback, useEffect } from "react";
@@ -14,8 +14,6 @@ export const useMdxProcessor = () => {
   const { content, setScenes, setLoading, setError } = useCompositionStore();
 
   const compileAndRun = useCallback(async (mdxContent: string) => {
-    console.log("compiling and running", mdxContent);
-
     try {
       const runtime = await import("react/jsx-runtime");
       const compiled = await compile(mdxContent, {
@@ -49,19 +47,17 @@ export const useMdxProcessor = () => {
 
         const { content: compiledContent, error: compileError } =
           await compileAndRun(content);
-        console.log("compiled content", compiledContent);
-        console.log("compiled error", compileError);
 
         if (compileError) throw new Error(compileError);
 
-        const { scene: scenes } = parseRoot(
+        const { scene: scenes, title } = parseRoot(
           compiledContent!,
           Block.extend({
             scene: z.array(SceneSchema),
-            
           }),
         );
-        console.log("parsed steps", scenes);
+
+        console.log("parsed steps", scenes, { title });
 
         if (!cancelled) {
           setScenes(scenes);

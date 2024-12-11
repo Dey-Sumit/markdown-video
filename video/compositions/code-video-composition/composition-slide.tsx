@@ -33,7 +33,6 @@ export function CompositionSlide({
   );
 
   const transition = propsParser.transition(scene.transition);
-  console.log("transition", transition);
 
   const codeBlockUtils = scene.codeBlockUtils || "";
 

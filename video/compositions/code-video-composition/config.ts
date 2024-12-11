@@ -7,3 +7,10 @@ export const compositionMetaData = {
   height: 1080,
   width: 1920,
 };
+
+export const FALLBACK_PROPS_RAW_FORMAT = {
+  sceneMeta: "--title= --duration=3", // no name and default duration of 3 seconds
+  transition: "--name=magic --duration=0.3", // default transition magic with duration of 0.3 seconds
+  fonts: "--family=arial --size=16 --weight=400", // default font arial, size 16px, weight 400
+  media: "--src= --type= --duration=", // default media image with duration of 1 second
+};
