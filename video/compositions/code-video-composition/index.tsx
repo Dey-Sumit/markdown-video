@@ -53,7 +53,7 @@ const CodeVideoComposition = ({ scenes }: CodeTransitionCompositionProps) => {
                 //@ts-ignore
                 <TransitionSeries.Transition
                   {...createTransitionConfig({
-                    direction: "from-top",
+                    direction: "from-bottom",
                     durationInSeconds: CODE_COMP_TRANSITION_DURATION_IN_SECONDS,
                     fps,
                     type: transitionType,
@@ -89,7 +89,7 @@ const CodeVideoComposition = ({ scenes }: CodeTransitionCompositionProps) => {
                   //@ts-ignore
                   <TransitionSeries.Transition
                     {...createTransitionConfig({
-                      direction: "from-top",
+                      direction: "from-bottom",
                       durationInSeconds: transitionDuration,
                       fps,
                       type: nextSceneTransitionType,

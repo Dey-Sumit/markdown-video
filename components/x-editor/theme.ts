@@ -33,7 +33,8 @@ export const monacoCustomTheme: editor.IStandaloneThemeData = {
     { token: "link", foreground: "#56b6c2" },
   ],
   colors: {
-    "editor.background": "#111111",
+    "editor.background": "#000000",
+    // "editor.background": "#111111",
     "editorCursor.foreground": "#ffffff",
     "editor.lineHighlightBackground": "#1a1a1a",
     "editorLineNumber.foreground": "#666666",

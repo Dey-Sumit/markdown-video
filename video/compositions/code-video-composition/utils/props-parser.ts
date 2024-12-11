@@ -88,9 +88,9 @@ class PropsParser {
         if (!value) {
           throw new ParseError(`Missing value for key: ${key}`);
         }
-        if (!config.validKeys.includes(key)) {
-          throw new ParseError(`Invalid key: ${key} for type: ${type}`);
-        }
+        // if (!config.validKeys.includes(key)) {
+        //   throw new ParseError(`Invalid key: ${key} for type: ${type}`);
+        // }
         params[key] = value;
       });
 

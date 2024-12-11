@@ -1,6 +1,6 @@
 import { registerRoot } from "remotion";
 import RemotionRoot from "./remotion-root";
 // import "../styles/prosemirror.css";
-import "../styles/global.css";
+import "../app/globals.css";
 
 registerRoot(RemotionRoot);

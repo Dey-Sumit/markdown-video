@@ -38,6 +38,13 @@ const XPlayer = () => {
             scenes: scenes,
           }}
           ref={playerRef}
+          errorFallback={({ error }) => {
+            return (
+              <div className="h-full w-full text-4xl">
+                There was an error: {JSON.stringify(error)}{" "}
+              </div>
+            );
+          }}
         />
       </div>
       <PlayerControls duration={duration} playerRef={playerRef} />

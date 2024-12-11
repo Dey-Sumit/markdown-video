@@ -14,7 +14,7 @@ export default function CodeTransitionCompositionLoader() {
       component={CodeVideoComposition}
       defaultProps={{ scenes: HARDCODED_STEPS }}
       calculateMetadata={({ props }) => {
-        const duration = calculateCompositionDuration(props.scenes);
+        const duration = calculateCompositionDuration(props.scenes) || 30;
 
         return {
           durationInFrames: duration,
@@ -26,3 +26,5 @@ export default function CodeTransitionCompositionLoader() {
     />
   );
 }
+
+
