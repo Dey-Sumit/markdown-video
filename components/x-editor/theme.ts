@@ -9,7 +9,12 @@ export const monacoCustomTheme: editor.IStandaloneThemeData = {
     { token: "string", foreground: "#98c379" },
     { token: "number", foreground: "#d19a66" },
     { token: "comment", foreground: "#5c6370", fontStyle: "italic" },
-
+// Add our custom syntax tokens
+    { token: 'property', foreground: '#c678dd' },         // Same as keyword
+    { token: 'argumentKey', foreground: '#d19a66' },      // Same as attribute.name
+    { token: 'argumentOperator', foreground: '#abb2bf' }, // Same as delimiters
+    { token: 'argumentValue', foreground: '#98c379' },    // Same as string
+    { token: 'sceneProperty', foreground: '#61afef' },   // Same as function
     // JSX/JavaScript specific
     { token: "delimiter.bracket.js", foreground: "#abb2bf" },
     { token: "delimiter.angle.js", foreground: "#abb2bf" },

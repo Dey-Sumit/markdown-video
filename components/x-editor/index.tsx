@@ -18,6 +18,7 @@ import {
   configureLinting,
 } from "./utils";
 import { configureCompletions } from "./utils/completion-provider.new";
+import { configureTokenizer } from "./utils/syntax-highlight/configure-tokens";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 function XEditor() {
@@ -50,6 +51,7 @@ function XEditor() {
     monaco.editor.setTheme("custom");
 
     configureCompletions(monaco);
+    configureTokenizer(monaco);
 
     // monaco.languages.register({ id: "markdown" });
 

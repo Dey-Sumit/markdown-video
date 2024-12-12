@@ -112,7 +112,7 @@ export class EditorCompletionProvider {
     }));
   }
 
-  private createArgumentValueSuggestions(
+  private _createArgumentValueSuggestions(
     propertyName: string,
     argumentName: string,
     position: Position,
@@ -156,60 +156,123 @@ export class EditorCompletionProvider {
 
     return [];
   }
+  private createArgumentValueSuggestions(
+    propertyName: string,
+    argumentName: string,
+    position: Position,
+  ): languages.CompletionItem[] {
+    const property = this.properties[propertyName];
+    const argument = property?.arguments[argumentName];
+
+    if (!property || !argument) return [];
+
+    // If argument has predefined values with examples
+    if (argument.values) {
+      return argument.values.map((value) => ({
+        label: value,
+        kind: this.monaco.languages.CompletionItemKind.Value,
+        insertText: value,
+        detail: argument.examples?.[value] || `Value for ${argumentName}`,
+        documentation: {
+          value: [
+            `### ${value}`,
+            argument.examples?.[value] || "",
+            argument.description || "",
+          ].join("\n"),
+          isTrusted: true,
+        },
+        range: {
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn: position.column,
+          endColumn: position.column,
+        },
+      }));
+    }
+
+    // For numeric arguments, suggest common values
+    if (argument.type === "number") {
+      const commonValues = argument.examples
+        ? Object.keys(argument.examples)
+        : ["0.1", "0.3", "0.5", "1", "2", "5"];
+
+      return commonValues.map((value) => ({
+        label: value,
+        kind: this.monaco.languages.CompletionItemKind.Value,
+        insertText: value,
+        detail:
+          argument.examples?.[value] || `Suggested value for ${argumentName}`,
+        documentation: {
+          value: [
+            `### ${value}`,
+            argument.examples?.[value] || "",
+            argument.description || "",
+          ].join("\n"),
+          isTrusted: true,
+        },
+        range: {
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn: position.column,
+          endColumn: position.column,
+        },
+      }));
+    }
+
+    // For all other cases, return empty array
+    return [];
+  }
 
   public getPropertySuggestions(
     model: editor.ITextModel,
     position: Position,
   ): languages.CompletionList | null {
     const lineContent = model.getLineContent(position.lineNumber);
-    console.log("Current line content:", lineContent);
 
     // First check for argument context
     const argContext = this.getArgumentContext(lineContent);
-    console.log("Argument context:", argContext);
 
-    if (
-      argContext &&
-      argContext.isAfterDoubleDash &&
-      !argContext.isAfterEquals
-    ) {
-      return {
-        suggestions: this.createArgumentKeySuggestions(
-          argContext.propertyName,
-          position,
-          argContext.currentArgument || "", // Pass the current partial word
-        ),
-      };
+    if (argContext) {
+      // If we're after an equals sign, show value suggestions
+      if (argContext.isAfterEquals) {
+        return {
+          suggestions: this.createArgumentValueSuggestions(
+            argContext.propertyName,
+            argContext.currentArgument!,
+            position,
+          ),
+        };
+      }
+
+      // If we're after double dash, show argument key suggestions
+      if (argContext.isAfterDoubleDash) {
+        return {
+          suggestions: this.createArgumentKeySuggestions(
+            argContext.propertyName,
+            position,
+            argContext.currentArgument || "",
+          ),
+        };
+      }
     }
 
-    if (argContext?.isAfterEquals) {
-      return {
-        suggestions: this.createArgumentValueSuggestions(
-          argContext.propertyName,
-          argContext.currentArgument!,
-          position,
-        ),
-      };
-    }
-
-    // Original property suggestion logic
+    // If no argument context, check for property suggestions (! or !!)
     const singleExclamation = lineContent.trim() === "!";
     const exactSceneStart = lineContent.trim() === "## !!";
 
     if (!singleExclamation && !exactSceneStart) {
-      console.log("No valid trigger found");
       return null;
     }
 
     const isSceneLevel = exactSceneStart;
 
-    const suggestions = Object.values(this.properties)
-      .filter((prop) =>
-        isSceneLevel ? prop.prefix === "!!" : prop.prefix === "!",
-      )
-      .map((prop) => this.createPropertySuggestion(prop, position));
-
-    return { suggestions };
+    return {
+      suggestions: Object.values(this.properties)
+        .filter((prop) =>
+          isSceneLevel ? prop.prefix === "!!" : prop.prefix === "!",
+        )
+        .map((prop) => this.createPropertySuggestion(prop, position)),
+    };
   }
 
   /**

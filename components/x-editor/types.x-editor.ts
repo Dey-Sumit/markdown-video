@@ -37,6 +37,7 @@ interface ScenePropertyArgument {
   required?: boolean;
   values?: string[];
   description?: string;
+  examples?: Record<string, string>;
 }
 
 export interface SceneProperty {
