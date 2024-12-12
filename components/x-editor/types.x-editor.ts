@@ -29,3 +29,43 @@ export interface ValidationResult {
 export interface MarkerData extends editor.IMarkerData {
   code?: string;
 }
+
+// types/x-editor.ts
+interface ScenePropertyArgument {
+  name: string;
+  type: "string" | "number";
+  required?: boolean;
+  values?: string[];
+  description?: string;
+}
+
+export interface SceneProperty {
+  name: string;
+  prefix: "!!" | "!"; // !! for scenes, ! for other properties
+  arguments: Record<string, ScenePropertyArgument>;
+  description?: string;
+}
+
+// config/properties.ts
+export const EDITOR_PROPERTIES: Record<string, SceneProperty> = {
+  scene: {
+    name: "scene",
+    prefix: "!!",
+    arguments: {
+      title: { name: "title", type: "string", required: true },
+      duration: { name: "duration", type: "number", required: true },
+    },
+  },
+  transition: {
+    name: "transition",
+    prefix: "!",
+    arguments: {
+      type: {
+        name: "type",
+        type: "string",
+        values: ["slide", "fade"],
+      },
+      duration: { name: "duration", type: "number" },
+    },
+  },
+};

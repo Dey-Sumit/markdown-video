@@ -12,11 +12,33 @@
 # Hi
 
 ```
-```markdown ! --grid-name=2/1
 # Hey
 
 ```
 ```markdown ! --grid-name=2/2
 # Hola
 
+```
+
+
+// ------
+```
+Scene Syntax Structure:
+- Command: !!scene  
+- Arguments: title, duration
+
+Font Syntax Structure:
+- Property/Command: !font
+- Arguments: size, weight, family
+
+So we refer to:
+- !font as a "property" or "command" 
+- --size=30 as an "argument" or "flag" of the font command
+- !!scene as a "scene command" or "scene declaration"
+- --title as an "argument" or "flag" of the scene command
+
+More consistent naming:
+- Everything starting with ! or !! → commands
+- Everything with -- → arguments/flags
+- The whole line → statement
 ```

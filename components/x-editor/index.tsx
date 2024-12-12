@@ -12,6 +12,13 @@ import { configureContextMenu } from "./utils/configure-context-menu";
 import { configureFoldingProvider } from "./utils/configure-folding-provider";
 import { configureHoverProvider } from "./utils/configure-hover-provider";
 import { provideCodeActions } from "./utils/quick-fixes";
+import {
+  configureJSX,
+  configureKeyboardShortcuts,
+  configureLinting,
+} from "./utils";
+import { configureCompletions } from "./utils/completion-provider.new";
+// import { configureCompletions } from "./utils/configure-autocompletion";
 
 function XEditor() {
   const [mounted, setMounted] = useState(false);
@@ -41,22 +48,25 @@ function XEditor() {
 
     monaco.editor.defineTheme("custom", monacoCustomTheme);
     monaco.editor.setTheme("custom");
+
+    configureCompletions(monaco);
+
     // monaco.languages.register({ id: "markdown" });
 
     /* --------- ON DEV: comment below  code block to make the hot reload faster -------- */
-    /*    configureJSX(monaco);
-    configureKeyboardShortcuts(editor, monaco);
-    configureLinting(editor, monaco);
-    monaco.languages.register({ id: "markdown" });
-    configureCompletions(monaco);
- */
+    // configureJSX(monaco);
+    // configureKeyboardShortcuts(editor, monaco);
+    // configureLinting(editor, monaco);
+    // monaco.languages.register({ id: "markdown" });
+    // configureCompletions(monaco);
+
     /* --------- ON DEV : comment above code block to make the hot reload faster --------- */
-    configureHoverProvider(editor, monaco);
-    configureContextMenu(editor, monaco);
-    configureFoldingProvider(monaco);
-    monaco.languages.registerCodeActionProvider("markdown", {
-      provideCodeActions: provideCodeActions,
-    });
+    // configureHoverProvider(editor, monaco);
+    // configureContextMenu(editor, monaco);
+    // configureFoldingProvider(monaco);
+    // monaco.languages.registerCodeActionProvider("markdown", {
+    //   provideCodeActions: provideCodeActions,
+    // });
   };
 
   return (
