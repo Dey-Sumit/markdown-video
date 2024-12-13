@@ -4,38 +4,17 @@ export const monacoCustomTheme: editor.IStandaloneThemeData = {
   base: "vs-dark",
   inherit: true,
   rules: [
-    // Basic syntax
-    { token: "keyword", foreground: "#c678dd" },
-    { token: "string", foreground: "#98c379" },
-    { token: "number", foreground: "#d19a66" },
-    { token: "comment", foreground: "#5c6370", fontStyle: "italic" },
-// Add our custom syntax tokens
-    { token: 'property', foreground: '#c678dd' },         // Same as keyword
-    { token: 'argumentKey', foreground: '#d19a66' },      // Same as attribute.name
-    { token: 'argumentOperator', foreground: '#abb2bf' }, // Same as delimiters
-    { token: 'argumentValue', foreground: '#98c379' },    // Same as string
-    { token: 'sceneProperty', foreground: '#61afef' },   // Same as function
-    // JSX/JavaScript specific
-    { token: "delimiter.bracket.js", foreground: "#abb2bf" },
-    { token: "delimiter.angle.js", foreground: "#abb2bf" },
-    { token: "tag", foreground: "#e06c75" },
-    { token: "tag.js", foreground: "#e06c75" },
-    { token: "tag.jsx", foreground: "#e06c75" },
-    { token: "attribute.name.js", foreground: "#d19a66" },
-    { token: "attribute.name.jsx", foreground: "#d19a66" },
-    { token: "attribute.value.js", foreground: "#98c379" },
-    { token: "attribute.value.jsx", foreground: "#98c379" },
+    { token: "keyword", foreground: "#c678dd" }, // for const, return, etc
+    { token: "string", foreground: "#98c379" }, // for "HELLO"
+    { token: "function", foreground: "#61afef" }, // for function names
+    { token: "delimiter.bracket", foreground: "#abb2bf" }, // for (), {}, []
+    { token: "variable", foreground: "#e06c75" }, // for variables like 'a'
 
-    // Functions and variables
-    { token: "function", foreground: "#61afef" },
-    { token: "variable", foreground: "#e06c75" },
-    { token: "type", foreground: "#56b6c2" },
-
-    // Markdown specific
-    { token: "heading", foreground: "#e5c07b", fontStyle: "bold" },
-    { token: "emphasis", fontStyle: "italic" },
-    { token: "strong", fontStyle: "bold" },
-    { token: "link", foreground: "#56b6c2" },
+    // { token: "sceneProperty", foreground: "#61afef" }, // Blue for scene
+    // { token: "property", foreground: "#c678dd" }, // Purple for properties
+    // { token: "argumentKey", foreground: "#d19a66" }, // Orange for argument keys
+    // { token: "argumentOperator", foreground: "#abb2bf" }, // Light grey for =
+    // { token: "argumentValue", foreground: "#98c379" }, // Green for values
   ],
   colors: {
     "editor.background": "#000000",

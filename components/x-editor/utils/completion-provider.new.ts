@@ -2,7 +2,7 @@
 import { editor, languages, Position, type IRange } from "monaco-editor";
 import { type Monaco } from "@monaco-editor/react";
 import { type SceneProperty } from "../types.x-editor";
-import { EDITOR_PROPERTIES } from "../config/scene-properties";
+import { EDITOR_PROPERTIES } from "../config/scene-properties.config";
 
 export class EditorCompletionProvider {
   constructor(
@@ -112,50 +112,6 @@ export class EditorCompletionProvider {
     }));
   }
 
-  private _createArgumentValueSuggestions(
-    propertyName: string,
-    argumentName: string,
-    position: Position,
-  ): languages.CompletionItem[] {
-    const property = this.properties[propertyName];
-    const argument = property?.arguments[argumentName];
-
-    if (!property || !argument) return [];
-
-    // If argument has predefined values, suggest them
-    if (argument.values) {
-      return argument.values.map((value) => ({
-        label: value,
-        kind: this.monaco.languages.CompletionItemKind.Value,
-        insertText: value,
-        detail: `Value for ${argumentName}`,
-        range: {
-          startLineNumber: position.lineNumber,
-          endLineNumber: position.lineNumber,
-          startColumn: position.column,
-          endColumn: position.column,
-        },
-      }));
-    }
-
-    // For number type, maybe suggest some common values
-    if (argument.type === "number") {
-      return ["0.1", "0.3", "0.5", "1", "2", "5"].map((value) => ({
-        label: value,
-        kind: this.monaco.languages.CompletionItemKind.Value,
-        insertText: value,
-        detail: `Example value for ${argumentName}`,
-        range: {
-          startLineNumber: position.lineNumber,
-          endLineNumber: position.lineNumber,
-          startColumn: position.column,
-          endColumn: position.column,
-        },
-      }));
-    }
-
-    return [];
-  }
   private createArgumentValueSuggestions(
     propertyName: string,
     argumentName: string,
@@ -285,6 +241,23 @@ export class EditorCompletionProvider {
     isAfterEquals: boolean;
     currentArgument?: string;
   } | null {
+    // Check for scene first
+    if (lineContent.trimStart().startsWith("## !!scene")) {
+      const lastDashIndex = lineContent.lastIndexOf("--");
+      if (lastDashIndex === -1) return null;
+
+      const afterText = lineContent.slice(lastDashIndex + 2);
+      const equalsMatch = afterText.match(/(\w+)=$/);
+      const argMatch = afterText.match(/^(\w*)/);
+
+      return {
+        propertyName: "scene",
+        isAfterDoubleDash: true,
+        isAfterEquals: !!equalsMatch,
+        currentArgument: equalsMatch?.[1] || argMatch?.[1],
+      };
+    }
+
     for (const [propertyName, property] of Object.entries(this.properties)) {
       const propertyStart = `${property.prefix}${property.name}`;
 

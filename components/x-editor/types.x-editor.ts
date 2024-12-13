@@ -47,4 +47,18 @@ export interface SceneProperty {
   description?: string;
 }
 
-// config/properties.ts
+// types/linter.ts
+export interface LinterError {
+  line: number; // Line where error occurs
+  startColumn: number; // Start position
+  endColumn: number; // End position
+  message: string; // Error message
+  severity: "error" | "warning";
+  code: string; // Error code for reference
+}
+
+export interface LinterContext {
+  content: string; // Full document content
+  lineNumber: number; // Current line being checked
+  line: string; // Current line content
+}

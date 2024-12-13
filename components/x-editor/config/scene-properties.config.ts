@@ -10,7 +10,7 @@ export const EDITOR_PROPERTIES: Record<string, SceneProperty> = {
       title: {
         name: "title",
         type: "string",
-        required: true,
+        required: false,
         description: "Unique identifier for the scene",
       },
       duration: {
@@ -34,6 +34,7 @@ export const EDITOR_PROPERTIES: Record<string, SceneProperty> = {
       type: {
         name: "type",
         type: "string",
+        required: true,
         values: ["slide", "fade"],
         description: "Type of transition animation to apply",
         examples: {
@@ -44,6 +45,7 @@ export const EDITOR_PROPERTIES: Record<string, SceneProperty> = {
       duration: {
         name: "duration",
         type: "number",
+        required: true,
         description: "How long the transition takes (in seconds)",
         examples: {
           "0.3": "Smooth, default transition",

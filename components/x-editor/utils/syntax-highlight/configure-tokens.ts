@@ -1,21 +1,29 @@
 import type { Monaco } from "@monaco-editor/react";
 
 export const configureTokenizer = (monaco: Monaco) => {
+  console.log("Configuring tokenizer");
+
   monaco.languages.setMonarchTokensProvider("markdown", {
+    defaultToken: "",
     tokenizer: {
       root: [
-        // Keep existing markdown rules
-        [/^#\s+.*$/, "heading"],
-        [/\*\*(.*?)\*\*/, "strong"],
-        [/\*(.*?)\*/, "emphasis"],
-        [/\[.*?\]\(.*?\)/, "link"],
-
-        // Add our custom syntax rules
-        [/^##\s*!!scene/, "sceneProperty"],
-        [/^!\w+/, "property"],
+        // Only our custom syntax
+        [
+          /^##\s*!!scene/,
+          {
+            token: "sceneProperty",
+            log: "Found scene property", // For debugging
+          },
+        ],
+        [
+          /^!\w+/,
+          {
+            token: "property",
+            log: "Found property",
+          },
+        ],
         [/--[\w]+/, "argumentKey"],
         [/=/, "argumentOperator"],
-        // Just use a simple token for value without state change
         [/=[^\s--]+/, "argumentValue"],
       ],
     },

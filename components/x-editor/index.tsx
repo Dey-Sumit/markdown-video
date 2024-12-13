@@ -3,7 +3,7 @@
 import { useMdxProcessor } from "@/hooks/codehike/useMDXProcessor";
 import useCompositionStore from "@/store/composition-store";
 import { Editor, type Monaco, type OnMount } from "@monaco-editor/react";
-import { editor } from "monaco-editor";
+import { editor, type IDisposable } from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
 import { monacoCustomOptions } from "./editor-config";
 import { useEditorShortcuts } from "./hooks/use-editor-shortcuts";
@@ -19,6 +19,7 @@ import {
 } from "./utils";
 import { configureCompletions } from "./utils/completion-provider.new";
 import { configureTokenizer } from "./utils/syntax-highlight/configure-tokens";
+import { configureDiagnostics } from "./utils/configure-diagnostics.new";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 function XEditor() {
@@ -46,18 +47,32 @@ function XEditor() {
   const handleEditorMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
     monacoRef.current = monaco;
-
+    // Register tokenizer first
+    // configureTokenizer(monaco);
     monaco.editor.defineTheme("custom", monacoCustomTheme);
     monaco.editor.setTheme("custom");
-
+    monaco.languages.register({ id: "markdown" });
     configureCompletions(monaco);
-    configureTokenizer(monaco);
+
+    // Add diagnostics
+    // Get the editor's model
+    const model = editor.getModel();
+    let disposable: IDisposable;
+    if (model) disposable = configureDiagnostics(monaco, model);
+
+    // Cleanup when editor is disposed
+    // TODO : I don't this should work. xD
+    return () => {
+      disposable.dispose();
+    };
+
+    //configureTokenizer(monaco); // TODO : this is working . but it disables existing color coding at some places.
 
     // monaco.languages.register({ id: "markdown" });
 
     /* --------- ON DEV: comment below  code block to make the hot reload faster -------- */
     // configureJSX(monaco);
-    // configureKeyboardShortcuts(editor, monaco);
+    configureKeyboardShortcuts(editor, monaco);
     // configureLinting(editor, monaco);
     // monaco.languages.register({ id: "markdown" });
     // configureCompletions(monaco);
