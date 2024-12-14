@@ -8,6 +8,7 @@ import {
 } from "./annotations/token-transitions";
 import { type Scene } from "./types.composition";
 import propsParser from "./utils/props-parser";
+import { mark } from "./annotations/mark";
 
 const { fontFamily } = loadFont();
 
@@ -60,7 +61,7 @@ export function CompositionSlide({
         <Pre
           ref={ref}
           code={code}
-          handlers={[tokenTransitions]}
+          handlers={[tokenTransitions, mark]}
           className="text-4xl leading-[3.5rem]"
           style={{
             fontFamily,

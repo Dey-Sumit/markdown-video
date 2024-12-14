@@ -40,6 +40,12 @@ interface TypeConfig {
   validKeys: string[];
   processors?: Record<string, PostProcessor>;
 }
+interface Mark {
+  delay: number;
+  duration: number;
+  type: string;
+  color: string;
+}
 
 class ParseError extends Error {
   constructor(message: string) {
@@ -47,9 +53,22 @@ class ParseError extends Error {
     this.name = "ParseError";
   }
 }
+interface ParserOptions {
+  withFallback?: boolean;
+  fallbackInput?: string;
+  silent?: boolean;
+}
+
+const FALLBACK_PROPS_RAW_FORMAT = {
+  sceneMeta: "--title= --duration=3",
+  transition: "--type=magic --duration=0.3",
+  fonts: "--family=arial --size=16 --weight=400",
+  media: "--src= --type=image --duration=1",
+  mark: "--delay=0 --duration=1 --type=highlight --color=yellow",
+};
 
 const configs: Record<
-  "transition" | "fonts" | "media" | "sceneMeta",
+  "transition" | "fonts" | "media" | "sceneMeta" | "mark",
   TypeConfig
 > = {
   transition: {
@@ -83,6 +102,14 @@ const configs: Record<
       duration: (value) => Number(value),
     },
   },
+  mark: {
+    defaults: { delay: "0", duration: "1", type: "highlight", color: "yellow" },
+    validKeys: ["delay", "duration", "type", "color"],
+    processors: {
+      delay: (value) => Number(value),
+      duration: (value) => Number(value),
+    },
+  },
   /*  zoom: {
     defaults: { level: "1", delay: "0", point: "(0,0)" },
     validKeys: ["level", "delay", "point"],
@@ -98,44 +125,7 @@ const configs: Record<
 };
 
 class PropsParser {
-  private parseArgs<T extends keyof typeof configs>(
-    type: T,
-    input: string,
-  ): Record<string, string | number> {
-    const config = configs[type];
-
-    if (!input?.trim()) {
-      return this.processValues(config, { ...config.defaults });
-    }
-
-    try {
-      const params: Record<string, string> = {};
-      const paramRegex = /--(\w+)=([^\s]+)/g;
-      const matches = [...input.matchAll(paramRegex)];
-
-      if (matches.length === 0) {
-        throw new ParseError("Invalid format. Use --key=value syntax");
-      }
-
-      matches.forEach(([, key, value]) => {
-        if (!value) {
-          throw new ParseError(`Missing value for key: ${key}`);
-        }
-        // if (!config.validKeys.includes(key)) {
-        //   throw new ParseError(`Invalid key: ${key} for type: ${type}`);
-        // }
-        params[key] = value;
-      });
-
-      return this.processValues(config, { ...config.defaults, ...params });
-    } catch (error) {
-      throw error instanceof ParseError
-        ? error
-        : new ParseError("Failed to parse input");
-    }
-  }
-
-  private processValues(
+  private processValues<T extends keyof typeof configs>(
     config: TypeConfig,
     values: Record<string, string>,
   ): Record<string, string | number> {
@@ -144,31 +134,101 @@ class PropsParser {
     if (config.processors) {
       Object.entries(values).forEach(([key, value]) => {
         if (config.processors?.[key]) {
-          result[key] = config.processors[key](value);
+          try {
+            result[key] = config.processors[key](value);
+          } catch (error) {
+            // If processor fails, keep original value
+            console.warn(`Failed to process value for ${key}: ${value}`);
+            result[key] = value;
+          }
         }
       });
     }
 
     return result;
   }
-  // TODO : add a fallback input string, so if it throws error (means it's not a valid input), it should get fallback again and parse it.
-  transition(input: string): TransitionResult {
-    return this.parseArgs("transition", input) as unknown as TransitionResult;
+  private parseArgs<T extends keyof typeof configs>(
+    type: T,
+    input: string,
+    options?: ParserOptions,
+  ): Record<string, string | number> {
+    const config = configs[type];
+    const fallbackInput =
+      options?.fallbackInput || FALLBACK_PROPS_RAW_FORMAT[type];
+
+    try {
+      const params: Record<string, string> = {};
+      const paramRegex = /--(\w+)=([^\s]*)/g;
+      const matches = [...input.matchAll(paramRegex)];
+
+      if (matches.length === 0) {
+        throw new ParseError("Invalid format. Use --key=value syntax");
+      }
+
+      // First pass: collect all valid values
+      matches.forEach(([, key, value]) => {
+        if (value && config.validKeys.includes(key)) {
+          params[key] = value;
+        }
+      });
+
+      // If we have fallback enabled and there are missing/invalid values
+      if (options?.withFallback) {
+        const fallbackMatches = [...fallbackInput.matchAll(paramRegex)];
+        const missingKeys = config.validKeys.filter((key) => !(key in params));
+
+        fallbackMatches.forEach(([, key, value]) => {
+          if (missingKeys.includes(key)) {
+            if (!options?.silent) {
+              console.warn(
+                `Fallback: Using default value for ${key} in ${type}`,
+              );
+            }
+            params[key] = value;
+          }
+        });
+      }
+
+      return this.processValues(config, { ...config.defaults, ...params });
+    } catch (error) {
+      if (options?.withFallback) {
+        if (!options?.silent) {
+          console.warn(`Fallback: Invalid ${type} input, using defaults`);
+        }
+        return this.parseArgs(type, fallbackInput);
+      }
+      throw error;
+    }
   }
 
-  fonts(input: string): FontsResult {
-    return this.parseArgs("fonts", input) as unknown as FontsResult;
+  // Update method signatures to include options
+  transition(input: string, options?: ParserOptions): TransitionResult {
+    return this.parseArgs(
+      "transition",
+      input,
+      options,
+    ) as unknown as TransitionResult;
   }
 
-  media(input: string): MediaResult {
-    return this.parseArgs("media", input) as unknown as MediaResult;
+  fonts(input: string, options?: ParserOptions): FontsResult {
+    return this.parseArgs("fonts", input, options) as unknown as FontsResult;
   }
-  sceneMeta(input: string): SceneMetaResult {
-    return this.parseArgs("sceneMeta", input) as unknown as SceneMetaResult;
+
+  media(input: string, options?: ParserOptions): MediaResult {
+    return this.parseArgs("media", input, options) as unknown as MediaResult;
   }
-  /* zoom(input: string): ZoomResult {
-    return this.parseArgs("zoom", input) as unknown as ZoomResult;
-  } */
+
+  sceneMeta(input: string, options?: ParserOptions): SceneMetaResult {
+    return this.parseArgs(
+      "sceneMeta",
+      input,
+      options,
+    ) as unknown as SceneMetaResult;
+  }
+
+  mark(input: string, options?: ParserOptions): Mark {
+    return this.parseArgs("mark", input, options) as unknown as Mark;
+  }
 }
 
 const propsParser = new PropsParser();

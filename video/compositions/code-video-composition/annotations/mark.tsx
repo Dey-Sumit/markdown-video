@@ -1,0 +1,134 @@
+import {
+  type AnnotationHandler,
+  type InlineAnnotation,
+  InnerLine,
+} from "codehike/code";
+import {
+  interpolate,
+  interpolateColors,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
+import propsParser from "../utils/props-parser";
+import { parseColorToRGBA } from "@/utils/utils";
+import { convertSecondsToFramerate } from "../../composition.utils";
+
+export const mark: AnnotationHandler = {
+  name: "mark",
+
+  transform: (annotation: InlineAnnotation) => {
+    console.log("mark transform: annotation", annotation);
+    return annotation;
+  },
+
+  AnnotatedLine: ({ annotation, ...props }) => {
+    const { fps } = useVideoConfig();
+    const { color, delay } = propsParser.mark(annotation.query, {
+      withFallback: true,
+    });
+    const { r: red, g: green, b: blue } = parseColorToRGBA(color);
+    const MARK_TRANSITION_DURATION_IN_FRAMES = convertSecondsToFramerate(
+      0.9,
+      fps,
+    );
+    const delayInFrames = convertSecondsToFramerate(delay, fps);
+
+    console.log("mark AnnotatedLine: annotation", {
+      delay,
+
+      red,
+      green,
+      blue,
+    });
+
+    const frame = useCurrentFrame();
+    const progress = interpolate(
+      frame,
+      [delayInFrames, delayInFrames + MARK_TRANSITION_DURATION_IN_FRAMES],
+      [0, 1],
+      {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      },
+    );
+
+    const backgroundColor = interpolateColors(
+      progress,
+      [0, 1],
+      ["rgba(0, 0, 0, 0)", `rgba(${red}, ${green}, ${blue}, 0.25)`],
+    );
+
+    const borderColor = interpolateColors(
+      progress,
+      [0, 1],
+      ["rgba(0, 0, 0, 0)", `rgba(${red}, ${green}, ${blue}, 1)`],
+    );
+
+    return (
+      <div
+        {...props}
+        style={{
+          backgroundColor,
+          padding: "0.25rem 0.5rem 0.25rem 0",
+          margin: "0 0 0 -0.5rem ",
+          borderLeft: `4px solid ${borderColor}`,
+        }}
+      >
+        <InnerLine merge={props} className="mark" />
+      </div>
+    );
+  },
+
+  Inline: ({ children, annotation }) => {
+    const { color, delay, duration } = propsParser.mark(annotation.query, {
+      withFallback: true,
+    });
+    const { r: red, g: green, b: blue } = parseColorToRGBA(color);
+    const { fps } = useVideoConfig();
+
+    const MARK_TRANSITION_DURATION_IN_FRAMES = convertSecondsToFramerate(
+      0.9,
+      fps,
+    );
+    const delayInFrames = convertSecondsToFramerate(delay, fps);
+
+    const frame = useCurrentFrame();
+
+    const progress = interpolate(
+      frame,
+      [delayInFrames, delayInFrames + MARK_TRANSITION_DURATION_IN_FRAMES],
+      [0, 1],
+      {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      },
+    );
+
+    const backgroundColor = interpolateColors(
+      progress,
+      [0, 1],
+      ["rgba(0, 0, 0, 0)", `rgba(${red}, ${green}, ${blue}, 0.25)`],
+    );
+
+    const borderColor = interpolateColors(
+      progress,
+      [0, 1],
+      ["rgba(0, 0, 0, 0)", `rgba(${red}, ${green}, ${blue}, 1)`],
+    );
+    return (
+      <div
+        style={{
+          display: "inline-block",
+          backgroundColor,
+          borderRadius: 4,
+          padding: "0.25rem 0.75rem",
+          margin: "0 -.125rem",
+          border: `2px solid ${borderColor}`,
+        }}
+      >
+        {/* this */}
+        {children}
+      </div>
+    );
+  },
+};

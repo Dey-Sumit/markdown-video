@@ -27,7 +27,7 @@ function XEditor() {
   const { content, setContent, loadSavedContent } = useCompositionStore();
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
-  // useMdxProcessor();
+  useMdxProcessor();
   useEditorShortcuts({
     content,
     editor: editorRef.current,

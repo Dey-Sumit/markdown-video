@@ -30,7 +30,6 @@ const CodeVideoComposition = ({ scenes }: CodeTransitionCompositionProps) => {
           const currentSceneMeta = propsParser.sceneMeta(
             currentScene.title || FALLBACK_PROPS_RAW_FORMAT.sceneMeta,
           ); // TODO : add a fallback
-          console.log({ currentSceneMeta });
 
           const currentSceneDurationInFrames = convertSecondsToFramerate(
             currentSceneMeta.duration,

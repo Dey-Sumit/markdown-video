@@ -58,7 +58,6 @@ export const propertyRules: Rule[] = [
       const requiredArgs = Object.entries(property.arguments)
         .filter(([_, arg]) => arg.required)
         .map(([key]) => key);
-      console.log({ requiredArgs });
 
       for (const arg of requiredArgs) {
         if (!line.includes(`--${arg}=`)) {
