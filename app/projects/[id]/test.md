@@ -50,3 +50,22 @@ const Page = () => {
   )
 }
 ```
+
+## !!scene --duration=10
+!transition --type=fade --duration=0.3
+
+
+```js ! hello
+const a = () => {
+
+    return "HELLO"
+    // !mark(1:2) --color=red --delay=3 --duration=3
+    return "HELLO"
+    return "HELLO"
+    // !mark --color --delay --duration
+    return "HELLO"
+    
+
+}
+
+```

@@ -17,7 +17,6 @@ export const mark: AnnotationHandler = {
   name: "mark",
 
   transform: (annotation: InlineAnnotation) => {
-    console.log("mark transform: annotation", annotation);
     return annotation;
   },
 
@@ -32,14 +31,6 @@ export const mark: AnnotationHandler = {
       fps,
     );
     const delayInFrames = convertSecondsToFramerate(delay, fps);
-
-    console.log("mark AnnotatedLine: annotation", {
-      delay,
-
-      red,
-      green,
-      blue,
-    });
 
     const frame = useCurrentFrame();
     const progress = interpolate(

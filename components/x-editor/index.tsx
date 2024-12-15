@@ -8,7 +8,6 @@ import { useEffect, useRef, useState } from "react";
 import { monacoCustomOptions } from "./editor-config";
 import { useEditorShortcuts } from "./hooks/use-editor-shortcuts";
 import { monacoCustomTheme } from "./theme";
-import { configureContextMenu } from "./utils/configure-context-menu";
 import { configureFoldingProvider } from "./utils/configure-folding-provider";
 import { configureHoverProvider } from "./utils/configure-hover-provider";
 import { provideCodeActions } from "./utils/quick-fixes";
@@ -20,6 +19,7 @@ import {
 import { configureCompletions } from "./utils/completion-provider.new";
 import { configureTokenizer } from "./utils/syntax-highlight/configure-tokens";
 import { configureDiagnostics } from "./utils/configure-diagnostics.new";
+import { configureContextMenu } from "./utils/context-menu/configure-context-menu.new";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 function XEditor() {
@@ -59,20 +59,13 @@ function XEditor() {
     const model = editor.getModel();
     let disposable: IDisposable;
     if (model) disposable = configureDiagnostics(monaco, model);
-
+    configureContextMenu(monaco, editor);
     // Cleanup when editor is disposed
     // TODO : I don't this should work. xD
     return () => {
       disposable.dispose();
     };
 
-    //configureTokenizer(monaco); // TODO : this is working . but it disables existing color coding at some places.
-
-    // monaco.languages.register({ id: "markdown" });
-
-    /* --------- ON DEV: comment below  code block to make the hot reload faster -------- */
-    // configureJSX(monaco);
-    configureKeyboardShortcuts(editor, monaco);
     // configureLinting(editor, monaco);
     // monaco.languages.register({ id: "markdown" });
     // configureCompletions(monaco);

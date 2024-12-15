@@ -55,4 +55,43 @@ export const EDITOR_PROPERTIES: Record<string, SceneProperty> = {
       },
     },
   },
+  mark: {
+    name: "mark",
+    prefix: "!",
+    description: "Marks code segments for animation",
+    arguments: {
+      color: {
+        name: "color",
+        type: "string",
+        values: ["red", "blue", "green", "yellow"],
+        description: "Color of the highlight",
+        examples: {
+          red: "Highlight in red color",
+          blue: "Highlight in blue color",
+          green: "Highlight in green color",
+          yellow: "Highlight in yellow color",
+        },
+      },
+      delay: {
+        name: "delay",
+        type: "number",
+        description: "Delay before animation starts (in seconds)",
+        examples: {
+          "0.3": "Short delay",
+          "1": "Medium delay",
+          "2": "Long delay",
+        },
+      },
+      duration: {
+        name: "duration",
+        type: "number",
+        description: "Duration of the highlight animation (in seconds)",
+        examples: {
+          "0.5": "Quick highlight",
+          "1": "Standard duration",
+          "2": "Extended highlight",
+        },
+      },
+    },
+  },
 };

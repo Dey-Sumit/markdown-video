@@ -45,6 +45,7 @@ export interface SceneProperty {
   prefix: "!!" | "!"; // !! for scenes, ! for other properties
   arguments: Record<string, ScenePropertyArgument>;
   description?: string;
+  variants?: string[];
 }
 
 // types/linter.ts

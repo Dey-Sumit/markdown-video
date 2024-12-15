@@ -185,6 +185,26 @@ export class EditorCompletionProvider {
   ): languages.CompletionList | null {
     const lineContent = model.getLineContent(position.lineNumber);
 
+    // Check for comment context
+    const isInComment = lineContent.trimStart().startsWith("//");
+    if (isInComment) {
+      const commentContent = lineContent.trimStart().slice(2).trimStart();
+      // Only suggest 'mark' when we have exactly "// !"
+      if (commentContent === "!") {
+        return {
+          suggestions: [
+            {
+              label: "mark",
+              kind: this.monaco.languages.CompletionItemKind.Property,
+              insertText: "mark",
+              detail: "Mark code segments for animation",
+              range: this.createCompletionRange(position, position.column),
+            },
+          ],
+        };
+      }
+    }
+
     // First check for argument context
     const argContext = this.getArgumentContext(lineContent);
 
@@ -256,6 +276,28 @@ export class EditorCompletionProvider {
         isAfterEquals: !!equalsMatch,
         currentArgument: equalsMatch?.[1] || argMatch?.[1],
       };
+    }
+    // Handle mark in comments
+    if (lineContent.trimStart().startsWith("//")) {
+      const commentContent = lineContent.trimStart().slice(2).trimStart();
+
+      // Check if it's a mark command (with any of the three syntaxes)
+      const markMatch = commentContent.match(/^!mark(\([^\)]*\)|\[[^\]]*\])?/);
+      if (markMatch) {
+        const lastDashIndex = lineContent.lastIndexOf("--");
+        if (lastDashIndex === -1) return null;
+
+        const afterText = lineContent.slice(lastDashIndex + 2);
+        const equalsMatch = afterText.match(/(\w+)=$/);
+        const argMatch = afterText.match(/^(\w*)/);
+
+        return {
+          propertyName: "mark",
+          isAfterDoubleDash: true,
+          isAfterEquals: !!equalsMatch,
+          currentArgument: equalsMatch?.[1] || argMatch?.[1],
+        };
+      }
     }
 
     for (const [propertyName, property] of Object.entries(this.properties)) {
