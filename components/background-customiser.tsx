@@ -2,7 +2,6 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCallback, useState } from "react";
-import { useDropzone } from "react-dropzone";
 import { SidebarBlock } from "./project-sidebar";
 import { Button } from "./ui/button";
 import { ColorPicker } from "./ui/color-picker";
@@ -119,8 +118,6 @@ export default function BackgroundCustomiser() {
     reader.readAsDataURL(file);
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-
   return (
     <div className="flex w-full flex-col gap-y-7">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -140,16 +137,13 @@ export default function BackgroundCustomiser() {
                     className="shrink-0"
                     value={gradientFrom}
                     onChange={(color) => {
-                      console.log(color);
                       handleApplyGradient(color, gradientTo);
-                      // setGradientColors((prev) => ({ ...prev, from: color }))
                     }}
                   />
                   <Input
                     maxLength={7}
                     onChange={(e) => {
                       handleApplyGradient(e?.currentTarget?.value, gradientTo);
-                      // setGradientColors((prev) => ({ ...prev, from: e?.currentTarget
                     }}
                     value={gradientFrom}
                     className="focus:ring-0 active:ring-0"
@@ -161,7 +155,6 @@ export default function BackgroundCustomiser() {
                     value={gradientTo}
                     onChange={(color) => {
                       handleApplyGradient(gradientFrom, color);
-                      // setGradientColors((prev) => ({ ...prev, to: color }))
                     }}
                   />
                   <Input
@@ -171,7 +164,6 @@ export default function BackgroundCustomiser() {
                         gradientFrom,
                         e?.currentTarget?.value,
                       );
-                      // setGradientColors((prev) => ({ ...prev, to: e?.currentTarget?.value }))
                     }}
                     value={gradientTo}
                     className=""
@@ -185,7 +177,7 @@ export default function BackgroundCustomiser() {
                 {gradientPresets.map((preset, index) => (
                   <button
                     key={index}
-                    className="aspect-square w-full rounded-md"
+                    className="aspect-square w-full rounded-md transition-transform duration-300 hover:scale-105"
                     style={{
                       background: `linear-gradient(to right, ${preset.from}, ${preset.to})`,
                     }}
@@ -226,7 +218,7 @@ export default function BackgroundCustomiser() {
 
         <TabsContent value="image" className="space-y-6">
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Upload Image</h3>
+            {/* <h3 className="text-lg font-medium">Upload Image</h3>
             <div
               {...getRootProps()}
               className={`cursor-pointer rounded-md border-2 border-dashed p-8 text-center ${
@@ -243,7 +235,7 @@ export default function BackgroundCustomiser() {
               ) : (
                 <p>Drag and drop an image here, or click to select a file</p>
               )}
-            </div>
+            </div> */}
           </div>
         </TabsContent>
 

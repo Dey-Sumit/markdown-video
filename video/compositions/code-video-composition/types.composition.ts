@@ -45,6 +45,7 @@ export const CodeTransitionCompositionPropsSchema = z.object({
     sceneContainer: z.object({
       inset: z.number().optional(),
       padding: z.number().optional(),
+      borderRadius: z.number().optional(),
     }),
   }),
 });

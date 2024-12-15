@@ -37,7 +37,7 @@ function Page() {
             className="min-h-[200px] md:min-w-[450px]"
           >
             <ResizablePanel defaultSize={50} minSize={20}>
-              <XEditor />
+              {/* <XEditor /> */}
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={50} minSize={20}>

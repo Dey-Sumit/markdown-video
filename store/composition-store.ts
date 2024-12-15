@@ -102,6 +102,7 @@ const useCompositionStore = create<CompositionStore>()(
         sceneContainer: {
           inset: 0,
           padding: 10,
+          borderRadius: 0,
         },
       },
 

@@ -30,7 +30,7 @@ const CodeVideoComposition = ({
 
   const {
     backgroundContainer: { background },
-    sceneContainer: { inset, padding },
+    sceneContainer: { inset, padding, borderRadius },
   } = styles;
 
   const { color, gradient, image, activeType } = background;
@@ -40,7 +40,7 @@ const CodeVideoComposition = ({
   return (
     <AbsoluteFill
       style={{
-        background: createGradient(gradient.colors  , gradient.angle),
+        background: createGradient(gradient.colors, gradient.angle),
         // background: background.color,
         // backgroundImage: background.image,
         // backgroundSize: "cover",
@@ -49,9 +49,11 @@ const CodeVideoComposition = ({
     >
       {/* <ProgressBar steps={steps} /> */}
       <div
-        className="absolute !h-auto !w-auto overflow-hidden rounded-xl bg-gray-950 shadow-2xl"
+        className="absolute !h-auto !w-auto overflow-hidden border-gray-800 bg-gray-950 shadow-2xl"
         style={{
           inset: padding,
+          borderRadius: borderRadius,
+          borderWidth: inset,
         }}
       >
         <TransitionSeries layout="none">
