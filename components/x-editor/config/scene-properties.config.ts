@@ -45,13 +45,26 @@ export const EDITOR_PROPERTIES: Record<string, SceneProperty> = {
       duration: {
         name: "duration",
         type: "number",
-        required: true,
+        required: false,
         description: "How long the transition takes (in seconds)",
         examples: {
           "0.3": "Smooth, default transition",
           "0.1": "Quick transition",
           "0.5": "Slow, dramatic transition",
         },
+      },
+      direction: {
+        name: "direction",
+        type: "string",
+        required: false,
+        description: "Direction of the transition",
+        examples: {
+          "from-bottom": "Slide in from the bottom",
+          "from-left": "Slide in from the left",
+          "from-right": "Slide in from the right",
+          "from-top": "Slide in from the top",
+        },
+        values: ["from-bottom", "from-left", "from-right", "from-top"],
       },
     },
   },

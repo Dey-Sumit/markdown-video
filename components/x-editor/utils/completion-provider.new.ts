@@ -90,7 +90,7 @@ export class EditorCompletionProvider {
     return Object.entries(property.arguments).map(([key, arg]) => ({
       label: key,
       kind: this.monaco.languages.CompletionItemKind.Field,
-      insertText: key, // Removed = as per point 2
+      insertText: key, 
       detail: arg.description,
       documentation: {
         value: [
