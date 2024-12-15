@@ -27,6 +27,8 @@ export function CompositionSlide({
   slideDurationInFrames: number;
   scene: Scene;
 }) {
+  console.log("CompositionSlide renders");
+
   const { code, ref } = useTokenTransitions(
     disableTransition ? newCode : oldCode,
     newCode,
@@ -48,7 +50,7 @@ export function CompositionSlide({
         fontFamily,
       }}
     >
-      {/* TODO : we need to move it out of this component ,as I dont want the heading to be animated as well eg. on slide it looks, bad */}
+      {/* TODO : we need to move it out of this component, as I don't want the heading to be animated as well eg. on slide it looks, bad */}
       <div
         className="h-10 text-center text-2xl text-white"
         style={{

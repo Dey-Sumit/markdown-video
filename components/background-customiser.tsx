@@ -9,6 +9,7 @@ import { ColorPicker } from "./ui/color-picker";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Slider } from "./ui/slider";
+import useCompositionStore from "@/store/composition-store";
 
 interface BackgroundSettings {
   padding: number;
@@ -40,15 +41,26 @@ const gradientPresets = [
 ];
 
 export default function BackgroundCustomiser() {
+  const styles = useCompositionStore((state) => state.styles);
+  const setStyles = useCompositionStore((state) => state.setStyles);
+  const {
+    background: {
+      color,
+      gradient: { colors },
+      image,
+      activeType,
+    },
+  } = styles.backgroundContainer;
   const [activeTab, setActiveTab] = useState("gradient");
-  const [gradientColors, setGradientColors] = useState({
-    from: "#3F37C9",
-    to: "#8C87DF",
-  });
+  const [gradientFrom, gradientTo] = colors;
+  // const [gradientColors, setGradientColors] = useState({
+  //   from: gradient.colors[0],
+  //   to: gradient.colors[1],
+  // });
   const [solidColor, setSolidColor] = useState("#3F37C9");
   const [settings, setSettings] = useState<BackgroundSettings>({
-    padding: 20,
-    borderRadius: 8,
+    padding: styles.sceneContainer.padding || 0,
+    borderRadius: styles.sceneContainer.borderRadius || 0,
     inset: 0,
   });
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -57,10 +69,34 @@ export default function BackgroundCustomiser() {
     key: keyof BackgroundSettings,
     value: number,
   ) => {
+    setStyles({
+      ...styles,
+      sceneContainer: {
+        ...styles.sceneContainer,
+        [key]: value,
+      },
+    });
+
     setSettings((prev) => ({
       ...prev,
       [key]: value,
     }));
+  };
+
+  const handleApplyGradient = (gradientFrom: string, gradientTo: string) => {
+    setStyles({
+      ...styles,
+      backgroundContainer: {
+        ...styles.backgroundContainer,
+        background: {
+          ...styles.backgroundContainer.background,
+          gradient: {
+            colors: [gradientFrom, gradientTo],
+            angle: 0,
+          },
+        },
+      },
+    });
   };
 
   const handleReset = (key: keyof BackgroundSettings) => {
@@ -102,40 +138,42 @@ export default function BackgroundCustomiser() {
                 <div className="flex items-start gap-1">
                   <ColorPicker
                     className="shrink-0"
-                    value={gradientColors.from}
-                    onChange={(color) =>
-                      setGradientColors((prev) => ({ ...prev, from: color }))
-                    }
+                    value={gradientFrom}
+                    onChange={(color) => {
+                      console.log(color);
+                      handleApplyGradient(color, gradientTo);
+                      // setGradientColors((prev) => ({ ...prev, from: color }))
+                    }}
                   />
                   <Input
                     maxLength={7}
                     onChange={(e) => {
-                      setGradientColors((prev) => ({
-                        ...prev,
-                        from: e?.currentTarget?.value,
-                      }));
+                      handleApplyGradient(e?.currentTarget?.value, gradientTo);
+                      // setGradientColors((prev) => ({ ...prev, from: e?.currentTarget
                     }}
-                    value={gradientColors.from}
+                    value={gradientFrom}
                     className="focus:ring-0 active:ring-0"
                   />
                 </div>
                 <div className="flex items-start gap-1">
                   <ColorPicker
                     className="shrink-0"
-                    value={gradientColors.to}
-                    onChange={(color) =>
-                      setGradientColors((prev) => ({ ...prev, to: color }))
-                    }
+                    value={gradientTo}
+                    onChange={(color) => {
+                      handleApplyGradient(gradientFrom, color);
+                      // setGradientColors((prev) => ({ ...prev, to: color }))
+                    }}
                   />
                   <Input
                     maxLength={7}
                     onChange={(e) => {
-                      setGradientColors((prev) => ({
-                        ...prev,
-                        from: e?.currentTarget?.value,
-                      }));
+                      handleApplyGradient(
+                        gradientFrom,
+                        e?.currentTarget?.value,
+                      );
+                      // setGradientColors((prev) => ({ ...prev, to: e?.currentTarget?.value }))
                     }}
-                    value={gradientColors.from}
+                    value={gradientTo}
                     className=""
                   />
                 </div>
@@ -151,7 +189,7 @@ export default function BackgroundCustomiser() {
                     style={{
                       background: `linear-gradient(to right, ${preset.from}, ${preset.to})`,
                     }}
-                    onClick={() => setGradientColors(preset)}
+                    onClick={() => handleApplyGradient(preset.from, preset.to)}
                   />
                 ))}
               </div>
@@ -163,7 +201,7 @@ export default function BackgroundCustomiser() {
           <div className="flex flex-col gap-y-5">
             <SidebarBlock label="Background Solid Color">
               <div className="flex items-start gap-1">
-                <ColorPicker
+                {/* <ColorPicker
                   className="shrink-0"
                   value={gradientColors.to}
                   onChange={(color) =>
@@ -180,7 +218,7 @@ export default function BackgroundCustomiser() {
                   }}
                   value={gradientColors.from}
                   className=""
-                />
+                /> */}
               </div>
             </SidebarBlock>
           </div>

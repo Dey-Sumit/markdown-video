@@ -35,7 +35,7 @@ export const EDITOR_PROPERTIES: Record<string, SceneProperty> = {
         name: "type",
         type: "string",
         required: true,
-        values: ["slide", "fade"],
+        values: ["slide", "magic", "wipe"],
         description: "Type of transition animation to apply",
         examples: {
           slide: "Slides content in from the edge",

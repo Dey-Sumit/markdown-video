@@ -87,6 +87,29 @@ const useCompositionStore = create<CompositionStore>()(
           toast.error("Failed to load saved content");
         }
       },
+      styles: {
+        backgroundContainer: {
+          background: {
+            color: "",
+            gradient: {
+              angle: 0,
+              colors: ["red", "blue"],
+            },
+            image: "",
+            activeType: "color",
+          },
+        },
+        sceneContainer: {
+          inset: 0,
+          padding: 10,
+        },
+      },
+
+      setStyles: (styles) => {
+        set((state) => {
+          state.styles = styles;
+        });
+      },
     })),
     {
       name: "composition-store",

@@ -30,6 +30,23 @@ export type Scene = z.infer<typeof SceneSchema>;
 
 export const CodeTransitionCompositionPropsSchema = z.object({
   scenes: z.array(SceneSchema),
+  styles: z.object({
+    backgroundContainer: z.object({
+      background: z.object({
+        color: z.string().optional(),
+        gradient: z.object({
+          angle: z.number(),
+          colors: z.array(z.string()),
+        }),
+        image: z.string().optional(),
+        activeType: z.enum(["color", "gradient", "image"]),
+      }),
+    }),
+    sceneContainer: z.object({
+      inset: z.number().optional(),
+      padding: z.number().optional(),
+    }),
+  }),
 });
 
 export type CodeTransitionCompositionProps = z.infer<
@@ -47,4 +64,8 @@ export interface CompositionStore {
   setError: (error: string | null) => void;
   duration: number;
   loadSavedContent: () => void;
+  styles: z.infer<typeof CodeTransitionCompositionPropsSchema>["styles"];
+  setStyles: (
+    styles: z.infer<typeof CodeTransitionCompositionPropsSchema>["styles"],
+  ) => void;
 }
