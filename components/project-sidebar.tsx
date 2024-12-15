@@ -40,6 +40,9 @@ import {
 } from "./ui/select";
 import { Separator } from "./ui/separator";
 import { Slider } from "./ui/slider";
+import Dropzone from "react-dropzone/.";
+import { FileDropzone } from "./file-dropzone";
+import { AssetGallery } from "./project-assets-gallery";
 
 // This is sample data
 const data = {
@@ -165,9 +168,10 @@ const sidebarContents: Record<string, SidebarContent> = {
   Assets: {
     title: "Asset Manager",
     component: (
-      <div className="">
-        {/* <FileUploader />
-        <AssetList /> */}
+      <div className="flex flex-col gap-4">
+        <FileDropzone />
+        <Separator />
+        <AssetGallery />
       </div>
     ),
   },

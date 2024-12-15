@@ -31,7 +31,7 @@ function Page() {
 
           <p className="text-sm font-medium">The Ox Oven Project</p>
         </header>
-        <div className="h-full w-full">
+        {/* <div className="h-full w-full">
           <ResizablePanelGroup
             direction="horizontal"
             className="min-h-[200px] md:min-w-[450px]"
@@ -42,12 +42,10 @@ function Page() {
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={50} minSize={20}>
               <XPlayer />
-              {/* <div className="h-full w-full border">
-            <CSSModifyTabs />
-          </div> */}
+             
             </ResizablePanel>
           </ResizablePanelGroup>
-        </div>
+        </div> */}
       </SidebarInset>
     </SidebarProvider>
   );
