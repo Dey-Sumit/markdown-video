@@ -4,10 +4,17 @@ export const monacoCustomTheme: editor.IStandaloneThemeData = {
   base: "vs-dark",
   inherit: true,
   rules: [
-    // { token: "keyword", foreground: "#c678dd" }, // for const, return, etc
-    // { token: "string", foreground: "#98c379" }, // for "HELLO"
-    // { token: "function", foreground: "#61afef" }, // for function names
-    // { token: "delimiter.bracket", foreground: "#abb2bf" }, // for (), {}, []
+    { token: "keyword", foreground: "#c678dd" }, // for const, return, etc
+    { token: "string", foreground: "#98c379" }, // for "HELLO"
+    { token: "function", foreground: "#61afef" }, // for function names
+    { token: "delimiter.bracket", foreground: "#abb2bf" }, // for (), {}, []
+    // comment, punctuation, etc
+    {
+      token: "comment",
+      foreground: "#5c6370",
+      // fontStyle: "italic",
+    },
+
     // { token: "variable", foreground: "#e06c75" }, // for variables like 'a'
     // { token: "sceneProperty", foreground: "#61afef" }, // Blue for scene
     // { token: "property", foreground: "#c678dd" }, // Purple for properties

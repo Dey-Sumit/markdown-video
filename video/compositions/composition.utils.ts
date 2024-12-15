@@ -15,20 +15,41 @@ export const calculateCompositionDuration = (
   fps: number = 30,
 ): number => {
   return steps.reduce((acc, step) => {
-    return (
-      acc +
-      convertSecondsToFramerate(
-        propsParser.sceneMeta(step.title || FALLBACK_PROPS_RAW_FORMAT.sceneMeta)
-          .duration,
+    console.log("step-->", {
+      transition: step.transition,
+      title: step.title,
+      seconds: propsParser.sceneMeta(step.title!, {
+        withFallback: true,
+      }).duration,
+      inFrames: convertSecondsToFramerate(
+        propsParser.sceneMeta(step.title!, {
+          withFallback: true,
+        }).duration,
         fps,
-      ) -
-      (step.transition && step.transition !== "magic"
-        ? convertSecondsToFramerate(
-            CODE_COMP_TRANSITION_DURATION_IN_SECONDS,
-            fps,
-          )
-        : 0)
-    );
+      ),
+      negative:
+        step.transition && step.transition !== "magic"
+          ? convertSecondsToFramerate(
+              CODE_COMP_TRANSITION_DURATION_IN_SECONDS,
+              fps,
+            )
+          : 0,
+      shouldNegative: step.transition && step.transition !== "magic",
+    });
+
+    const { duration } = propsParser.sceneMeta(step.title!, {
+      withFallback: true,
+    });
+    const transition = propsParser.transition(step.transition!, {
+      withFallback: true,
+    });
+    const durationInFrames = convertSecondsToFramerate(duration, fps);
+    const transitionDurationInFrames =
+      transition.type && transition.type !== "magic"
+        ? convertSecondsToFramerate(transition.duration, fps)
+        : 0;
+
+    return acc + durationInFrames - transitionDurationInFrames;
   }, 0);
 };
 

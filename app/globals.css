@@ -98,3 +98,12 @@
 }
 
 /* ----------------------------- X EDITOR STYLES ends ---------------------------- */
+/* Add this to your CSS */
+.scene-line-highlight {
+  background-color: rgba(100, 100, 255, 0.1) !important;
+}
+.scene-line-margin {
+  background-color: rgba(100, 100, 255, 0.6);
+  width: 5px !important;
+  margin-left: 3px;
+}

@@ -93,7 +93,7 @@ const useCompositionStore = create<CompositionStore>()(
             color: "",
             gradient: {
               angle: 0,
-              colors: ["red", "blue"],
+              colors: ["#4338ca", "#5b21b6"],
             },
             image: "",
             activeType: "color",
@@ -101,8 +101,8 @@ const useCompositionStore = create<CompositionStore>()(
         },
         sceneContainer: {
           inset: 0,
-          padding: 10,
-          borderRadius: 0,
+          padding: 40,
+          borderRadius: 10,
         },
       },
 

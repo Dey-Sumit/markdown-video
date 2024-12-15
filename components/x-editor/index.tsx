@@ -4,7 +4,7 @@ import { useMdxProcessor } from "@/hooks/codehike/useMDXProcessor";
 import useCompositionStore from "@/store/composition-store";
 import { Editor, type Monaco, type OnMount } from "@monaco-editor/react";
 import { editor, type IDisposable } from "monaco-editor";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { monacoCustomOptions } from "./editor-config";
 import { useEditorShortcuts } from "./hooks/use-editor-shortcuts";
 import { monacoCustomTheme } from "./theme";
@@ -27,6 +27,40 @@ function XEditor() {
   const { content, setContent, loadSavedContent } = useCompositionStore();
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
+  const activeDecorationsRef = useRef<string[]>([]); // Add this ref
+
+  // Add this function at component level
+  const updateDecorations = useCallback(() => {
+    const editor = editorRef.current;
+    const monaco = monacoRef.current;
+    if (!editor || !monaco) return;
+
+    const model = editor.getModel();
+    if (!model) return;
+
+    const decorations: editor.IModelDeltaDecoration[] = [];
+    const lineCount = model.getLineCount();
+
+    for (let lineNumber = 1; lineNumber <= lineCount; lineNumber++) {
+      const lineContent = model.getLineContent(lineNumber);
+      if (lineContent.includes("!!scene")) {
+        decorations.push({
+          range: new monaco.Range(lineNumber, 1, lineNumber, 1),
+          options: {
+            isWholeLine: true,
+            className: "scene-line-highlight",
+            marginClassName: "scene-line-margin",
+          },
+        });
+      }
+    }
+
+    activeDecorationsRef.current = editor.deltaDecorations(
+      activeDecorationsRef.current,
+      decorations,
+    );
+  }, []);
+
   useMdxProcessor();
   useEditorShortcuts({
     content,
@@ -54,6 +88,14 @@ function XEditor() {
     monaco.languages.register({ id: "markdown" });
     configureCompletions(monaco);
 
+    // Set up decoration listener
+    const contentChangeDisposable = editor.onDidChangeModelContent(() => {
+      updateDecorations();
+    });
+
+    // Initial decoration update
+    updateDecorations();
+
     // Add diagnostics
     // Get the editor's model
     const model = editor.getModel();
@@ -63,6 +105,7 @@ function XEditor() {
     // Cleanup when editor is disposed
     // TODO : I don't this should work. xD
     return () => {
+      contentChangeDisposable.dispose();
       disposable.dispose();
     };
 
