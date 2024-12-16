@@ -12,6 +12,8 @@ const XPlayer = () => {
   const playerRef = useRef<PlayerRef>(null);
   const duration = useCompositionStore((state) => state.duration);
   const scenes = useCompositionStore((state) => state.scenes);
+  console.log({ scenes });
+
   const styles = useCompositionStore((state) => state.styles);
   const { width, height, fps } = compositionMetaData;
   const [reloadKey, setReloadKey] = useState(1);

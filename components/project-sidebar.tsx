@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ArrowUpFromDot,
   Book,
   Clapperboard,
   Code,
@@ -40,11 +41,13 @@ import {
 } from "./ui/select";
 import { Separator } from "./ui/separator";
 import { Slider } from "./ui/slider";
-import Dropzone from "react-dropzone/.";
 import { FileDropzone } from "./file-dropzone";
 import { AssetGallery } from "./project-assets-gallery";
+import { Button } from "./ui/button";
+import { useRendering } from "@/hooks/use-rendering";
+import useCompositionStore from "@/store/composition-store";
+import { Input } from "./ui/input";
 
-// This is sample data
 const data = {
   user: {
     name: "Sumit",
@@ -98,7 +101,7 @@ const data = {
   ],
 };
 
-interface SidebarContent {
+interface SidebarStuff {
   title: string;
   component: React.ReactNode;
 }
@@ -120,8 +123,114 @@ export const SidebarBlock = ({
     {children}
   </div>
 );
+const RenderSectionSidebarContent = () => {
+  const scenes = useCompositionStore((state) => state.scenes);
+  const styles = useCompositionStore((state) => state.styles);
+  const { renderMedia, state, undo } = useRendering(
+    "code-transition-composition",
+    {
+      scenes,
+      styles,
+    },
+  );
+  // Helper function to get button text based on state
+  const getButtonText = () => {
+    if (state.status === "rendering") {
+      const progress = Math.round(state.progress * 100);
+      return `Processing ${progress}%`;
+    }
+    return "Prepare Export";
+  };
+  return (
+    <div className="flex flex-col gap-y-7">
+      <SidebarBlock label="Video Title">
+        {/* Video title text input */}
+        <Input type="text" placeholder="Enter video title" value={"My Video"} />
+      </SidebarBlock>
+      {/* <SidebarBlock label="Codec">
+        <Select>
+          <SelectTrigger className="-mt-1">
+            <SelectValue placeholder="Select codec" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="h264">H264</SelectItem>
+            <SelectItem value="h265">H265</SelectItem>
+          </SelectContent>
+        </Select>
+      </SidebarBlock> */}
 
-const sidebarContents: Record<string, SidebarContent> = {
+      <SidebarBlock label="Resolution" containerClassName="-mt-3">
+        <Select>
+          <SelectTrigger className="-mt-1">
+            <SelectValue placeholder="Select resolution" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="1080p">1080p</SelectItem>
+            <SelectItem value="720p">720p</SelectItem>
+            <SelectItem value="480p">480p</SelectItem>
+          </SelectContent>
+        </Select>
+      </SidebarBlock>
+
+      <SidebarBlock label="Frame Rate">
+        <Select>
+          <SelectTrigger className="-mt-1">
+            <SelectValue placeholder="Select frame rate" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="30">30</SelectItem>
+            <SelectItem value="45">45</SelectItem>
+            <SelectItem value="60">60</SelectItem>
+          </SelectContent>
+        </Select>
+      </SidebarBlock>
+
+      <SidebarBlock label="Bitrate">
+        <Slider defaultValue={[1000]} max={10000} min={100} step={100} />
+      </SidebarBlock>
+
+      <SidebarFooter>
+        <Button onClick={renderMedia} className="border-2">
+          {state.status === "invoking"
+            ? "Rendering..."
+            : state.status === "rendering"
+              ? getButtonText()
+              : state.status === "done"
+                ? "Render Again"
+                : "Render"}
+        </Button>
+        {state.status === "done" && (
+          <Button
+            className="h-8 gap-1.5 text-sm"
+            size="sm"
+            variant="bezel"
+            asChild
+          >
+            <a href={state.url}>
+              Download video
+              <Megabytes sizeInBytes={state.size}></Megabytes>
+              <ArrowUpFromDot className="size-4" />
+            </a>
+          </Button>
+        )}
+      </SidebarFooter>
+    </div>
+  );
+};
+
+const Megabytes: React.FC<{
+  sizeInBytes: number;
+}> = ({ sizeInBytes }) => {
+  const megabytes = Intl.NumberFormat("en", {
+    notation: "compact",
+    style: "unit",
+    unit: "byte",
+    unitDisplay: "narrow",
+  }).format(sizeInBytes);
+  return <span className="opacity-60">{megabytes}</span>;
+};
+
+const sidebarContents: Record<string, SidebarStuff> = {
   Editor: {
     title: "Editor Settings",
     component: (
@@ -163,7 +272,8 @@ const sidebarContents: Record<string, SidebarContent> = {
   },
   Background: {
     title: "Background Settings",
-    component: <BackgroundCustomiser />,
+    component: null,
+    // component: <BackgroundCustomiser />,
   },
   Assets: {
     title: "Asset Manager",
@@ -183,6 +293,79 @@ const sidebarContents: Record<string, SidebarContent> = {
       </div>
     ),
   },
+  Render: {
+    title: "Render Settings",
+    component: <RenderSectionSidebarContent />,
+  },
+};
+
+const RenderSettingStuff = () => {
+  return (
+    <>
+      <SidebarHeader className="gap-3.5 border-b p-3">
+        <div className="flex w-full items-center justify-between">
+          <div className="text-base font-medium text-foreground">Render</div>
+        </div>
+        <SidebarInput placeholder="Type to search..." />
+      </SidebarHeader>
+
+      <SidebarContent className="w-[calc(var(--sidebar-width)_-var(--sidebar-width-icon))] p-3">
+        <RenderSectionSidebarContent />
+      </SidebarContent>
+
+      <SidebarFooter></SidebarFooter>
+    </>
+  );
+};
+
+const DocsStuff = () => {
+  return (
+    <>
+      <SidebarHeader className="gap-3.5 border-b p-3">
+        <div className="flex w-full items-center justify-between">
+          <div className="text-base font-medium text-foreground">Docs</div>
+        </div>
+        <SidebarInput placeholder="Type to search..." />
+      </SidebarHeader>
+
+      <SidebarContent className="w-[calc(var(--sidebar-width)_-var(--sidebar-width-icon))] p-3">
+        <Docs />
+      </SidebarContent>
+
+      <SidebarFooter></SidebarFooter>
+    </>
+  );
+};
+
+const RenderAssetManagerStuff = () => {
+  return (
+    <div className="flex flex-col gap-4">
+      <FileDropzone />
+      <Separator />
+      <AssetGallery />
+    </div>
+  );
+};
+
+const SidebarStuffComponent = (key: string) => {
+  switch (key) {
+    case "Background":
+      return <BackgroundCustomiser />;
+    case "Project":
+      return <RenderSectionSidebarContent />;
+    case "Assets":
+      return <RenderAssetManagerStuff />;
+    case "Render":
+      return <RenderSettingStuff />;
+    case "Editor":
+      return <RenderSectionSidebarContent />;
+    case "Docs":
+      return <DocsStuff />;
+    case "Help":
+      return <Docs />;
+    default:
+      return null;
+  }
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -256,18 +439,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {/* This is the second sidebar */}
       {/* We disable collapsible and let it fill remaining space */}
       <Sidebar collapsible="none" className="hidden flex-1 md:flex">
-        <SidebarHeader className="gap-3.5 border-b p-3">
+        {/* <SidebarHeader className="gap-3.5 border-b p-3">
           <div className="flex w-full items-center justify-between">
             <div className="text-base font-medium text-foreground">
               {activeItem.title}
             </div>
           </div>
           <SidebarInput placeholder="Type to search..." />
-        </SidebarHeader>
+        </SidebarHeader> */}
 
-        <SidebarContent className="w-[calc(var(--sidebar-width)_-var(--sidebar-width-icon))] p-3">
+        {/* <SidebarContent className="w-[calc(var(--sidebar-width)_-var(--sidebar-width-icon))] p-3">
           {sidebarContents[activeItem.title]?.component ?? null}
-        </SidebarContent>
+        </SidebarContent> */}
 
         <SidebarFooter>
           {/* <div className="p-1">

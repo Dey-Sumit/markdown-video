@@ -64,6 +64,7 @@
     "codehike": "^1.0.4",
     "color-parse": "^2.0.2",
     "dexie": "^4.0.10",
+    "dotenv": "^16.4.7",
     "geist": "^1.2.1",
     "immer": "^10.1.1",
     "lucide-react": "^0.456.0",

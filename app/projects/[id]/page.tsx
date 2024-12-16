@@ -11,8 +11,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import XEditor from "@/components/x-editor";
-import XPlayer from "@/components/x-player";
+// import XEditor from "@/components/x-editor";
+// import XPlayer from "@/components/x-player";
 
 function Page() {
   return (
@@ -24,7 +24,8 @@ function Page() {
       }
     >
       <AppSidebar />
-      <SidebarInset>
+      hello HE
+      {/* <SidebarInset>
         <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-3">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-1 h-4" />
@@ -45,7 +46,7 @@ function Page() {
             </ResizablePanel>
           </ResizablePanelGroup>
         </div>
-      </SidebarInset>
+      </SidebarInset> */}
     </SidebarProvider>
   );
 }

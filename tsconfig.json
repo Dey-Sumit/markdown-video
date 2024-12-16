@@ -30,7 +30,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/poc/markdown/docs.mdx"
+    "app/poc/markdown/docs.mdx",
+    "lib/config/remotion-deploy.mjs"
   ],
   "exclude": ["node_modules"]
 }
