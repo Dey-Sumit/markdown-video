@@ -90,7 +90,7 @@ export class EditorCompletionProvider {
     return Object.entries(property.arguments).map(([key, arg]) => ({
       label: key,
       kind: this.monaco.languages.CompletionItemKind.Field,
-      insertText: key, 
+      insertText: key,
       detail: arg.description,
       documentation: {
         value: [
@@ -144,6 +144,55 @@ export class EditorCompletionProvider {
           endColumn: position.column,
         },
       }));
+    }
+
+    // For boolean arguments
+    if (argument.type === "boolean") {
+      return [
+        {
+          label: "true",
+          kind: this.monaco.languages.CompletionItemKind.Value,
+          insertText: "true",
+          detail: argument.examples?.true || "Enable this feature",
+          documentation: {
+            value: [
+              "### true",
+              argument.examples?.true || "",
+              argument.description || "",
+            ].join("\n"),
+            isTrusted: true,
+          },
+          range: {
+            startLineNumber: position.lineNumber,
+            endLineNumber: position.lineNumber,
+            startColumn: position.column,
+            endColumn: position.column,
+          },
+          sortText: "0",
+        },
+        {
+          label: "false",
+          kind: this.monaco.languages.CompletionItemKind.Value,
+          insertText: "false",
+          detail: argument.examples?.false || "Disable this feature",
+          documentation: {
+            value: [
+              "### false",
+              argument.examples?.false || "",
+              argument.description || "",
+            ].join("\n"),
+            isTrusted: true,
+          },
+          range: {
+            startLineNumber: position.lineNumber,
+            endLineNumber: position.lineNumber,
+            startColumn: position.column,
+            endColumn: position.column,
+          },
+          sortText: "1",
+          
+        },
+      ];
     }
 
     // For numeric arguments, suggest common values

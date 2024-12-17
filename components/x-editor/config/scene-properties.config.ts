@@ -68,6 +68,63 @@ export const EDITOR_PROPERTIES: Record<string, SceneProperty> = {
       },
     },
   },
+  media: {
+    name: "media",
+    prefix: "!",
+    description: "Adds media content to the scene",
+    arguments: {
+      src: {
+        name: "src",
+        type: "string",
+        required: true,
+        description: "URL of the media content to display",
+      },
+      duration: {
+        name: "duration",
+        type: "number",
+        required: false,
+        description: "How long the transition takes (in seconds)",
+        examples: {
+          "0.3": "Smooth, default transition",
+          "0.1": "Quick transition",
+          "0.5": "Slow, dramatic transition",
+        },
+      },
+      animation: {
+        name: "animation",
+        type: "string",
+        required: false,
+        description: "Animation to apply to the media content",
+        values: ["fade", "zoom", "slide"],
+        examples: {
+          fade: "Default | Smoothly fades content in/out",
+          zoom: "Zooms in on the content",
+          slide: "Slides content in from the edge",
+        },
+      },
+      delay: {
+        name: "delay",
+        type: "number",
+        required: false,
+        description: "Delay before animation starts (in seconds)",
+        examples: {
+          "0.3": "Short delay",
+          "1": "Medium delay",
+          "2": "Long delay",
+        },
+      },
+      withMotion: {
+        name: "withMotion",
+        type: "boolean",
+        required: false,
+        description: "Adds subtle motion effect to the media content",
+        examples: {
+          true: "Default | Enable motion effect",
+          false: "Disable motion effect",
+        },
+      },
+    },
+  },
   mark: {
     name: "mark",
     prefix: "!",

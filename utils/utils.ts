@@ -44,3 +44,24 @@ export function parseColorToRGBA(
 
   return { r, g, b, alpha };
 }
+
+export function getMediaType(url: string): string | null {
+  const imageExtensions = ["jpg", "jpeg", "png"];
+  const gifExtensions = ["gif"];
+  const videoExtensions = ["mp4", "webm", "ogg"];
+
+  // Extract the file extension from the URL
+  const extension = url.split(".").pop()?.toLowerCase();
+
+  if (extension) {
+    if (imageExtensions.includes(extension)) {
+      return "image";
+    } else if (gifExtensions.includes(extension)) {
+      return "gif";
+    } else if (videoExtensions.includes(extension)) {
+      return "video";
+    }
+  }
+
+  return null; // Return null if it's not a recognized media type
+}

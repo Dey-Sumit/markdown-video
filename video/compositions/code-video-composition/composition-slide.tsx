@@ -9,6 +9,10 @@ import {
 import { type Scene } from "./types.composition";
 import propsParser from "./utils/props-parser";
 import { mark } from "./annotations/mark";
+import { getMediaType } from "@/utils/utils";
+import CompositionImage from "./components/composition-image";
+import { convertSecondsToFramerate } from "../composition.utils";
+import { useVideoConfig } from "remotion";
 
 const { fontFamily } = loadFont();
 
@@ -27,21 +31,20 @@ export function CompositionSlide({
   slideDurationInFrames: number;
   scene: Scene;
 }) {
-  console.log("CompositionSlide renders");
-
+  const { fps } = useVideoConfig();
   const { code, ref } = useTokenTransitions(
     disableTransition ? newCode : oldCode,
     newCode,
     tokenTransitionDurationInFrames,
   );
 
-  const transition = propsParser.transition(scene.transition);
+  // const transition = propsParser.transition(scene.transition);
 
-  const codeBlockUtils = scene.codeBlockUtils || "";
+  // const codeBlockUtils = scene.codeBlockUtils || "";
 
-  const media = scene.media || "";
-
-  const [mediaUrl, mediaAppearanceDelay] = media.split(/\s+/);
+  // const media = scene.media || "";
+  const media = propsParser.media(scene.media);
+  console.log("media", media);
 
   return (
     <div
@@ -72,6 +75,26 @@ export function CompositionSlide({
             fontVariantLigatures: "contextual",
           }}
         />
+
+        {media.src && getMediaType(media.src) === "image" && (
+          <CompositionImage
+            src={media.src}
+            slideDurationInFrames={slideDurationInFrames}
+            mediaAppearanceDelay={convertSecondsToFramerate(media.delay, fps)}
+            withMotion={media.withMotion}
+          />
+        )}
+        {/* {mediaUrl && getMediaType(mediaUrl) === "image" && (
+          <AnimatedImage
+            src={mediaUrl}
+            slideDuration={slideDuration}
+            mediaAppearanceDelay={+mediaAppearanceDelay}
+          />
+        )}
+
+        {mediaUrl && getMediaType(mediaUrl) === "video" && (
+          <AnimatedVideo src={mediaUrl} slideDuration={slideDuration} />
+        )} */}
       </div>
     </div>
   );

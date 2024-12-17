@@ -33,7 +33,7 @@ export interface MarkerData extends editor.IMarkerData {
 // types/x-editor.ts
 interface ScenePropertyArgument {
   name: string;
-  type: "string" | "number";
+  type: "string" | "number" | "boolean";
   required?: boolean;
   values?: string[];
   description?: string;

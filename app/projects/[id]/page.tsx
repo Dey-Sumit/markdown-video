@@ -4,7 +4,6 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 
-import { ProjectSidebar } from "@/components/project-sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,

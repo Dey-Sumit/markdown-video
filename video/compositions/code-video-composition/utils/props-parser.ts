@@ -1,6 +1,8 @@
 import type { TransitionType } from "../types.composition";
 
-type PostProcessor = (value: string) => string | number;
+type IndividualReturnType = string | number | boolean;
+
+type PostProcessor = (value: string) => IndividualReturnType;
 
 interface SceneMetaResult {
   name?: string;
@@ -29,12 +31,6 @@ interface FontsResult {
   lineHeight?: string;
 }
 
-interface MediaResult {
-  src: string;
-  type: string;
-  alt?: string;
-  duration: number;
-}
 interface TypeConfig {
   defaults: Record<string, string>;
   validKeys: string[];
@@ -45,6 +41,14 @@ interface Mark {
   duration: number;
   type: string;
   color: string;
+}
+
+interface Media {
+  src: string;
+  duration: number;
+  delay: number;
+  animation: string;
+  withMotion: boolean;
 }
 
 class ParseError extends Error {
@@ -63,7 +67,7 @@ const FALLBACK_PROPS_RAW_FORMAT = {
   sceneMeta: "--title= --duration=3",
   transition: "--type=magic --duration=0.3",
   fonts: "--family=arial --size=16 --weight=400",
-  media: "--src= --type=image --duration=1",
+  media: "--src= --duration=1 --animation=fade --delay=0.5 --withMotion=true",
   mark: "--delay=0 --duration=1 --type=highlight --color=yellow",
 };
 
@@ -89,10 +93,18 @@ const configs: Record<
     },
   },
   media: {
-    defaults: { src: "", type: "image", duration: "1" },
-    validKeys: ["src", "type", "alt", "duration"],
+    defaults: {
+      src: "",
+      duration: "1",
+      animation: "fade",
+      delay: "0.5",
+      withMotion: "true",
+    },
+    validKeys: ["src", "duration", "animation", "delay", "withMotion"], // TODO : type this tightly with the scene property config
     processors: {
       duration: (value) => Number(value),
+      delay: (value) => Number(value),
+      withMotion: (value) => value === "true",
     },
   },
   sceneMeta: {
@@ -128,8 +140,8 @@ class PropsParser {
   private processValues<T extends keyof typeof configs>(
     config: TypeConfig,
     values: Record<string, string>,
-  ): Record<string, string | number> {
-    const result: Record<string, string | number> = { ...values };
+  ): Record<string, IndividualReturnType> {
+    const result: Record<string, IndividualReturnType> = { ...values };
 
     if (config.processors) {
       Object.entries(values).forEach(([key, value]) => {
@@ -151,7 +163,7 @@ class PropsParser {
     type: T,
     input: string,
     options?: ParserOptions,
-  ): Record<string, string | number> {
+  ): Record<string, IndividualReturnType> {
     const config = configs[type];
     const fallbackInput =
       options?.fallbackInput || FALLBACK_PROPS_RAW_FORMAT[type];
@@ -214,8 +226,8 @@ class PropsParser {
     return this.parseArgs("fonts", input, options) as unknown as FontsResult;
   }
 
-  media(input: string, options?: ParserOptions): MediaResult {
-    return this.parseArgs("media", input, options) as unknown as MediaResult;
+  media(input: string, options?: ParserOptions): Media {
+    return this.parseArgs("media", input, options) as unknown as Media;
   }
 
   sceneMeta(input: string, options?: ParserOptions): SceneMetaResult {
