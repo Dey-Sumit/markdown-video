@@ -217,18 +217,6 @@ const RenderSectionSidebarContent = () => {
   );
 };
 
-const Megabytes: React.FC<{
-  sizeInBytes: number;
-}> = ({ sizeInBytes }) => {
-  const megabytes = Intl.NumberFormat("en", {
-    notation: "compact",
-    style: "unit",
-    unit: "byte",
-    unitDisplay: "narrow",
-  }).format(sizeInBytes);
-  return <span className="opacity-60">{megabytes}</span>;
-};
-
 const sidebarContents: Record<string, SidebarStuff> = {
   Editor: {
     title: "Editor Settings",

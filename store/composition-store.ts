@@ -2,10 +2,7 @@ import { validateMarkdown } from "@/components/x-editor/utils";
 import { db } from "@/lib/dexie-db";
 import { toast } from "sonner";
 
-import {
-  compositionMetaData,
-  FALLBACK_COMPOSITION_DURATION_IN_SECONDS,
-} from "@/video/compositions/code-video-composition/config";
+import { FALLBACK_COMPOSITION_DURATION_IN_SECONDS } from "@/video/compositions/code-video-composition/config";
 import type { CompositionStore } from "@/video/compositions/code-video-composition/types.composition";
 import { calculateCompositionDuration } from "@/video/compositions/composition.utils";
 import { editor } from "monaco-editor";

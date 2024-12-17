@@ -44,7 +44,7 @@ function Page() {
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={50} minSize={20}>
-              {/* <XPlayer /> */}
+              <XPlayer />
             </ResizablePanel>
           </ResizablePanelGroup>
         </div>

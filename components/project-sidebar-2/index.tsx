@@ -14,18 +14,42 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Code, Command, Palette } from "lucide-react";
+import { Book, Code, Command, FolderOpen, Palette, Rocket } from "lucide-react";
 import { NavUser } from "../nav-user";
 // import BackgroundCustomiser from "../background-customiser";
+import dynamic from "next/dynamic";
+import Docs from "../docs";
 const DynamicBackgroundCustomiser = dynamic(
-  () => import("../background-customiser"),
+  () => import("../project-sidebar-content/background-customiser"),
+  {
+    ssr: false,
+    loading: () => <div>Loading x...</div>,
+  },
+);
+const RenderingSettingStuff = dynamic(
+  () => import("../project-sidebar-content/rendering-setting"),
   {
     ssr: false,
     loading: () => <div>Loading...</div>,
   },
 );
-import { sidebarContents } from "./project-sidebar-content";
-import dynamic from "next/dynamic";
+
+const SidebarAssetsStuff = dynamic(
+  () => import("../project-sidebar-content/sidebar-assets-stuff"),
+  {
+    ssr: false,
+    loading: () => <div>Loading...</div>,
+  },
+);
+
+const EditorSettings = dynamic(
+  () => import("../project-sidebar-content/editor-setting"),
+  {
+    ssr: false,
+    loading: () => <div>Loading...</div>,
+  },
+);
+
 const data = {
   user: {
     name: "Sumit",
@@ -34,42 +58,43 @@ const data = {
   },
   navMain: [
     {
-      title: "Editor",
-      url: "#",
-      icon: Code,
-      isActive: true,
-    },
-    {
       title: "Background",
       url: "#",
       icon: Palette,
+      isActive: true,
+    },
+    {
+      title: "Editor",
+      url: "#",
+      icon: Code,
       isActive: false,
     },
+
     // {
     //   title: "Project",
     //   url: "#",
     //   icon: Clapperboard,
     //   isActive: false,
     // },
-    // {
-    //   title: "Assets",
-    //   url: "#",
-    //   icon: FolderOpen,
-    //   isActive: false,
-    // },
-    // {
-    //   title: "Render",
-    //   url: "#",
-    //   icon: Rocket,
-    //   isActive: false,
-    // },
+    {
+      title: "Assets",
+      url: "#",
+      icon: FolderOpen,
+      isActive: false,
+    },
+    {
+      title: "Render",
+      url: "#",
+      icon: Rocket,
+      isActive: false,
+    },
 
-    // {
-    //   title: "Docs",
-    //   url: "#",
-    //   icon: Book,
-    //   isActive: false,
-    // },
+    {
+      title: "Docs",
+      url: "#",
+      icon: Book,
+      isActive: false,
+    },
     // {
     //   title: "Help",
     //   url: "#",
@@ -82,9 +107,9 @@ const data = {
 export function ProjectSidebar2({ ...props }: ComponentProps<typeof Sidebar>) {
   // Note: I'm using state to show active item.
   // IRL you should use the url/router.
-  const [activeItem, setActiveItem] = useState(data.navMain[0]);
+  const [activeItem, setActiveItem] = useState("Background");
   const { setOpen } = useSidebar();
-  //   return null;
+
   return (
     <Sidebar
       collapsible="icon"
@@ -126,11 +151,11 @@ export function ProjectSidebar2({ ...props }: ComponentProps<typeof Sidebar>) {
                         children: item.title,
                         hidden: false,
                       }}
-                      //   onClick={() => {
-                      //     setActiveItem(item);
-                      //     setOpen(true);
-                      //   }}
-                      //   isActive={activeItem.title === item.title}
+                      onClick={() => {
+                        setActiveItem(item.title);
+                        setOpen(true);
+                      }}
+                      isActive={activeItem === item.title}
                       className="px-2.5 md:px-2"
                     >
                       <item.icon />
@@ -149,23 +174,19 @@ export function ProjectSidebar2({ ...props }: ComponentProps<typeof Sidebar>) {
       {/* This is the second sidebar */}
       {/* We disable collapsible and let it fill remaining space */}
       <Sidebar collapsible="none" className="hidden flex-1 md:flex">
-        <SidebarHeader className="gap-3.5 border-b p-3">
-          <div className="flex w-full items-center justify-between">
-            <div className="text-base font-medium text-foreground">
-              {activeItem.title}
-            </div>
-          </div>
-          <SidebarInput placeholder="Type to search..." />
-        </SidebarHeader>
-
-        <SidebarContent className="w-[calc(var(--sidebar-width)_-var(--sidebar-width-icon))] p-3">
-          {/* {sidebarContents[activeItem.title]?.component ?? null} */}
+        {activeItem === "Background" ? (
           <DynamicBackgroundCustomiser />
-        </SidebarContent>
-
-        {/* <SidebarFooter>
-         
-        </SidebarFooter> */}
+        ) : activeItem === "Render" ? (
+          <RenderingSettingStuff />
+        ) : activeItem === "Assets" ? (
+          <SidebarAssetsStuff />
+        ) : activeItem === "Editor" ? (
+          <EditorSettings />
+        ) : activeItem === "Project" ? (
+          <div>Project</div>
+        ) : activeItem === "Docs" ? (
+          <Docs />
+        ) : null}
         <SidebarRail />
       </Sidebar>
     </Sidebar>

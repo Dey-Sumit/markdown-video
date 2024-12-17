@@ -4,9 +4,7 @@ import rehypePrettyCode from "rehype-pretty-code";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    reactCompiler: true,
-  },
+  experimental: {},
   images: {
     remotePatterns: [{ hostname: "images.pexels.com" }],
   },
