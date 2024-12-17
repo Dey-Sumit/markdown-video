@@ -30,7 +30,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import BackgroundCustomiser from "./background-customiser";
+// import BackgroundCustomiser from "./background-customiser";
 import Docs from "./docs";
 import {
   Select,
@@ -144,7 +144,6 @@ const RenderSectionSidebarContent = () => {
   return (
     <div className="flex flex-col gap-y-7">
       <SidebarBlock label="Video Title">
-        {/* Video title text input */}
         <Input type="text" placeholder="Enter video title" value={"My Video"} />
       </SidebarBlock>
       {/* <SidebarBlock label="Codec">
@@ -349,8 +348,8 @@ const RenderAssetManagerStuff = () => {
 
 const SidebarStuffComponent = (key: string) => {
   switch (key) {
-    case "Background":
-      return <BackgroundCustomiser />;
+    // case "Background":
+    //   return <BackgroundCustomiser />;
     case "Project":
       return <RenderSectionSidebarContent />;
     case "Assets":
@@ -368,12 +367,14 @@ const SidebarStuffComponent = (key: string) => {
   }
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function ProjectSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
   // Note: I'm using state to show active item.
   // IRL you should use the url/router.
   const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
   const { setOpen } = useSidebar();
-
+  return null;
   return (
     <Sidebar
       collapsible="icon"
@@ -383,7 +384,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {/* This is the first sidebar */}
       {/* We disable collapsible and adjust width to icon. */}
       {/* This will make the sidebar appear as icons. */}
-      <Sidebar
+      {/* <Sidebar
         collapsible="none"
         className="!w-[calc(var(--sidebar-width-icon)_+_1px)] border-r"
       >
@@ -434,7 +435,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarFooter>
           <NavUser user={data.user} />
         </SidebarFooter>
-      </Sidebar>
+      </Sidebar> */}
 
       {/* This is the second sidebar */}
       {/* We disable collapsible and let it fill remaining space */}
@@ -452,12 +453,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {sidebarContents[activeItem.title]?.component ?? null}
         </SidebarContent> */}
 
-        <SidebarFooter>
-          {/* <div className="p-1">
-            <SidebarOptInForm />
-          </div> */}
-        </SidebarFooter>
-        <SidebarRail />
+        {/* <SidebarFooter>
+         
+        </SidebarFooter> */}
+        {/* <SidebarRail /> */}
       </Sidebar>
     </Sidebar>
   );

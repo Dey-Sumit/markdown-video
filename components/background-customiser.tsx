@@ -42,6 +42,27 @@ const gradientPresets = [
 export default function BackgroundCustomiser() {
   const styles = useCompositionStore((state) => state.styles);
   const setStyles = useCompositionStore((state) => state.setStyles);
+
+  // const styles = {
+  //   backgroundContainer: {
+  //     background: {
+  //       color: "#000000",
+  //       gradient: {
+  //         colors: ["#000000", "#000000"],
+  //         angle: 0,
+  //       },
+  //       image: "",
+  //       activeType: "gradient",
+  //     },
+  //   },
+  //   sceneContainer: {
+  //     padding: 20,
+  //     borderRadius: 8,
+  //     inset: 0,
+  //   },
+  // };
+  // const setStyles = (obj: any) => {};
+
   const {
     background: {
       color,
