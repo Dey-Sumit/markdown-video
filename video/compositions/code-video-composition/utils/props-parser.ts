@@ -174,7 +174,9 @@ class PropsParser {
       const matches = [...input.matchAll(paramRegex)];
 
       if (matches.length === 0) {
-        throw new ParseError("Invalid format. Use --key=value syntax");
+        throw new ParseError(
+          `Invalid format of ${type} : Use --key=value syntax`,
+        );
       }
 
       // First pass: collect all valid values

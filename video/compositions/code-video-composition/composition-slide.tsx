@@ -43,7 +43,8 @@ export function CompositionSlide({
   // const codeBlockUtils = scene.codeBlockUtils || "";
 
   // const media = scene.media || "";
-  const media = propsParser.media(scene.media);
+  let media;
+  if (scene.media) media = propsParser.media(scene.media || "");
   console.log("media", media);
 
   return (
@@ -75,8 +76,7 @@ export function CompositionSlide({
             fontVariantLigatures: "contextual",
           }}
         />
-
-        {media.src && getMediaType(media.src) === "image" && (
+        {media && media.src && getMediaType(media.src) === "image" && (
           <CompositionImage
             src={media.src}
             slideDurationInFrames={slideDurationInFrames}
@@ -84,6 +84,7 @@ export function CompositionSlide({
             withMotion={media.withMotion}
           />
         )}
+        
         {/* {mediaUrl && getMediaType(mediaUrl) === "image" && (
           <AnimatedImage
             src={mediaUrl}

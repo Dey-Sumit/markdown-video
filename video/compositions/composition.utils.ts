@@ -54,7 +54,7 @@ export const calculateCompositionDuration = (
 };
 
 export const convertSecondsToFramerate = (seconds: number, framerate: number) =>
-  seconds * framerate;
+  Math.floor(seconds * framerate);
 
 export const createTransitionConfig = ({
   type,
@@ -90,13 +90,18 @@ export const createTransitionConfig = ({
   presentation: ReturnType<typeof slide | typeof fade | typeof wipe>;
 } => {
   switch (type) {
-    case "slide":
+    case "slide": {
+      console.log("slide-->", {
+        durationInFrames: convertSecondsToFramerate(durationInSeconds, fps),
+      });
+
       return {
         timing: linearTiming({
           durationInFrames: convertSecondsToFramerate(durationInSeconds, fps),
         }),
         presentation: slide({ direction }),
       };
+    }
     case "fade":
       return {
         timing: linearTiming({
