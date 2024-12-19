@@ -82,12 +82,14 @@ const CodeVideoComposition = ({
 
             let nextSceneTransitionType: TransitionType | undefined;
             let nextTransitionDurationInSeconds: number = 0.3;
+            let transitionDirection: string = "from-bottom";
 
             if (nextStep) {
               try {
                 const result = propsParser.transition(nextStep.transition);
                 nextSceneTransitionType = result.type;
                 nextTransitionDurationInSeconds = result.duration;
+                transitionDirection = result.direction;
               } catch (e) {
                 nextSceneTransitionType = "none";
               }
@@ -132,7 +134,7 @@ const CodeVideoComposition = ({
                     //@ts-ignore
                     <TransitionSeries.Transition
                       {...createTransitionConfig({
-                        direction: "from-bottom",
+                        direction: transitionDirection,
                         durationInSeconds: nextTransitionDurationInSeconds,
                         fps,
                         type: nextSceneTransitionType,

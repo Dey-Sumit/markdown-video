@@ -65,7 +65,7 @@ interface ParserOptions {
 
 const FALLBACK_PROPS_RAW_FORMAT = {
   sceneMeta: "--title= --duration=3",
-  transition: "--type=magic --duration=0.3",
+  transition: "--type=magic --duration=0.3 --direction=from-bottom",
   fonts: "--family=arial --size=16 --weight=400",
   media: "--src= --duration=1 --animation=fade --delay=0.5 --withMotion=true",
   mark: "--delay=0 --duration=1 --type=highlight --color=yellow",
@@ -76,8 +76,8 @@ const configs: Record<
   TypeConfig
 > = {
   transition: {
-    defaults: { type: "magic", duration: "0.3" },
-    validKeys: ["type", "duration", "delay", "easing"],
+    defaults: { type: "magic", duration: "0.3", direction: "from-bottom" },
+    validKeys: ["type", "duration", "delay", "easing", "direction"],
     processors: {
       duration: (value) => Number(value),
       delay: (value) => Number(value),

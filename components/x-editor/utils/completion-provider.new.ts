@@ -190,7 +190,6 @@ export class EditorCompletionProvider {
             endColumn: position.column,
           },
           sortText: "1",
-          
         },
       ];
     }
@@ -299,12 +298,71 @@ export class EditorCompletionProvider {
         .map((prop) => this.createPropertySuggestion(prop, position)),
     };
   }
+  private getArgumentContext(lineContent: string): {
+    propertyName: string;
+    isAfterDoubleDash: boolean;
+    isAfterEquals: boolean;
+    currentArgument?: string;
+  } | null {
+    // Find which property we're dealing with
+    let propertyName: string | null = null;
+
+    if (lineContent.trimStart().startsWith("## !!scene")) {
+      propertyName = "scene";
+    } else {
+      for (const [name, property] of Object.entries(this.properties)) {
+        const propertyStart = `${property.prefix}${property.name}`;
+        if (lineContent.trimStart().startsWith(propertyStart)) {
+          propertyName = name;
+          break;
+        }
+      }
+    }
+
+    if (!propertyName) return null;
+
+    // Parse all arguments in the line
+    const args = Array.from(lineContent.matchAll(/--(\w+)(?:=([^-\s]*))?/g));
+
+    // Find the argument where the cursor is located
+    for (const match of args) {
+      const argStart = match.index!;
+      const argEnd = argStart + match[0].length;
+      const argName = match[1];
+      const hasEquals = match[0].includes("=");
+
+      // If we found an argument with =, we're in value context
+      if (hasEquals && !match[2]) {
+        return {
+          propertyName,
+          isAfterDoubleDash: false,
+          isAfterEquals: true,
+          currentArgument: argName,
+        };
+      }
+    }
+
+    // If we're after a new --, we're in argument name context
+    const lastDash = lineContent.lastIndexOf("--");
+    if (lastDash !== -1 && !lineContent.slice(lastDash).includes("=")) {
+      const currentArg =
+        lineContent.slice(lastDash + 2).match(/^\w*/)?.[0] || "";
+      return {
+        propertyName,
+        isAfterDoubleDash: true,
+        isAfterEquals: false,
+        currentArgument: currentArg,
+      };
+    }
+
+    return null;
+  }
 
   /**
    * Determines if the current position is in a valid argument suggestion context
    * @returns Object containing property name and context info, or null if not in argument context
    */
-  private getArgumentContext(lineContent: string): {
+  private _getArgumentContext(lineContent: string): {
     propertyName: string;
     isAfterDoubleDash: boolean;
     isAfterEquals: boolean;
