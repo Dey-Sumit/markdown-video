@@ -2,7 +2,7 @@ import { Composition } from "remotion";
 import CodeVideoComposition from ".";
 import { calculateCompositionDuration } from "../composition.utils";
 import { compositionMetaData } from "./config";
-import { type CompositionStore } from "./types.composition";
+import { SceneSchema, type CompositionStore } from "./types.composition";
 
 // const HARDCODED_STEPS: CompositionStore["scenes"] = [];
 // const HARDCODED_STYLES = {
@@ -16,6 +16,18 @@ import { type CompositionStore } from "./types.composition";
 // };
 
 import data from "../../../debug.json";
+import SampleMarkdownContent from "../../../samples/clean-only-text.md";
+import { Block, parseRoot } from "codehike/blocks";
+import { z } from "zod";
+
+const { scene: scenes, title } = parseRoot(
+  SampleMarkdownContent,
+  Block.extend({
+    scene: z.array(SceneSchema),
+  }),
+);
+
+console.log("AT ROOT", { scenes, title });
 
 const HARDCODED_STEPS: CompositionStore["scenes"] = [
   {
@@ -122,7 +134,7 @@ export default function CodeTransitionCompositionLoader() {
       id="code-transition-composition"
       component={CodeVideoComposition}
       defaultProps={{
-        scenes: HARDCODED_STEPS,
+        scenes: scenes,
         styles: HARDCODED_STYLES,
       }}
       calculateMetadata={({ props }) => {

@@ -2,7 +2,7 @@ import { languages, type Position } from "monaco-editor";
 import { type Monaco } from "@monaco-editor/react";
 
 const TRANSITION_PROPERTIES = {
-  name: ["slide-in-left", "slide-in-right", "fade-in", "zoom-in"],
+  name: ["slide-in-left", "slide-i n-right", "fade-in", "zoom-in"],
   duration: ["300ms", "500ms", "1s"],
   delay: ["0ms", "200ms", "500ms"],
 };

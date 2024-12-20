@@ -13,6 +13,7 @@ import { getMediaType } from "@/utils/utils";
 import CompositionImage from "./components/composition-image";
 import { convertSecondsToFramerate } from "../composition.utils";
 import { useVideoConfig } from "remotion";
+import CompositionText from "./components/composition-text";
 
 const { fontFamily } = loadFont();
 
@@ -45,7 +46,6 @@ export function CompositionSlide({
   // const media = scene.media || "";
   let media;
   if (scene.media) media = propsParser.media(scene.media || "");
-  console.log("media", media);
 
   return (
     <div
@@ -56,12 +56,12 @@ export function CompositionSlide({
     >
       {/* TODO : we need to move it out of this component, as I don't want the heading to be animated as well eg. on slide it looks, bad */}
       <div
-        className="h-10 text-center text-2xl text-white"
+        className="hidden h-10 text-center text-2xl text-white"
         style={{
           fontFamily,
         }}
       >
-        {newCode.meta}
+        {newCode?.meta}
       </div>
       <div className="flex w-full flex-1">
         <Pre
@@ -76,6 +76,7 @@ export function CompositionSlide({
             fontVariantLigatures: "contextual",
           }}
         />
+        {/* <CompositionText /> */}
         {media && media.src && getMediaType(media.src) === "image" && (
           <CompositionImage
             src={media.src}
@@ -84,18 +85,6 @@ export function CompositionSlide({
             withMotion={media.withMotion}
           />
         )}
-        
-        {/* {mediaUrl && getMediaType(mediaUrl) === "image" && (
-          <AnimatedImage
-            src={mediaUrl}
-            slideDuration={slideDuration}
-            mediaAppearanceDelay={+mediaAppearanceDelay}
-          />
-        )}
-
-        {mediaUrl && getMediaType(mediaUrl) === "video" && (
-          <AnimatedVideo src={mediaUrl} slideDuration={slideDuration} />
-        )} */}
       </div>
     </div>
   );

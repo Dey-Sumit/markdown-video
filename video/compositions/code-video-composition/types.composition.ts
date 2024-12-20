@@ -17,11 +17,12 @@ export const TransitionType = z.enum(VALID_TRANSITIONS);
 export type TransitionType = z.infer<typeof TransitionType>;
 
 const BaseSchema = z.object({
-  code: HighlightedCodeBlock,
+  code: HighlightedCodeBlock.optional(),
   font: z.string().optional().default(""),
   transition: z.string().optional().default("--name=magic --duration=0.3"),
   codeBlockUtils: z.string().optional().default(""),
   media: z.string().optional().default(""),
+  text: z.string().optional().default(""),
 });
 
 export const SceneSchema = Block.extend(BaseSchema.shape);
