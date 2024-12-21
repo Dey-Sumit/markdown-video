@@ -27,7 +27,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.className} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${inter.className} scroll-smooth`}
+      suppressHydrationWarning
+      data-theme="dark"
+    >
       <body className="bg-background text-foreground">
         <ThemeProvider
           attribute="class"
