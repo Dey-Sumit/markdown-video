@@ -13,6 +13,7 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@arcjet/next": "1.0.0-alpha.34",
     "@aws-sdk/client-s3": "^3.712.0",
     "@aws-sdk/s3-request-presigner": "^3.712.0",
     "@mdx-js/loader": "^3.1.0",
@@ -56,6 +57,9 @@
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "@tailwindcss/typography": "^0.5.15",
+    "@tsparticles/engine": "^3.7.1",
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.7.1",
     "@types/mdx": "^2.0.13",
     "autoprefixer": "10.4.20",
     "babel-plugin-react-compiler": "19.0.0-beta-df7b47d-20241124",
@@ -65,6 +69,7 @@
     "color-parse": "^2.0.2",
     "dexie": "^4.0.10",
     "dotenv": "^16.4.7",
+    "framer-motion": "^11.15.0",
     "geist": "^1.2.1",
     "immer": "^10.1.1",
     "lucide-react": "^0.456.0",

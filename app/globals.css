@@ -85,7 +85,18 @@
 [data-panel-resize-handle] {
   cursor: col-resize;
 }
+@keyframes bgFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
 
+.animate-bgFadeIn {
+  animation: bgFadeIn 5s ease-in forwards;
+}
 /* ----------------------------- X EDITOR STYLES starts ---------------------------- */
 .decorationsOverviewRuler,
 .vertical.scrollbar {
