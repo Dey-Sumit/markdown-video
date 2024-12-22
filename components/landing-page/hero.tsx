@@ -10,7 +10,7 @@ import MarkdownBackground from "../markdown-cells-bg";
 
 export default function Hero() {
   return (
-    <div className="relative w-full pt-8 text-white md:pt-16">
+    <div className="relative w-full pt-0 text-white md:pt-16">
       {/* <MarkdownBackground /> */}
       {/* ---------------------------- particles wrapper --------------------------- */}
       <div className="fixed inset-x-0 top-20 h-[20vh] md:h-[80vh]">
@@ -22,7 +22,7 @@ export default function Hero() {
           refresh
         />
       </div>
-      <div className="container mx-auto flex min-h-screen flex-col items-center justify-start gap-12 px-2 pt-20 sm:px-6 lg:px-8">
+      <div className="container mx-auto flex flex-col items-center justify-start gap-12 px-2 pt-16 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-y-4 text-center sm:gap-y-8">
           <div className="flex flex-col gap-y-3">
             <h1 className="text-4xl font-bold md:text-5xl lg:text-6xl xl:text-7xl">
@@ -30,8 +30,8 @@ export default function Hero() {
             </h1>
 
             <p className="mx-auto max-w-xl text-sm font-light text-gray-300 sm:max-w-2xl md:text-xl">
-              Make coding videos using by writing a simple markdown. As simple
-              as that. No need to learn complex video editing tools.
+              Make code walkthrough videos just by writing a simple markdown. As
+              simple as that. No need to learn complex video editing tools.
             </p>
           </div>
 
@@ -52,11 +52,11 @@ export default function Hero() {
           </Link>
         </div>
 
-        <div className="relative h-[700px] w-full">
+        <div className="relative h-[180px] w-full md:h-[700px]">
           <div
             className={cn(
               "relative flex h-full flex-col items-center justify-center rounded-xl backdrop-blur-lg",
-              "before:absolute before:left-0 before:top-0 before:z-[-1] before:h-full before:w-full before:[background-image:linear-gradient(to_bottom,purple,purple)] before:[filter:blur(200px)] md:before:[background-image:linear-gradient(to_bottom,#7a34f2,#7a34f2)]",
+              "before:pointer-events-none before:absolute before:left-0 before:top-0 before:z-[-1] before:h-full before:w-full before:[background-image:linear-gradient(to_bottom,purple,purple)] before:[filter:blur(200px)] md:before:[background-image:linear-gradient(to_bottom,#7a34f2,#7a34f2)]",
             )}
           >
             <div className="h-full w-full rounded-xl">
@@ -79,7 +79,7 @@ export default function Hero() {
                     />
                   </div>
                 }
-                className="rounded-xl border-2 border-indigo-800 bg-black"
+                className="rounded-xl border border-indigo-800 bg-black"
                 slideMode="drag"
                 autoplay
               />

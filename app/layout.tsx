@@ -2,7 +2,7 @@
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import "./globals.css";
-
+import { Analytics } from "@vercel/analytics/next";
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
@@ -14,6 +14,7 @@ export const metadata = {
 };
 
 import { Inter } from "next/font/google";
+import { WebVitals } from "./_components/web-vitals";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -41,35 +42,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Toaster richColors />
-
+          <Analytics />
           <main className="flex min-h-screen flex-col">
-            {/* <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-                <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-                  <div className="flex gap-5 items-center font-semibold">
-                    <Link href={"/"}>Next.js Supabase Starter</Link>
-                    <div className="flex items-center gap-2">
-                      <DeployButton />
-                    </div>
-                  </div>
-                  {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
-                </div>
-              </nav> */}
             <>{children}</>
-
-            {/* <footer className="mx-auto flex w-full items-center justify-center gap-8 border-t py-16 text-center text-xs">
-              <p>
-                Powered by{" "}
-                <a
-                  href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-                  target="_blank"
-                  className="font-bold hover:underline"
-                  rel="noreferrer"
-                >
-                  Supabase
-                </a>
-              </p>
-              <ThemeSwitcher />
-            </footer> */}
           </main>
         </ThemeProvider>
       </body>
