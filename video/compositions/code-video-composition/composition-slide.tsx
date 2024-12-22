@@ -7,7 +7,7 @@ import {
   useTokenTransitions,
 } from "./annotations/token-transitions";
 import { type Scene } from "./types.composition";
-import propsParser from "./utils/props-parser";
+import propsParser, { type TextProps } from "./utils/props-parser";
 import { mark } from "./annotations/mark";
 import { getMediaType } from "@/utils/utils";
 import CompositionImage from "./components/composition-image";
@@ -47,6 +47,9 @@ export function CompositionSlide({
   let media;
   if (scene.media) media = propsParser.media(scene.media || "");
 
+  let text: TextProps = {};
+  if (scene.text) text = propsParser.text(scene.text);
+
   return (
     <div
       className={cn("flex h-full w-full flex-col px-8 py-4", {})}
@@ -56,14 +59,14 @@ export function CompositionSlide({
     >
       {/* TODO : we need to move it out of this component, as I don't want the heading to be animated as well eg. on slide it looks, bad */}
       <div
-        className="hidden h-10 text-center text-2xl text-white"
+        className="h-10 text-center text-2xl text-white"
         style={{
           fontFamily,
         }}
       >
         {newCode?.meta}
       </div>
-      <div className="flex w-full flex-1">
+      <div className="flex w-full flex-1 flex-col">
         <Pre
           ref={ref}
           code={code}
@@ -76,7 +79,9 @@ export function CompositionSlide({
             fontVariantLigatures: "contextual",
           }}
         />
-        {/* <CompositionText /> */}
+        {text.content && (
+          <CompositionText text={text.content} animationType={text.animation} />
+        )}
         {media && media.src && getMediaType(media.src) === "image" && (
           <CompositionImage
             src={media.src}

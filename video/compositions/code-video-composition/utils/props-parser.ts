@@ -51,6 +51,15 @@ interface Media {
   withMotion: boolean;
 }
 
+export interface TextProps {
+  content: string;
+  duration: number;
+  animation: string;
+  delay: number;
+  fontSize: string;
+  fontWeight: string;
+}
+
 class ParseError extends Error {
   constructor(message: string) {
     super(message);
@@ -62,17 +71,19 @@ interface ParserOptions {
   fallbackInput?: string;
   silent?: boolean;
 }
-
+// !text --content="Coding Challenge: Repeat a string with ellipsis" --duration=3 --animation=fadeInSlideUp --delay=1
+// --fontSize=60 --fontWeight=700 --textAlign=center
 const FALLBACK_PROPS_RAW_FORMAT = {
   sceneMeta: "--title= --duration=3",
   transition: "--type=magic --duration=0.3 --direction=from-bottom",
   fonts: "--family=arial --size=16 --weight=400",
   media: "--src= --duration=1 --animation=fade --delay=0.5 --withMotion=true",
   mark: "--delay=0 --duration=1 --type=highlight --color=yellow",
+  text: "--content= --duration=3 --animation=fadeInSlideUp --delay=1 --fontSize=60 --fontWeight=700 ",
 };
 
 const configs: Record<
-  "transition" | "fonts" | "media" | "sceneMeta" | "mark",
+  "transition" | "fonts" | "media" | "sceneMeta" | "mark" | "text",
   TypeConfig
 > = {
   transition: {
@@ -120,6 +131,30 @@ const configs: Record<
     processors: {
       delay: (value) => Number(value),
       duration: (value) => Number(value),
+    },
+  },
+  text: {
+    defaults: {
+      content: "",
+      duration: "3",
+      animation: "fadeInSlideUp",
+      delay: "1",
+      fontSize: "60",
+      fontWeight: "700",
+    },
+    validKeys: [
+      "content",
+      "duration",
+      "animation",
+      "delay",
+      "fontSize",
+      "fontWeight",
+    ],
+    processors: {
+      duration: (value) => Number(value),
+      delay: (value) => Number(value),
+      fontSize: (value) => `${value}px`,
+      fontWeight: (value) => value,
     },
   },
   /*  zoom: {
@@ -170,7 +205,10 @@ class PropsParser {
 
     try {
       const params: Record<string, string> = {};
-      const paramRegex = /--(\w+)=([^\s]*)/g;
+      const paramRegex =
+        type === "text"
+          ? /--(\w+)=(?:"([^"]*?)"|([^\s]*))/g
+          : /--(\w+)=([^\s]*)/g;
       const matches = [...input.matchAll(paramRegex)];
 
       if (matches.length === 0) {
@@ -180,7 +218,10 @@ class PropsParser {
       }
 
       // First pass: collect all valid values
-      matches.forEach(([, key, value]) => {
+      matches.forEach((match) => {
+        const [, key, quotedValue, unquotedValue] = match;
+        const value = quotedValue !== undefined ? quotedValue : unquotedValue;
+
         if (value && config.validKeys.includes(key)) {
           params[key] = value;
         }
@@ -215,13 +256,16 @@ class PropsParser {
     }
   }
 
-  // Update method signatures to include options
   transition(input: string, options?: ParserOptions): TransitionResult {
     return this.parseArgs(
       "transition",
       input,
       options,
     ) as unknown as TransitionResult;
+  }
+
+  text(input: string, options?: ParserOptions): TextProps {
+    return this.parseArgs("text", input, options) as unknown as TextProps;
   }
 
   fonts(input: string, options?: ParserOptions): FontsResult {

@@ -1,6 +1,5 @@
 import type { SceneProperty } from "../types.x-editor";
 
-// config/editor-properties.ts
 export const EDITOR_PROPERTIES: Record<string, SceneProperty> = {
   scene: {
     name: "scene",
@@ -160,6 +159,53 @@ export const EDITOR_PROPERTIES: Record<string, SceneProperty> = {
           "0.5": "Quick highlight",
           "1": "Standard duration",
           "2": "Extended highlight",
+        },
+      },
+    },
+  },
+  text: {
+    name: "text",
+    prefix: "!",
+    description: "Adds text content to the scene",
+    arguments: {
+      content: {
+        name: "content",
+        type: "string",
+        required: true,
+        description: "Text content to display",
+      },
+      duration: {
+        name: "duration",
+        type: "number",
+        required: false,
+        description: "How long the text stays on screen (in seconds)",
+        examples: {
+          "0.3": "Short duration",
+          "1": "Standard duration",
+          "2": "Extended duration",
+        },
+      },
+      animation: {
+        name: "animation",
+        type: "string",
+        required: false,
+        description: "Animation to apply to the text content",
+        values: ["fadeInSlideUp", "fadeInSlideDown", "fadeInOnly"],
+        examples: {
+          fadeInSlideUp: "Slide up from the bottom",
+          fadeInSlideDown: "Slide down from the top",
+          fadeInOnly: "Fade in without sliding",
+        },
+      },
+      delay: {
+        name: "delay",
+        type: "number",
+        required: false,
+        description: "Delay before animation starts (in seconds)",
+        examples: {
+          "0.3": "Short delay",
+          "1": "Medium delay",
+          "2": "Long delay",
         },
       },
     },

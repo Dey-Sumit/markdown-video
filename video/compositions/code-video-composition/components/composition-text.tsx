@@ -1,8 +1,6 @@
 import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
-const TEXT = "Hello, This is the next step";
-
 type AnimationFn = (params: {
   frame: number;
   fps: number;
@@ -211,14 +209,22 @@ const ANIMATION_MAP: Record<AnimationType, AnimationFn> = {
   wave,
   //   typewriter,
 };
-
+const Wrapper = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="absolute inset-0 flex w-full flex-col items-center justify-center gap-10 bg-red-500 p-16">
+      {children}
+    </div>
+  );
+};
 const CompositionText = ({
   animationType = "wave",
-  text = "Hello, This is the next step",
-  applyTo = "sentence",
+  text = "Hello,  is the next step",
+  applyTo = "word",
+  delay = 60,
 }: {
   animationType?: AnimationType;
   text?: string;
+  delay?: number;
   applyTo?: "word" | "sentence"; // New prop to control animation granularity
 }) => {
   const frame = useCurrentFrame();
@@ -236,10 +242,11 @@ const CompositionText = ({
       frame,
       fps,
       index: 0, // Single index for entire sentence
+      delay,
     });
 
     return (
-      <div className="flex w-full flex-col items-center justify-center gap-10">
+      <Wrapper>
         <h1
           className="font-sans text-9xl font-black tracking-wide text-white"
           style={{
@@ -249,16 +256,21 @@ const CompositionText = ({
         >
           {text}
         </h1>
-      </div>
+      </Wrapper>
     );
   }
   const words = text.split(" "); // Split text into words
 
   return (
-    <div className="flex w-full flex-col items-center justify-center gap-10">
+    <Wrapper>
       <h1 className="font-sans text-[7.5rem] font-black tracking-wide text-white">
         {words.map((word, index) => {
-          const { opacity, transform } = animationFn({ frame, fps, index });
+          const { opacity, transform } = animationFn({
+            frame,
+            fps,
+            index,
+            delay,
+          });
 
           return (
             <span
@@ -274,7 +286,7 @@ const CompositionText = ({
           );
         })}
       </h1>
-    </div>
+    </Wrapper>
   );
 };
 
