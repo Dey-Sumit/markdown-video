@@ -1,11 +1,13 @@
 import Hero from "@/components/landing-page/hero";
-import { PlaceholdersAndVanishInputDemo } from "@/components/landing-page/waitlist";
+import { Waitlist } from "@/components/landing-page/waitlist";
+import SparklesText from "@/components/sparkle-text";
 
 export default async function Index() {
   return (
-    <div className="mb-[50vh] px-10 py-4">
+    <div className="mb-[20vh] flex flex-col gap-y-16 px-4 py-4 md:px-10">
       <Hero />
-      <PlaceholdersAndVanishInputDemo />
+      <Waitlist />
+      <SparklesText text="Markdown Video" />
     </div>
   );
 }

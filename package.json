@@ -13,6 +13,7 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@arcjet/ip": "1.0.0-alpha.34",
     "@arcjet/next": "1.0.0-alpha.34",
     "@aws-sdk/client-s3": "^3.712.0",
     "@aws-sdk/s3-request-presigner": "^3.712.0",
@@ -61,6 +62,8 @@
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.7.1",
     "@types/mdx": "^2.0.13",
+    "@vercel/analytics": "^1.4.1",
+    "@vercel/functions": "^1.5.2",
     "autoprefixer": "10.4.20",
     "babel-plugin-react-compiler": "19.0.0-beta-df7b47d-20241124",
     "class-variance-authority": "^0.7.1",
@@ -74,7 +77,7 @@
     "immer": "^10.1.1",
     "lucide-react": "^0.456.0",
     "monaco-editor": "^0.52.0",
-    "next": "^15.0.4",
+    "next": "^15.1.2",
     "next-themes": "^0.4.3",
     "prettier": "^3.4.2",
     "prettier-plugin-organize-imports": "^4.1.0",
