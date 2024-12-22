@@ -139,6 +139,7 @@ export default function CodeTransitionCompositionLoader() {
       }}
       calculateMetadata={({ props }) => {
         const duration = calculateCompositionDuration(props.scenes) || 30;
+        console.log("DURATION", duration);
 
         return {
           durationInFrames: duration,
