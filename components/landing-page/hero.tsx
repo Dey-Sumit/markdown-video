@@ -25,7 +25,7 @@ export default function Hero() {
       <div className="container mx-auto flex flex-col items-center justify-start gap-12 px-2 pt-16 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-y-4 text-center sm:gap-y-8">
           <div className="flex flex-col gap-y-3">
-            <h1 className="text-4xl font-bold md:text-5xl lg:text-6xl xl:text-7xl">
+            <h1 className="text-4xl font-bold md:text-5xl lg:text-6xl xl:text-[5rem]">
               Markdown to Video. That's it
             </h1>
 
