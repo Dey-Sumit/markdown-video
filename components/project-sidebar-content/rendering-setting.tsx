@@ -14,6 +14,7 @@ import { Input } from "../ui/input";
 import { useRendering } from "@/hooks/use-rendering";
 import useCompositionStore from "@/store/composition-store";
 import { Slider } from "../ui/slider";
+import { useSearchParams } from "next/navigation";
 
 const Megabytes: React.FC<{
   sizeInBytes: number;
@@ -28,6 +29,12 @@ const Megabytes: React.FC<{
 };
 
 const RenderingSettingStuff = () => {
+  const searchParams = useSearchParams();
+  console.log(searchParams);
+  const owner = searchParams.get("owner");
+  const renderDisabled = owner !== "sumit";
+
+  // const
   const scenes = useCompositionStore((state) => state.scenes);
   const styles = useCompositionStore((state) => state.styles);
   const { renderMedia, state, undo } = useRendering(
@@ -97,7 +104,11 @@ const RenderingSettingStuff = () => {
       </SidebarContent>
 
       <SidebarFooter>
-        <Button onClick={renderMedia} className="border-2">
+        <Button
+          onClick={renderMedia}
+          className="border-2"
+          disabled={renderDisabled}
+        >
           {state.status === "invoking"
             ? "Rendering..."
             : state.status === "rendering"
