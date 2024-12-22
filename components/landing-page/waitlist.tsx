@@ -69,7 +69,7 @@ export function Waitlist() {
           onSubmit={onSubmit}
           className="flex w-full max-w-xl flex-col items-start gap-y-2"
         >
-          <div className="group flex w-full flex-col items-center gap-2 rounded-lg border border-gray-800 p-1.5 focus-within:border-primary sm:flex-row">
+          <div className="group flex w-full flex-col items-center gap-2 rounded-[8px] border border-gray-800 p-1.5 focus-within:border-primary sm:flex-row">
             <Input
               className="w-full border-none bg-transparent outline-none focus:outline-none focus-visible:ring-0"
               inputMode="email"
@@ -80,7 +80,7 @@ export function Waitlist() {
               onChange={(e) => setEmail(e.target.value)}
             />
 
-            <Button className="w-full px-4 md:w-max">
+            <Button className="w-full rounded-[5px] px-4 md:w-max">
               Join
               <MoveRight size={16} strokeWidth={3} className="ml-2" />
             </Button>
