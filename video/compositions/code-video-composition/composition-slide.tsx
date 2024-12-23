@@ -47,6 +47,8 @@ export function CompositionSlide({
   let media;
   if (scene.media) media = propsParser.media(scene.media || "");
 
+  const sceneMeta = propsParser.sceneMeta(scene.title || "");
+
   let text: TextProps = {};
   if (scene.text) text = propsParser.text(scene.text);
 
@@ -55,6 +57,7 @@ export function CompositionSlide({
       className={cn("flex h-full w-full flex-col px-8 py-4", {})}
       style={{
         fontFamily,
+        background: sceneMeta.background,
       }}
     >
       {/* TODO : we need to move it out of this component, as I don't want the heading to be animated as well eg. on slide it looks, bad */}

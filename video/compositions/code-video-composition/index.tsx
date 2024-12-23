@@ -35,7 +35,7 @@ const CodeVideoComposition = ({
 
   const { color, gradient, image, activeType } = background;
 
-  const derivedBackground = {};
+
 
   return (
     <AbsoluteFill

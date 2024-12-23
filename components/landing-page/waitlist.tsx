@@ -3,19 +3,18 @@ import React from "react";
 import { useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { ArrowRight, MoveRight } from "lucide-react";
+import { MoveRight } from "lucide-react";
 import { toast } from "sonner";
 import GridPattern from "../grid-pattern";
 import { cn } from "@/lib/utils";
-import { createClient } from "@/utils/supabase/client";
-import Form from "next/form";
-import { useFormState } from "react-dom";
+
+const validateEmail = (email: string) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
 export function Waitlist() {
   const [email, setEmail] = useState("");
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+  const [isMutating, setIsMutating] = useState(false);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,7 +25,7 @@ export function Waitlist() {
       toast.error("Please enter a valid email address.");
       return;
     }
-
+    setIsMutating(true);
     try {
       const response = await fetch("/api/add-to-waitlist", {
         method: "POST",
@@ -46,6 +45,8 @@ export function Waitlist() {
     } catch (error) {
       console.error("Failed to join the waitlist", error);
       toast.error("Failed to join the waitlist. Please try again.");
+    } finally {
+      setIsMutating(false);
     }
   };
 
@@ -80,9 +81,18 @@ export function Waitlist() {
               onChange={(e) => setEmail(e.target.value)}
             />
 
-            <Button className="w-full rounded-[5px] px-4 md:w-max">
-              Join
-              <MoveRight size={16} strokeWidth={3} className="ml-2" />
+            <Button
+              className="w-full rounded-[5px] px-4 md:w-max"
+              disabled={isMutating}
+            >
+              {isMutating ? (
+                "Joining..."
+              ) : (
+                <>
+                  Join
+                  <MoveRight size={16} strokeWidth={3} className="ml-2" />
+                </>
+              )}
             </Button>
           </div>
 
