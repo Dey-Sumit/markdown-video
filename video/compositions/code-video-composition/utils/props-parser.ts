@@ -7,6 +7,7 @@ type PostProcessor = (value: string) => IndividualReturnType;
 interface SceneMetaResult {
   name?: string;
   duration: number;
+  background?: string;
 }
 
 /* interface ZoomResult {
@@ -74,12 +75,12 @@ interface ParserOptions {
 // !text --content="Coding Challenge: Repeat a string with ellipsis" --duration=3 --animation=fadeInSlideUp --delay=1
 // --fontSize=60 --fontWeight=700 --textAlign=center
 const FALLBACK_PROPS_RAW_FORMAT = {
-  sceneMeta: "--title= --duration=3",
+  sceneMeta: "--title= --duration=3 --background=blue",
   transition: "--type=magic --duration=0.3 --direction=from-bottom",
   fonts: "--family=arial --size=16 --weight=400",
   media: "--src= --duration=1 --animation=fade --delay=0.5 --withMotion=true",
   mark: "--delay=0 --duration=1 --type=highlight --color=yellow",
-  text: "--content= --duration=3 --animation=fadeInSlideUp --delay=1 --fontSize=60 --fontWeight=700 ",
+  text: "--content= --duration=3 --applyTo=word --animation=fadeInSlideUp --delay=1 --fontSize=60 --fontWeight=700 ",
 };
 
 const configs: Record<
@@ -119,8 +120,8 @@ const configs: Record<
     },
   },
   sceneMeta: {
-    defaults: { title: "", duration: "3" },
-    validKeys: ["title", "duration"],
+    defaults: { title: "", duration: "3", background: "blue" },
+    validKeys: ["title", "duration", "background"],
     processors: {
       duration: (value) => Number(value),
     },
@@ -141,6 +142,7 @@ const configs: Record<
       delay: "1",
       fontSize: "60",
       fontWeight: "700",
+      applyTo: "word",
     },
     validKeys: [
       "content",
@@ -149,6 +151,7 @@ const configs: Record<
       "delay",
       "fontSize",
       "fontWeight",
+      "applyTo",
     ],
     processors: {
       duration: (value) => Number(value),

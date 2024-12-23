@@ -23,6 +23,19 @@ export const EDITOR_PROPERTIES: Record<string, SceneProperty> = {
           "30": "Extended scene for detailed content",
         },
       },
+      background: {
+        name: "background",
+        type: "string",
+        required: false,
+        description: "Background color for the scene",
+        examples: {
+          "#ffffff": "White background",
+          "#000000": "Black background",
+          "#ff0000": "Red background",
+          "#00ff00": "Green background",
+          "#0000ff": "Blue background",
+        },
+      },
     },
   },
   transition: {
