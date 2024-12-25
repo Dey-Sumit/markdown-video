@@ -1,3 +1,4 @@
+import type { PropsParserConfig } from "@/types/props.types";
 import parse from "color-parse";
 import { redirect } from "next/navigation";
 
@@ -68,4 +69,17 @@ export function getMediaType(url: string): string | null {
 
 export const createGradient = (colors: string[], angle: number) => {
   return `linear-gradient(${angle}deg, ${colors.join(", ")})`;
+};
+
+export const generateFallbackPropsFormat = (configs: PropsParserConfig) => {
+  return Object.entries(configs).reduce(
+    (acc, [key, config]) => {
+      //@ts-ignore - Fuck TypeScript
+      acc[key] = Object.entries(config.defaults)
+        .map(([prop, value]) => `--${prop}=${value}`)
+        .join(" ");
+      return acc;
+    },
+    {} as Record<keyof typeof configs, string>,
+  );
 };

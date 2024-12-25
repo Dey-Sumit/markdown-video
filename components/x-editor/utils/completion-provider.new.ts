@@ -2,7 +2,7 @@
 import { editor, languages, Position, type IRange } from "monaco-editor";
 import { type Monaco } from "@monaco-editor/react";
 import { type SceneProperty } from "../types.x-editor";
-import { EDITOR_PROPERTIES } from "../config/scene-properties.config";
+import { CORE_PROPS_CONFIG } from "../config/property-config";
 
 export class EditorCompletionProvider {
   constructor(
@@ -435,7 +435,7 @@ export class EditorCompletionProvider {
 }
 
 export const configureCompletions = (monaco: Monaco) => {
-  const provider = new EditorCompletionProvider(monaco, EDITOR_PROPERTIES);
+  const provider = new EditorCompletionProvider(monaco, CORE_PROPS_CONFIG);
 
   return monaco.languages.registerCompletionItemProvider("markdown", {
     // Trigger on ! for properties and space for arguments

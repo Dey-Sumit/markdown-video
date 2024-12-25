@@ -1,70 +1,20 @@
-import type { TransitionType } from "../types.composition";
+import type {
+  FontsResult,
+  IndividualReturnType,
+  Mark,
+  Media,
+  PropsParserConfig,
+  SceneMetaResult,
+  TextProps,
+  TransitionResult,
+  TypeConfig,
+} from "@/types/props.types";
+import { generateFallbackPropsFormat } from "@/utils/utils";
 
-type IndividualReturnType = string | number | boolean;
-
-type PostProcessor = (value: string) => IndividualReturnType;
-
-interface SceneMetaResult {
-  name?: string;
-  duration: number;
-  background?: string;
-}
-
-/* interface ZoomResult {
-  level: number;
-  delay: number;
-  point: { x: number; y: number };
-} */
-
-// TODO : add direction here
-interface TransitionResult {
-  type: TransitionType;
-  duration: number;
-  delay?: number;
-  easing?: string;
-  direction: string;
-}
-
-interface FontsResult {
-  family: string;
-  size: string;
-  weight: string;
-  lineHeight?: string;
-}
-
-interface TypeConfig {
-  defaults: Record<string, string>;
-  validKeys: string[];
-  processors?: Record<string, PostProcessor>;
-}
-interface Mark {
-  delay: number;
-  duration: number;
-  type: string;
-  color: string;
-}
-
-interface Media {
-  src: string;
-  duration: number;
-  delay: number;
-  animation: string;
-  withMotion: boolean;
-}
-
-export interface TextProps {
-  content: string;
-  duration: number;
-  animation: string;
-  delay: number;
-  fontSize: string;
-  fontWeight: string;
-}
-
-class ParseError extends Error {
+class PraseError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "ParseError";
+    this.name = "PropsParser";
   }
 }
 interface ParserOptions {
@@ -72,21 +22,26 @@ interface ParserOptions {
   fallbackInput?: string;
   silent?: boolean;
 }
-// !text --content="Coding Challenge: Repeat a string with ellipsis" --duration=3 --animation=fadeInSlideUp --delay=1
-// --fontSize=60 --fontWeight=700 --textAlign=center
-const FALLBACK_PROPS_RAW_FORMAT = {
+
+// TODO : remove this after testing
+/* const FALLBACK_PROPS_RAW_FORMAT = {
   sceneMeta: "--title= --duration=3 --background=transparent",
   transition: "--type=magic --duration=0.3 --direction=from-bottom",
-  fonts: "--family=arial --size=16 --weight=400",
+  code: "--family=arial --size=16 --weight=400",
   media: "--src= --duration=1 --animation=fade --delay=0.5 --withMotion=true",
   mark: "--delay=0 --duration=1 --type=highlight --color=yellow",
   text: "--content= --duration=3 --applyTo=word --animation=fadeInSlideUp --delay=0 --fontSize=60 --fontWeight=700 ",
 };
+ */
+const configs: PropsParserConfig = {
+  sceneMeta: {
+    defaults: { title: "", duration: "3", background: "transparent" },
+    validKeys: ["title", "duration", "background"],
+    processors: {
+      duration: (value) => Number(value),
+    },
+  },
 
-const configs: Record<
-  "transition" | "fonts" | "media" | "sceneMeta" | "mark" | "text",
-  TypeConfig
-> = {
   transition: {
     defaults: { type: "magic", duration: "0.3", direction: "from-bottom" },
     validKeys: ["type", "duration", "delay", "easing", "direction"],
@@ -95,7 +50,8 @@ const configs: Record<
       delay: (value) => Number(value),
     },
   },
-  fonts: {
+
+  code: {
     defaults: { family: "arial", size: "16", weight: "400" },
     validKeys: ["family", "size", "weight", "lineHeight"],
     processors: {
@@ -104,6 +60,7 @@ const configs: Record<
       weight: (value) => value,
     },
   },
+
   media: {
     defaults: {
       src: "",
@@ -119,13 +76,7 @@ const configs: Record<
       withMotion: (value) => value === "true",
     },
   },
-  sceneMeta: {
-    defaults: { title: "", duration: "3", background: "transparent" },
-    validKeys: ["title", "duration", "background"],
-    processors: {
-      duration: (value) => Number(value),
-    },
-  },
+
   mark: {
     defaults: { delay: "0", duration: "1", type: "highlight", color: "yellow" },
     validKeys: ["delay", "duration", "type", "color"],
@@ -172,7 +123,9 @@ const configs: Record<
       },
     },
   }, */
-};
+} as const;
+
+const FALLBACK_PROPS_RAW_FORMAT = generateFallbackPropsFormat(configs);
 
 class PropsParser {
   private processValues<T extends keyof typeof configs>(
@@ -197,6 +150,7 @@ class PropsParser {
 
     return result;
   }
+
   private parseArgs<T extends keyof typeof configs>(
     type: T,
     input: string,
@@ -210,15 +164,18 @@ class PropsParser {
       const params: Record<string, string> = {};
       const paramRegex =
         type === "text"
-          ? /--(\w+)=(?:"([^"]*?)"|([^\s]*))/g
-          : /--(\w+)=([^\s]*)/g;
+          ? /--(\w+)=\s*(?:"([^"]*?)"|([^\s]*))/g
+          : /--(\w+)=\s*([^\s]*)/g;
       const matches = [...input.matchAll(paramRegex)];
+      console.log("matches", type, matches);
 
-      /*   if (matches.length === 0) {
-        throw new ParseError(
-          `Invalid format of ${type} : Use --key=value syntax`,
-        );
-      } */
+      if (matches.length === 0) {
+        return this.processValues(config, config.defaults);
+        // ! Not throwing error for now as it might break the user's flow.
+        // throw new ParseError(
+        //   `Invalid format of ${type} : Use --key=value syntax`,
+        // );
+      }
 
       // First pass: collect all valid values
       matches.forEach((match) => {
@@ -271,8 +228,8 @@ class PropsParser {
     return this.parseArgs("text", input, options) as unknown as TextProps;
   }
 
-  fonts(input: string, options?: ParserOptions): FontsResult {
-    return this.parseArgs("fonts", input, options) as unknown as FontsResult;
+  code(input: string, options?: ParserOptions): FontsResult {
+    return this.parseArgs("code", input, options) as unknown as FontsResult;
   }
 
   media(input: string, options?: ParserOptions): Media {

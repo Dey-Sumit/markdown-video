@@ -18,9 +18,9 @@ export const EDITOR_PROPERTIES: Record<string, SceneProperty> = {
         required: true,
         description: "Duration in seconds for this scene",
         examples: {
-          "5": "Short scene, good for quick transitions",
-          "15": "Standard scene length",
-          "30": "Extended scene for detailed content",
+          "3": "3 Seconds | Short scene, good for quick transitions",
+          "5": "5 Seconds | Standard scene length",
+          "7.5": "7.5 Seconds | Extended scene for detailed content",
         },
       },
       background: {
