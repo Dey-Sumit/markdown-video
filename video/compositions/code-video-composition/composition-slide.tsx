@@ -51,6 +51,7 @@ export function CompositionSlide({
 
   let text: TextProps = {};
   if (scene.text) text = propsParser.text(scene.text);
+  console.log("text", text);
 
   return (
     <div
@@ -83,7 +84,13 @@ export function CompositionSlide({
           }}
         />
         {text.content && (
-          <CompositionText text={text.content} animationType={text.animation} />
+          <CompositionText
+            text={text.content}
+            animationType={text.animation}
+            delay={convertSecondsToFramerate(text.delay || 0, fps)}
+            fontSize={text.fontSize}
+            fontWeight={text.fontWeight}
+          />
         )}
         {media && media.src && getMediaType(media.src) === "image" && (
           <CompositionImage

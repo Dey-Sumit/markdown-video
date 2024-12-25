@@ -63,7 +63,11 @@ const XPlayer = () => {
           }}
         />
       </div>
-      <PlayerControls duration={duration} playerRef={playerRef} />
+      <PlayerControls
+        duration={duration}
+        playerRef={playerRef}
+        key={reloadKey}
+      />
     </section>
   );
 };

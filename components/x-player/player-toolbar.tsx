@@ -1,5 +1,5 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { PlayerRef } from "@remotion/player";
+import { type PlayerRef } from "@remotion/player";
 import React from "react";
 
 const Toolbar = ({

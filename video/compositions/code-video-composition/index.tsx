@@ -17,10 +17,7 @@ import {
   createTransitionConfig,
 } from "../composition.utils";
 import propsParser from "./utils/props-parser";
-
-const createGradient = (colors: string[], angle: number) => {
-  return `linear-gradient(${angle}deg, ${colors.join(", ")})`;
-};
+import { createGradient } from "@/utils/utils";
 
 const CodeVideoComposition = ({
   scenes,
@@ -33,18 +30,12 @@ const CodeVideoComposition = ({
     sceneContainer: { inset, padding, borderRadius },
   } = styles;
 
-  const { color, gradient, image, activeType } = background;
-
-
+  const { gradient } = background;
 
   return (
     <AbsoluteFill
       style={{
         background: createGradient(gradient.colors, gradient.angle),
-        // background: background.color,
-        // backgroundImage: background.image,
-        // backgroundSize: "cover",
-        // backgroundPosition: "center",
       }}
     >
       {/* <ProgressBar steps={steps} /> */}

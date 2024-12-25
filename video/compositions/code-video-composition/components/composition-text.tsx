@@ -419,21 +419,24 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 const CompositionText = ({
   animationType = "wave",
   text = "Hello, This is the next step",
-  applyTo = "sentence",
-  delay = 45, // Delay for the entire animation to start
+  applyTo = "word",
+  delay = 0, // Delay for the entire animation to start
 }: {
   animationType?: AnimationType;
   text?: string;
   delay?: number; // Delay in frames before starting the animation
   applyTo?: "word" | "sentence";
 }) => {
+  console.log("CompositionText", delay);
+
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const animationFn = ANIMATION_MAP[animationType]; // Select the animation function
+  let animationFn = ANIMATION_MAP[animationType]; // Select the animation function
 
   if (!animationFn) {
-    throw new Error(`Unknown animation type: ${animationType}`);
+    animationFn = ANIMATION_MAP["wave"]; // Default to "wave" animation
+    // throw new Error(`Unknown animation type: ${animationType}`);
   }
 
   // If applyTo is "sentence", treat the entire text as one unit

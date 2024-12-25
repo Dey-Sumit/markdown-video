@@ -65,3 +65,7 @@ export function getMediaType(url: string): string | null {
 
   return null; // Return null if it's not a recognized media type
 }
+
+export const createGradient = (colors: string[], angle: number) => {
+  return `linear-gradient(${angle}deg, ${colors.join(", ")})`;
+};

@@ -2,18 +2,14 @@ import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import AnimatedGradientText from "@/components/magicui/animated-gradient-text";
-import { BorderBeam } from "@/components/magicui/border-beam";
-import HeroVideoDialog from "@/components/magicui/hero-video-dialog";
 import Particles from "@/components/magicui/particles";
 import { Compare } from "../compare";
-import MarkdownBackground from "../markdown-cells-bg";
 
 export default function Hero() {
   return (
-    <div className="relative w-full pt-0 text-white md:pt-16">
-      {/* <MarkdownBackground /> */}
+    <div className="hero-bg relative w-full px-4 pt-0 md:px-10 md:pt-16">
       {/* ---------------------------- particles wrapper --------------------------- */}
-      <div className="fixed inset-x-0 top-20 h-[20vh] md:h-[80vh]">
+      <div className="fixed inset-x-0 top-8 h-[60vh] md:top-20 md:h-[80vh]">
         <Particles
           className="h-full w-full"
           quantity={100}
@@ -52,11 +48,12 @@ export default function Hero() {
           </Link>
         </div>
 
-        <div className="relative h-[180px] w-full md:h-[700px]">
+        <div className="relative h-[210px] w-full md:h-[700px]">
           <div
             className={cn(
               "relative flex h-full flex-col items-center justify-center rounded-xl backdrop-blur-lg",
-              "before:pointer-events-none before:absolute before:left-0 before:top-0 before:z-[-1] before:h-full before:w-full before:[background-image:linear-gradient(to_bottom,purple,purple)] before:[filter:blur(200px)] md:before:[background-image:linear-gradient(to_bottom,#7a34f2,#7a34f2)]",
+              "before:pointer-events-none before:absolute before:left-0 before:top-0 before:z-[-1] before:h-full before:w-full before:border-2 before:[filter:blur(200px)]",
+              "before:[background:purple] md:before:[background-image:linear-gradient(to_bottom,#7a34f2,#7a34f2)]",
             )}
           >
             <div className="h-full w-full rounded-xl">
@@ -84,7 +81,6 @@ export default function Hero() {
                 autoplay
               />
             </div>
-            {/* <BorderBeam /> */}
           </div>
         </div>
       </div>
