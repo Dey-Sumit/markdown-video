@@ -15,7 +15,6 @@
     "jsx": "preserve",
     "incremental": true,
     "verbatimModuleSyntax": true, // ts : 4.5+
-
     "plugins": [
       {
         "name": "next"
@@ -31,7 +30,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/poc/markdown/docs.mdx",
-    "lib/config/remotion-deploy.mjs"
-, "app/_components/web-vitals.js"  ],
+    "lib/config/remotion-deploy.mjs",
+    "app/_components/web-vitals.js"
+  ],
   "exclude": ["node_modules"]
 }

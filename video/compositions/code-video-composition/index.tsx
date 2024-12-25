@@ -52,7 +52,7 @@ const CodeVideoComposition = ({
             const nextStep = scenes[index + 1];
             const currentSceneMeta = propsParser.sceneMeta(
               currentScene.title || FALLBACK_PROPS_RAW_FORMAT.sceneMeta,
-            ); // TODO : add a fallback
+            );
 
             const currentSceneDurationInFrames = convertSecondsToFramerate(
               currentSceneMeta.duration,
