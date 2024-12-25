@@ -118,7 +118,12 @@
   width: 5px !important;
   margin-left: 3px;
 }
-.text-stroke{
-   -webkit-text-stroke-width: 1.5px;
+.text-stroke {
+  -webkit-text-stroke-width: 1.5px;
   -webkit-text-stroke-color: white;
+}
+.hero-bg {
+  /* background: radial-gradient(144.92% 178.15% at 50.12% 98.15%, hsla(275, 100%, 25%, 1) 0%, rgba(242, 226, 4, 0) 100%); */
+
+  /* background: radial-gradient(circle at bottom center, hsla(275, 100%, 25%, 1) 0%, transparent 100%) */
 }

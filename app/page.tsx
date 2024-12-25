@@ -4,10 +4,12 @@ import SparklesText from "@/components/sparkle-text";
 
 export default async function Index() {
   return (
-    <div className="mb-[20vh] flex flex-col gap-y-16 px-4 py-4 md:px-10">
+    <div className="mb-[20vh] flex flex-col gap-y-16">
       <Hero />
-      <Waitlist />
-      <SparklesText text="Markdown Video" />
+      <div className="flex flex-col gap-y-16 px-4 py-4 md:px-10">
+        <Waitlist />
+        <SparklesText text="Markdown Video" />
+      </div>
     </div>
   );
 }

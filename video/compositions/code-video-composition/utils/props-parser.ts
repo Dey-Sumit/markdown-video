@@ -75,12 +75,12 @@ interface ParserOptions {
 // !text --content="Coding Challenge: Repeat a string with ellipsis" --duration=3 --animation=fadeInSlideUp --delay=1
 // --fontSize=60 --fontWeight=700 --textAlign=center
 const FALLBACK_PROPS_RAW_FORMAT = {
-  sceneMeta: "--title= --duration=3 --background=blue",
+  sceneMeta: "--title= --duration=3 --background=transparent",
   transition: "--type=magic --duration=0.3 --direction=from-bottom",
   fonts: "--family=arial --size=16 --weight=400",
   media: "--src= --duration=1 --animation=fade --delay=0.5 --withMotion=true",
   mark: "--delay=0 --duration=1 --type=highlight --color=yellow",
-  text: "--content= --duration=3 --applyTo=word --animation=fadeInSlideUp --delay=1 --fontSize=60 --fontWeight=700 ",
+  text: "--content= --duration=3 --applyTo=word --animation=fadeInSlideUp --delay=0 --fontSize=60 --fontWeight=700 ",
 };
 
 const configs: Record<
@@ -120,7 +120,7 @@ const configs: Record<
     },
   },
   sceneMeta: {
-    defaults: { title: "", duration: "3", background: "blue" },
+    defaults: { title: "", duration: "3", background: "transparent" },
     validKeys: ["title", "duration", "background"],
     processors: {
       duration: (value) => Number(value),
@@ -139,7 +139,7 @@ const configs: Record<
       content: "",
       duration: "3",
       animation: "fadeInSlideUp",
-      delay: "1",
+      delay: "0",
       fontSize: "60",
       fontWeight: "700",
       applyTo: "word",
@@ -214,11 +214,11 @@ class PropsParser {
           : /--(\w+)=([^\s]*)/g;
       const matches = [...input.matchAll(paramRegex)];
 
-      if (matches.length === 0) {
+      /*   if (matches.length === 0) {
         throw new ParseError(
           `Invalid format of ${type} : Use --key=value syntax`,
         );
-      }
+      } */
 
       // First pass: collect all valid values
       matches.forEach((match) => {
