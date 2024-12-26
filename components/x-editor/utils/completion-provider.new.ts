@@ -2,12 +2,12 @@
 import { editor, languages, Position, type IRange } from "monaco-editor";
 import { type Monaco } from "@monaco-editor/react";
 import { type SceneProperty } from "../types.x-editor";
-import { CORE_PROPS_CONFIG } from "../config/property-config";
+import { CORE_PROPS_CONFIG, type PropsName } from "../config/property-config";
 
 export class EditorCompletionProvider {
   constructor(
     private readonly monaco: Monaco,
-    private readonly properties: Record<string, SceneProperty>,
+    private readonly properties: typeof CORE_PROPS_CONFIG,
   ) {}
 
   /**
@@ -77,7 +77,7 @@ export class EditorCompletionProvider {
   }
 
   private createArgumentKeySuggestions(
-    propertyName: string,
+    propertyName: PropsName,
     position: Position,
     currentWord: string, // Add this parameter
   ): languages.CompletionItem[] {
@@ -113,7 +113,7 @@ export class EditorCompletionProvider {
   }
 
   private createArgumentValueSuggestions(
-    propertyName: string,
+    propertyName: PropsName,
     argumentName: string,
     position: Position,
   ): languages.CompletionItem[] {
@@ -299,13 +299,13 @@ export class EditorCompletionProvider {
     };
   }
   private getArgumentContext(lineContent: string): {
-    propertyName: string;
+    propertyName: PropsName;
     isAfterDoubleDash: boolean;
     isAfterEquals: boolean;
     currentArgument?: string;
   } | null {
     // Find which property we're dealing with
-    let propertyName: string | null = null;
+    let propertyName: PropsName | null = null;
 
     if (lineContent.trimStart().startsWith("## !!scene")) {
       propertyName = "scene";
@@ -313,7 +313,7 @@ export class EditorCompletionProvider {
       for (const [name, property] of Object.entries(this.properties)) {
         const propertyStart = `${property.prefix}${property.name}`;
         if (lineContent.trimStart().startsWith(propertyStart)) {
-          propertyName = name;
+          propertyName = name as PropsName;
           break;
         }
       }

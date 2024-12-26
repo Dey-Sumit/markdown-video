@@ -85,6 +85,14 @@ type TextArgs = {
   applyTo: string;
 };
 
+export type CorePropsConfigType = {
+  scene: CorePropertyConfig<SceneArgs>;
+  transition: CorePropertyConfig<TransitionArgs>;
+  media: CorePropertyConfig<MediaArgs>;
+  mark: CorePropertyConfig<MarkArgs>;
+  text: CorePropertyConfig<TextArgs>;
+};
+
 const CORE_PROPS_CONFIG = {
   scene: {
     name: "scene",
@@ -233,13 +241,7 @@ const CORE_PROPS_CONFIG = {
   },
 } satisfies CorePropsConfigType;
 
-export type CorePropsConfigType = {
-  scene: CorePropertyConfig<SceneArgs>;
-  transition: CorePropertyConfig<TransitionArgs>;
-  media: CorePropertyConfig<MediaArgs>;
-  mark: CorePropertyConfig<MarkArgs>;
-  text: CorePropertyConfig<TextArgs>;
-};
+export type PropsName = "scene" | "transition" | "media" | "mark" | "text";
 
 type RuntimePropertyConfig<T> = {
   defaults: Record<keyof T, string>;

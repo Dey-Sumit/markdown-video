@@ -20,6 +20,8 @@ import { configureCompletions } from "./utils/completion-provider.new";
 import { configureTokenizer } from "./utils/syntax-highlight/configure-tokens";
 import { configureDiagnostics } from "./utils/configure-diagnostics.new";
 import { configureContextMenu } from "./utils/context-menu/configure-context-menu.new";
+import { configureMarkdownVideoPlugin } from "./plugins";
+// import { configureMarkdownVideoPlugin } from "./plugins/core";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 function XEditor() {
@@ -86,40 +88,14 @@ function XEditor() {
     monaco.editor.defineTheme("custom", monacoCustomTheme);
     monaco.editor.setTheme("custom");
     monaco.languages.register({ id: "markdown" });
-    configureCompletions(monaco);
 
-    // Set up decoration listener
-    const contentChangeDisposable = editor.onDidChangeModelContent(() => {
-      updateDecorations();
-    });
-
-    // Initial decoration update
-    updateDecorations();
-
-    // Add diagnostics
     // Get the editor's model
     const model = editor.getModel();
-    let disposable: IDisposable;
-    if (model) disposable = configureDiagnostics(monaco, model);
+    if (model) {
+      const disposable = configureMarkdownVideoPlugin(monaco, model);
+    }
+
     configureContextMenu(monaco, editor);
-    // Cleanup when editor is disposed
-    // TODO : I don't this should work. xD
-    return () => {
-      contentChangeDisposable.dispose();
-      disposable.dispose();
-    };
-
-    // configureLinting(editor, monaco);
-    // monaco.languages.register({ id: "markdown" });
-    // configureCompletions(monaco);
-
-    /* --------- ON DEV : comment above code block to make the hot reload faster --------- */
-    // configureHoverProvider(editor, monaco);
-    // configureContextMenu(editor, monaco);
-    // configureFoldingProvider(monaco);
-    // monaco.languages.registerCodeActionProvider("markdown", {
-    //   provideCodeActions: provideCodeActions,
-    // });
   };
 
   return (
