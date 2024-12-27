@@ -14,6 +14,7 @@ import {
 import ClientSideEditor from "@/components/x-editor/dynamic-x-editor";
 import XPlayer from "@/components/x-player";
 import { ProjectSidebar2 } from "@/components/project-sidebar-2";
+import ClientXPlayer from "@/components/x-editor/dynamic-x-player";
 
 function Page() {
   return (
@@ -43,7 +44,7 @@ function Page() {
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={50} minSize={20}>
-              <XPlayer />
+              <ClientXPlayer />
             </ResizablePanel>
           </ResizablePanelGroup>
         </div>

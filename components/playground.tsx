@@ -10,37 +10,49 @@ import { cn } from "@/lib/utils";
 import ClientXPlayer from "./x-editor/dynamic-x-player";
 import SparklesText from "./sparkle-text";
 import { RainbowButton } from "./ui/rainbow-button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Playground = () => {
+  const isMobile = useIsMobile();
   return (
     <section>
       <div
-        className={cn("relative flex items-start justify-center gap-6 pb-20")}
+        className={cn(
+          "relative flex items-start justify-center gap-6 pb-6 md:pb-20",
+        )}
       >
         <SparklesText text="Playground" className="md:text-7xl" />
-        <RainbowButton className="h-9 rounded-full text-primary">
+        <RainbowButton className="h-9 rounded-full px-6 text-primary">
           Beta
         </RainbowButton>
       </div>
 
-      <div
-        className={cn(
-          "relative h-[80vh] w-full overflow-hidden rounded-lg border-2",
-        )}
-      >
-        <ResizablePanelGroup
-          direction="horizontal"
-          className="min-h-[200px] md:min-w-[450px]"
+      {isMobile ? (
+        <div className="flex items-center justify-center rounded-lg border p-4 text-center">
+          <h3 className="">
+            Open the page on large screen to view the playground
+          </h3>
+        </div>
+      ) : (
+        <div
+          className={cn(
+            "relative h-[80vh] w-full overflow-hidden rounded-lg border-2",
+          )}
         >
-          <ResizablePanel defaultSize={50} minSize={20}>
-            <ClientSideEditor />
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={50} minSize={20}>
-            <ClientXPlayer />
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </div>
+          <ResizablePanelGroup
+            direction="horizontal"
+            className="min-h-[200px] md:min-w-[450px]"
+          >
+            <ResizablePanel defaultSize={50} minSize={20}>
+              <ClientSideEditor />
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={50} minSize={20}>
+              <ClientXPlayer />
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </div>
+      )}
     </section>
   );
 };
