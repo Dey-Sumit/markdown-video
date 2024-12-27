@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState } from "react";
@@ -79,32 +78,20 @@ export default function HeroVideoDialog({
   const selectedAnimation = animationVariants[animationStyle];
 
   return (
-    <div
-      className={cn(
-        "relative h-full overflow-hidden rounded-[inherit]",
-        className,
-      )}
-    >
+    <div className={cn("relative", className)}>
       <div
-        className="group relative h-full cursor-pointer"
+        className="group relative cursor-pointer"
         onClick={() => setIsVideoOpen(true)}
       >
-        {/* <img
+        <img
           src={thumbnailSrc}
           alt={thumbnailAlt}
-          // width={1920}
-          // height={1080}
-          className="max-h-full w-full rounded-md object-cover shadow-lg transition-all duration-200 ease-out group-hover:brightness-[0.8]"
-        /> */}
-        <video
-          src="/landing-page/compare-video.mp4"
-          autoPlay
-          muted
-          loop
-          className="max-h-full"
+          width={1920}
+          height={1080}
+          className="w-full rounded-md border shadow-lg transition-all duration-200 ease-out group-hover:brightness-[0.8]"
         />
-        <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/30">
-          <div className="flex size-28 scale-[0.9] items-center justify-center rounded-full bg-primary/10 backdrop-blur-md transition-all duration-200 ease-out group-hover:scale-100">
+        <div className="absolute inset-0 flex scale-[0.9] items-center justify-center rounded-2xl transition-all duration-200 ease-out group-hover:scale-100">
+          <div className="flex size-28 items-center justify-center rounded-full bg-primary/10 backdrop-blur-md">
             <div
               className={`relative flex size-20 scale-100 items-center justify-center rounded-full bg-gradient-to-b from-primary/30 to-primary shadow-md transition-all duration-200 ease-out group-hover:scale-[1.2]`}
             >
