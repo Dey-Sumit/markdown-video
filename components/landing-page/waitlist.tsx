@@ -53,7 +53,7 @@ export function Waitlist() {
   return (
     <section
       id="waitlist"
-      className="relative scroll-mt-10 overflow-hidden rounded-xl border border-gray-600/30 shadow"
+      className="relative scroll-mt-20 overflow-hidden rounded-xl border border-gray-600/30 shadow"
     >
       <div className="mx-auto flex flex-col items-center justify-center gap-y-10 px-4 py-8 sm:px-6 sm:py-14 lg:px-8">
         <div className="flex flex-col gap-2 text-center">
