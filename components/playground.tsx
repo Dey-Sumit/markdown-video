@@ -16,7 +16,7 @@ const Playground = () => {
   const isMobile = useIsMobile();
   return (
     <section>
-      <div className="flex flex-col items-center justify-center gap-8 pb-6 md:pb-20">
+      <div className="flex flex-col items-center justify-center gap-8">
         <div className={cn("relative flex items-start justify-center gap-8")}>
           <SparklesText text="Playground" className="md:text-7xl" />
           <RainbowButton className="h-9 rounded-full px-6 text-primary">
@@ -35,20 +35,24 @@ const Playground = () => {
           </h3>
         </div>
       ) : (
-        <div
-          className={cn(
-            "relative h-[90vh] w-full overflow-hidden rounded-lg border-2",
-          )}
-        >
+        <div className={cn("relative mt-12 h-[90vh] w-full rounded-lg")}>
           <ResizablePanelGroup
             direction="horizontal"
-            className="min-h-[200px] md:min-w-[450px]"
+            className="min-h-[200px] bg-black md:min-w-[450px]"
           >
-            <ResizablePanel defaultSize={50} minSize={20}>
+            <ResizablePanel
+              defaultSize={50}
+              minSize={20}
+              className="border pt-14"
+            >
               <ClientSideEditor />
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={50} minSize={20}>
+            <ResizablePanel
+              defaultSize={50}
+              minSize={20}
+              className="border border-l-0 pt-14"
+            >
               <ClientXPlayer />
             </ResizablePanel>
           </ResizablePanelGroup>

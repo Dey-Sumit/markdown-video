@@ -11,11 +11,27 @@ import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 const AUTO_SAVE_INTERVAL = 5 * 1000; // 5 seconds
+const DEFAULT_TEMPLATE = `## !!scene --title=Text --duration=4 --background=#1a1a1a
+!text --content="Your Text With Animation" --animation=fadeInSlideUp --duration=3 --delay=0.5
+!transition --type=slide --duration=0.3 --direction=from-left
 
+## !!scene --title=Code --duration=4 --background=transparent
+!transition --type=slide --duration=0.8 --direction=from-bottom
+\`\`\`js !
+const fastestEditor = () => {
+    return "markdownvideo.com"
+}
+fastestEditor()
+\`\`\`
+
+## !!scene --title=Scene --duration=5
+!transition --type=fade --duration=0.3
+\`\`\`js !
+\`\`\``;
 const useCompositionStore = create<CompositionStore>()(
   devtools(
     immer((set) => ({
-      content: "",
+      content: DEFAULT_TEMPLATE,
       scenes: [],
       loading: false,
       error: null,
