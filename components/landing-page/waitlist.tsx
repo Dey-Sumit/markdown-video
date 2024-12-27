@@ -57,7 +57,7 @@ export function Waitlist() {
     >
       <div className="mx-auto flex flex-col items-center justify-center gap-y-10 px-4 py-8 sm:px-6 sm:py-14 lg:px-8">
         <div className="flex flex-col gap-2 text-center">
-          <h2 className="text-2xl font-bold text-black dark:text-white sm:text-7xl">
+          <h2 className="text-4xl font-bold text-black dark:text-white sm:text-7xl">
             Join the waitlist
           </h2>
           <h3 className="text-base text-gray-300 md:text-lg">
@@ -109,7 +109,7 @@ export function Waitlist() {
         x={-1}
         y={-1}
         className={cn(
-          "-z-10 [mask-image:linear-gradient(to_bottom_right,white,transparent,transparent)]",
+          "[mask-image:linear-gradient(to_bottom_right,white,transparent,transparent)]",
         )}
       />
     </section>

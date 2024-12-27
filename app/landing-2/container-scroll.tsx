@@ -22,19 +22,15 @@ import React, { useRef, useState } from "react";
 const ContainerScroll = () => {
   const containerRef = useRef(null);
   const isMobile = useIsMobile();
-  const [isOpen, setIsOpen] = useState(false);
+  console.log({ isMobile });
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "start 200px"],
   });
 
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    console.log({ latest });
-  });
-
   const scaleDimensions = () => {
-    return isMobile ? [0.7, 0.9] : [1.25, 1];
+    return isMobile ? [1.1, 1] : [1, 0.9];
   };
   // Adjust perspective range for more dramatic effect
   const perspective = useTransform(scrollYProgress, [0, 1], [2000, 1000]);
@@ -44,11 +40,11 @@ const ContainerScroll = () => {
   return (
     <section ref={containerRef} className="pb-[100px]">
       <motion.div
-        className="relative h-[40rem] w-full"
+        className="relative h-[14rem] w-full md:h-[40rem]"
         style={{ perspective: perspective, transformStyle: "preserve-3d" }}
       >
         <motion.div
-          className="relative mx-auto h-full w-max overflow-hidden rounded-3xl border-0 border-purple-600"
+          className="relative mx-auto h-full max-w-full overflow-hidden rounded-3xl border-2 border-purple-800"
           style={{
             transformStyle: "preserve-3d",
             rotateX: rotateX,
@@ -58,10 +54,9 @@ const ContainerScroll = () => {
           }}
         >
           <HeroVideoDialog
-            className="hidden dark:block"
             animationStyle="from-center"
             videoSrc="https://www.youtube.com/embed/Um66g-byRLU?si=ErsH451IxqSa4lXM"
-            thumbnailSrc="https://startup-template-sage.vercel.app/hero-dark.png"
+            thumbnailSrc="/landing-page/image.png"
             thumbnailAlt="Hero Video"
           />
           {/* <video
