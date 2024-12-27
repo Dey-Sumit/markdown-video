@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   ResizablePanelGroup,
@@ -5,11 +6,10 @@ import {
   ResizableHandle,
 } from "./ui/resizable";
 import ClientSideEditor from "./x-editor/dynamic-x-editor";
-import XPlayer from "./x-player";
+import { cn } from "@/lib/utils";
+import ClientXPlayer from "./x-editor/dynamic-x-player";
 import SparklesText from "./sparkle-text";
 import { RainbowButton } from "./ui/rainbow-button";
-import { before } from "node:test";
-import { cn } from "@/lib/utils";
 
 const Playground = () => {
   return (
@@ -37,7 +37,7 @@ const Playground = () => {
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={50} minSize={20}>
-            <XPlayer />
+            <ClientXPlayer />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
