@@ -34,4 +34,5 @@ export const monacoCustomOptions: editor.IEditorOptions = {
     showFunctions: true,
     showConstants: true,
   },
+  suggestOnTriggerCharacters: true,
 };

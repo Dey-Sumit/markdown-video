@@ -3,7 +3,7 @@
 import { useMdxProcessor } from "@/hooks/codehike/useMDXProcessor";
 import useCompositionStore from "@/store/composition-store";
 import { Editor, type Monaco, type OnMount } from "@monaco-editor/react";
-import { editor, type IDisposable } from "monaco-editor";
+import { editor, type IDisposable, type IKeyboardEvent } from "monaco-editor";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { monacoCustomOptions } from "./editor-config";
 import { useEditorShortcuts } from "./hooks/use-editor-shortcuts";
@@ -20,6 +20,8 @@ import { configureCompletions } from "./utils/completion-provider.new";
 import { configureTokenizer } from "./utils/syntax-highlight/configure-tokens";
 import { configureDiagnostics } from "./utils/configure-diagnostics.new";
 import { configureContextMenu } from "./utils/context-menu/configure-context-menu.new";
+import { configureSnippets } from "./utils/snippets";
+import CommandMenu, { type Position } from "./command-menu";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 function XEditor() {
@@ -28,6 +30,11 @@ function XEditor() {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
   const activeDecorationsRef = useRef<string[]>([]); // Add this ref
+  const [showCommandMenu, setShowCommandMenu] = useState(false);
+  const [menuPosition, setMenuPosition] = useState<Position>({
+    top: 0,
+    left: 0,
+  });
 
   // Add this function at component level
   const updateDecorations = useCallback(() => {
@@ -75,7 +82,24 @@ function XEditor() {
   useEffect(() => {
     setMounted(true);
   }, []);
+  const calculatePosition = useCallback(
+    (editorPosition: { top: number; left: number }) => {
+      const viewportHeight = window.innerHeight;
+      const menuHeight = 300; // Approximate menu height
+      const buffer = -10; // Space between menu and editor line
 
+      const shouldShowAbove =
+        editorPosition.top + menuHeight + buffer > viewportHeight;
+
+      return {
+        top: shouldShowAbove
+          ? editorPosition.top - menuHeight - buffer
+          : editorPosition.top + buffer,
+        left: editorPosition.left,
+      };
+    },
+    [],
+  );
   if (!mounted) return null;
 
   const handleEditorMount: OnMount = (editor, monaco) => {
@@ -86,6 +110,31 @@ function XEditor() {
     monaco.editor.defineTheme("custom", monacoCustomTheme);
     monaco.editor.setTheme("custom");
     monaco.languages.register({ id: "markdown" });
+
+    editor.onKeyDown((e: IKeyboardEvent) => {
+      if (e.browserEvent.key === "\\") {
+        // Remove any backslash handling logic, just show the menu
+        const position = editor.getPosition();
+        if (!position) return;
+
+        // Show menu after the backslash is typed
+        requestAnimationFrame(() => {
+          const coords = editor.getContainerDomNode().getBoundingClientRect();
+          const pos = editor.getScrolledVisiblePosition(position);
+
+          if (pos) {
+            setMenuPosition(
+              calculatePosition({
+                top: coords.top + pos.top,
+                left: coords.left + pos.left,
+              }),
+            );
+            setShowCommandMenu(true);
+          }
+        });
+      }
+    });
+    // configureSnippets(monaco);
     configureCompletions(monaco);
 
     // Set up decoration listener
@@ -123,14 +172,23 @@ function XEditor() {
   };
 
   return (
-    <Editor
-      height="100%"
-      defaultLanguage="markdown"
-      value={content}
-      onChange={(value) => setContent(value ?? "")}
-      onMount={handleEditorMount}
-      options={monacoCustomOptions}
-    />
+    <>
+      <Editor
+        height="100%"
+        defaultLanguage="markdown"
+        value={content}
+        onChange={(value) => setContent(value ?? "")}
+        onMount={handleEditorMount}
+        options={monacoCustomOptions}
+      />
+      <CommandMenu
+        position={menuPosition}
+        isVisible={showCommandMenu}
+        editor={editorRef.current}
+        monaco={monacoRef.current}
+        onClose={() => setShowCommandMenu(false)}
+      />
+    </>
   );
 }
 
