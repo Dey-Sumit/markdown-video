@@ -16,15 +16,16 @@ const Playground = () => {
   const isMobile = useIsMobile();
   return (
     <section>
-      <div
-        className={cn(
-          "relative flex items-start justify-center gap-6 pb-6 md:pb-20",
-        )}
-      >
-        <SparklesText text="Playground" className="md:text-7xl" />
-        <RainbowButton className="h-9 rounded-full px-6 text-primary">
-          Beta
-        </RainbowButton>
+      <div className="flex flex-col items-center justify-center gap-8 pb-6 md:pb-20">
+        <div className={cn("relative flex items-start justify-center gap-8")}>
+          <SparklesText text="Playground" className="md:text-7xl" />
+          <RainbowButton className="h-9 rounded-full px-6 text-primary">
+            Beta
+          </RainbowButton>
+        </div>
+        <div className="text-sm">
+          <p>I know the docs is pending :), I am working on it.</p>
+        </div>
       </div>
 
       {isMobile ? (
@@ -36,7 +37,7 @@ const Playground = () => {
       ) : (
         <div
           className={cn(
-            "relative h-[80vh] w-full overflow-hidden rounded-lg border-2",
+            "relative h-[90vh] w-full overflow-hidden rounded-lg border-2",
           )}
         >
           <ResizablePanelGroup
