@@ -31,7 +31,7 @@ function Page() {
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-1 h-4" />
 
-          <p className="text-sm font-medium">The Ox Oven Project </p>
+          <p className="font-mono text-sm font-medium">markdown video </p>
         </header>
         <div className="h-full w-full">
           <ResizablePanelGroup
