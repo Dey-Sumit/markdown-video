@@ -53,7 +53,7 @@ export function Waitlist() {
   return (
     <section
       id="waitlist"
-      className="relative scroll-mt-10 overflow-hidden rounded-xl border border-gray-500/30 shadow"
+      className="relative scroll-mt-10 overflow-hidden rounded-xl border border-gray-600/30 shadow"
     >
       <div className="mx-auto flex flex-col items-center justify-center gap-y-10 px-4 py-8 sm:px-6 sm:py-14 lg:px-8">
         <div className="flex flex-col gap-2 text-center">
@@ -72,12 +72,14 @@ export function Waitlist() {
         >
           <div className="group flex w-full flex-col items-center gap-2 rounded-[8px] border border-gray-800 p-1.5 focus-within:border-primary sm:flex-row">
             <Input
-              className="w-full border-none bg-transparent outline-none focus:outline-none focus-visible:ring-0"
+              autoFocus
+              className="peer w-full border-none bg-transparent outline-none focus:outline-none focus-visible:ring-0"
               inputMode="email"
               type="email"
               placeholder="Enter your email"
               name="email"
               value={email}
+              required
               onChange={(e) => setEmail(e.target.value)}
             />
 
@@ -107,7 +109,7 @@ export function Waitlist() {
         x={-1}
         y={-1}
         className={cn(
-          "[mask-image:linear-gradient(to_bottom_right,white,transparent,transparent)]",
+          "-z-10 [mask-image:linear-gradient(to_bottom_right,white,transparent,transparent)]",
         )}
       />
     </section>

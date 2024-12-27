@@ -5,10 +5,15 @@ import rehypePrettyCode from "rehype-pretty-code";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    reactCompiler: true,
+    // reactCompiler: true,
   },
   images: {
-    remotePatterns: [{ hostname: "images.pexels.com" }],
+    remotePatterns: [
+      { hostname: "images.pexels.com" },
+      {
+        hostname: "images.unsplash.com",
+      },
+    ],
   },
   webpack: (config, { isServer }) => {
     config.resolve.fallback = {
