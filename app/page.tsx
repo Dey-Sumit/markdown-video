@@ -58,7 +58,9 @@ const LandingPage = () => {
       <div className="flex flex-col gap-y-16 px-4 py-20 md:px-20">
         <Waitlist />
         <Playground />
-        <SparklesText text="Markdown Video" />
+        <div className="py-20">
+          <SparklesText text="Markdown Video" />
+        </div>
       </div>
 
       {/* <div className="sticky bottom-0 left-0 z-0 flex h-80 w-full items-center justify-center bg-white">

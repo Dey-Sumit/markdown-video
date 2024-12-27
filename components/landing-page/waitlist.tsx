@@ -72,7 +72,6 @@ export function Waitlist() {
         >
           <div className="group flex w-full flex-col items-center gap-2 rounded-[8px] border border-gray-800 p-1.5 focus-within:border-primary sm:flex-row">
             <Input
-              autoFocus
               className="peer w-full border-none bg-transparent outline-none focus:outline-none focus-visible:ring-0"
               inputMode="email"
               type="email"
