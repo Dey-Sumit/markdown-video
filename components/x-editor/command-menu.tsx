@@ -300,7 +300,7 @@ const CommandMenu = memo(
             autoFocus
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search commands..."
-            className="w-full border bg-transparent text-sm"
+            className="w-full rounded-[4px] border bg-transparent text-sm"
           />
         </div>
         {filteredCommands.length > 0 ? (

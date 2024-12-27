@@ -30,7 +30,11 @@ export function useTokenTransitions(
   const frame = useCurrentFrame();
   const ref = React.useRef<HTMLPreElement>(null);
   const [snapshot, setSnapshot] = useState<TokenTransitionsSnapshot>();
-  const [handle] = React.useState(() => delayRender());
+  const [handle] = React.useState(() =>
+    delayRender("TOKEN_TRANSITIONS", {
+      retries: 10,
+    }),
+  );
 
   // if no old code, we transition from empty code
   const prevCode = oldCode || { ...newCode, tokens: [], annotations: [] };
@@ -50,7 +54,7 @@ export function useTokenTransitions(
         durationInFrames * options.duration,
       );
     });
-    continueRender(handle);
+    continueRender(handle); // I think, the token transitions cant be more than 28 seconds
   });
 
   const code = snapshot ? newCode : prevCode;
