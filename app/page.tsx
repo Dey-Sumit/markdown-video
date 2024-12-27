@@ -7,6 +7,7 @@ import { Link, ChevronRight } from "lucide-react";
 
 import { Waitlist } from "@/components/landing-page/waitlist";
 import SparklesText from "@/components/sparkle-text";
+import Playground from "@/components/playground";
 
 const LandingPage = () => {
   return (
@@ -56,6 +57,7 @@ const LandingPage = () => {
       {/* <section className="h-screen bg-black p-10"></section> */}
       <div className="flex flex-col gap-y-16 px-4 py-20 md:px-20">
         <Waitlist />
+        <Playground />
         <SparklesText text="Markdown Video" />
       </div>
 
