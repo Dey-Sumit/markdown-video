@@ -44,7 +44,7 @@ const ContainerScroll = () => {
         style={{ perspective: perspective, transformStyle: "preserve-3d" }}
       >
         <motion.div
-          className="relative mx-auto h-full max-w-full overflow-hidden rounded-3xl border-2 border-purple-800"
+          className="relative mx-auto h-full max-w-full overflow-hidden rounded-xl bg-gradient-to-br from-purple-800 to-blue-800 p-2"
           style={{
             transformStyle: "preserve-3d",
             rotateX: rotateX,
@@ -53,38 +53,14 @@ const ContainerScroll = () => {
               "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003",
           }}
         >
-          <HeroVideoDialog
-            animationStyle="from-center"
-            videoSrc="https://www.youtube.com/embed/Um66g-byRLU?si=ErsH451IxqSa4lXM"
-            thumbnailSrc="/landing-page/image.png"
-            thumbnailAlt="Hero Video"
-          />
-          {/* <video
-            src="/landing-page/compare-video.mp4"
-            autoPlay
-            muted
-            loop
-            className="max-h-full"
-          />
-
-          <div className="group absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <button
-              onClick={() => setIsOpen(true)}
-              className="flex size-28 scale-95 items-center justify-center rounded-full bg-primary/10 backdrop-blur-md group-hover:scale-100"
-            >
-              <div
-                className={`relative flex size-20 scale-100 items-center justify-center rounded-full bg-gradient-to-b from-primary/30 to-primary shadow-md transition-all duration-200 ease-out group-hover:scale-[1.2]`}
-              >
-                <Play
-                  className="size-8 scale-100 fill-white text-white transition-transform duration-200 ease-out group-hover:scale-105"
-                  style={{
-                    filter:
-                      "drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06))",
-                  }}
-                />
-              </div>
-            </button>
-          </div> */}
+          <div className="h-full w-full">
+            <HeroVideoDialog
+              animationStyle="from-center"
+              videoSrc="https://www.youtube.com/embed/Um66g-byRLU?si=ErsH451IxqSa4lXM"
+              thumbnailSrc="/landing-page/image.png"
+              thumbnailAlt="Hero Video"
+            />
+          </div>
         </motion.div>
       </motion.div>
     </section>
