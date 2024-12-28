@@ -53,16 +53,16 @@ export function Waitlist() {
   return (
     <section
       id="waitlist"
-      className="relative scroll-mt-20 overflow-hidden rounded-xl border border-gray-600/30 shadow"
+      className="relative scroll-my-20 overflow-hidden rounded-xl border border-gray-600/30 shadow"
     >
-      <div className="mx-auto flex flex-col items-center justify-center gap-y-10 px-4 py-8 sm:px-6 sm:py-14 lg:px-8">
+      <div className="relative z-20 mx-auto flex flex-col items-center justify-center gap-y-10 px-4 py-8 sm:px-6 sm:py-14 lg:px-8">
         <div className="flex flex-col gap-2 text-center">
-          <h2 className="text-4xl font-bold text-black dark:text-white sm:text-7xl">
+          <h2 className="text-4xl font-bold text-black dark:text-white sm:text-8xl">
             Join the waitlist
           </h2>
           <h3 className="text-base text-gray-300 md:text-lg">
             Get early access to{" "}
-            <span className="text-indigo-600">markdownvideo</span>
+            <span className="text-indigo-600">markdown video</span>
           </h3>
         </div>
 

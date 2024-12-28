@@ -40,11 +40,11 @@ const ContainerScroll = () => {
   return (
     <section ref={containerRef} className="pb-[100px]">
       <motion.div
-        className="relative h-[14rem] w-full md:h-[46rem]"
+        className="relative h-[14rem] w-full md:h-[48rem]"
         style={{ perspective: perspective, transformStyle: "preserve-3d" }}
       >
         <motion.div
-          className="relative mx-auto h-full max-w-full overflow-hidden rounded-2xl bg-gradient-to-br from-purple-800 to-blue-800 p-2"
+          className="relative mx-auto h-full max-w-full overflow-hidden rounded-2xl bg-gray-500/30 p-2"
           style={{
             transformStyle: "preserve-3d",
             rotateX: rotateX,
@@ -53,13 +53,15 @@ const ContainerScroll = () => {
               "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003",
           }}
         >
-          <div className="h-full w-full">
-            <HeroVideoDialog
-              animationStyle="from-center"
-              videoSrc="https://www.youtube.com/embed/Um66g-byRLU?si=ErsH451IxqSa4lXM"
-              thumbnailSrc="/landing-page/image.png"
-              thumbnailAlt="Hero Video"
-            />
+          <div className="rounded-xl bg-gray-500/40 p-1">
+            <div className="h-full w-full">
+              <HeroVideoDialog
+                animationStyle="from-center"
+                videoSrc="https://www.youtube.com/embed/Um66g-byRLU?si=ErsH451IxqSa4lXM"
+                thumbnailSrc="/landing-page/image.png"
+                thumbnailAlt="Hero Video"
+              />
+            </div>
           </div>
         </motion.div>
       </motion.div>
