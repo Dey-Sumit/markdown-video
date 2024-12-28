@@ -12,7 +12,7 @@ export const configureFoldingProvider = (monaco: Monaco) => {
     provideFoldingRanges: (model) => {
       const ranges: FoldingRange[] = [];
       const lineCount = model.getLineCount();
-      let stepStart = -1;
+      let sceneStart = -1;
       let nestedCodeBlockStart = -1;
 
       const isEmptyLine = (lineNumber: number): boolean => {
@@ -38,22 +38,22 @@ export const configureFoldingProvider = (monaco: Monaco) => {
       for (let lineNumber = 1; lineNumber <= lineCount; lineNumber++) {
         const line = model.getLineContent(lineNumber);
 
-        // Handle step sections
-        if (line.match(/^##\s*!!steps\s+.+/)) {
-          if (stepStart !== -1) {
-            // End previous step at the last non-empty line
+        // Handle scene sections
+        if (line.match(/^##\s*!!scene\s+.+/)) {
+          if (sceneStart !== -1) {
+            // End previous scene at the last non-empty line
             const endLine = findPreviousNonEmptyLine(lineNumber - 1);
             ranges.push({
-              start: stepStart,
+              start: sceneStart,
               end: endLine,
               kind: monaco.languages.FoldingRangeKind.Region,
             });
           }
-          // Start new step from the first content line
-          stepStart = lineNumber;
+          // Start new scene from the first content line
+          sceneStart = lineNumber;
         }
 
-        // Handle code blocks within steps
+        // Handle code blocks within scenes
         if (line.match(/^```\w+/)) {
           nestedCodeBlockStart = lineNumber;
         } else if (line.match(/^```$/) && nestedCodeBlockStart !== -1) {
@@ -65,11 +65,11 @@ export const configureFoldingProvider = (monaco: Monaco) => {
           nestedCodeBlockStart = -1;
         }
 
-        // Handle last step
-        if (lineNumber === lineCount && stepStart !== -1) {
+        // Handle last scene
+        if (lineNumber === lineCount && sceneStart !== -1) {
           const endLine = findPreviousNonEmptyLine(lineCount);
           ranges.push({
-            start: stepStart,
+            start: sceneStart,
             end: endLine,
             kind: monaco.languages.FoldingRangeKind.Region,
           });

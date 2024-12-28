@@ -15,28 +15,6 @@ export const calculateCompositionDuration = (
   fps: number = 30,
 ): number => {
   return steps.reduce((acc, step) => {
-    console.log("step-->", {
-      transition: step.transition,
-      title: step.title,
-      seconds: propsParser.sceneMeta(step.title!, {
-        withFallback: true,
-      }).duration,
-      inFrames: convertSecondsToFramerate(
-        propsParser.sceneMeta(step.title!, {
-          withFallback: true,
-        }).duration,
-        fps,
-      ),
-      negative:
-        step.transition && step.transition !== "magic"
-          ? convertSecondsToFramerate(
-              CODE_COMP_TRANSITION_DURATION_IN_SECONDS,
-              fps,
-            )
-          : 0,
-      shouldNegative: step.transition && step.transition !== "magic",
-    });
-
     const { duration } = propsParser.sceneMeta(step.title!, {
       withFallback: true,
     });
@@ -91,10 +69,6 @@ export const createTransitionConfig = ({
 } => {
   switch (type) {
     case "slide": {
-      console.log("slide-->", {
-        durationInFrames: convertSecondsToFramerate(durationInSeconds, fps),
-      });
-
       return {
         timing: linearTiming({
           durationInFrames: convertSecondsToFramerate(durationInSeconds, fps),

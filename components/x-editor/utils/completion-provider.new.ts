@@ -10,6 +10,25 @@ export class EditorCompletionProvider {
     private readonly properties: Record<string, SceneProperty>,
   ) {}
 
+  private codeBlockTemplates = {
+    js: {
+      label: "```js ",
+      insertText: "```js !\nconst example = () => {\n  ${1}\n}\n\n```",
+    },
+    jsx: {
+      label: "```jsx",
+      insertText:
+        "```jsx !\nconst Component = () => {\n  return (\n    <div>\n      ${1}\n    </div>\n  )\n}\n\n```",
+    },
+    python: {
+      label: "```python",
+      insertText: "```python !\ndef example():\n    ${1}\n\n```",
+    },
+    swift: {
+      label: "```swift",
+      insertText: "```swift !\nfunc example() {\n    ${1}\n}\n\n```",
+    },
+  };
   /**
    * Creates a property completion suggestion
    * @param property Scene property to create suggestion for
@@ -227,11 +246,109 @@ export class EditorCompletionProvider {
     return [];
   }
 
+  private isClosingCodeBlock(
+    model: editor.ITextModel,
+    lineNumber: number,
+  ): boolean {
+    console.log("Checking for closing code block");
+
+    for (let i = lineNumber - 1; i >= 1; i--) {
+      const line = model.getLineContent(i);
+      if (line.trim().startsWith("```")) {
+        return line.trim().match(/^```\w+/) !== null;
+      }
+    }
+    console.log("No code block found");
+
+    return false;
+  }
+
   public getPropertySuggestions(
     model: editor.ITextModel,
     position: Position,
   ): languages.CompletionList | null {
     const lineContent = model.getLineContent(position.lineNumber);
+
+    // Check if inside code block
+    let inCodeBlock = false;
+    for (let i = 1; i <= position.lineNumber; i++) {
+      const line = model.getLineContent(i);
+      if (line.trim().startsWith("```")) {
+        inCodeBlock = !inCodeBlock;
+      }
+    }
+
+    // if (inCodeBlock || lineContent.trim().startsWith("```")) return null; // Add scene template suggestion
+    const trimmedContent = lineContent.trim();
+    const isHashTrigger = trimmedContent === "#" || trimmedContent === "##";
+    if (isHashTrigger) {
+      const hashCount = trimmedContent.length; // Will be 1 or 2
+      return {
+        suggestions: [
+          {
+            label: "## !!scene",
+            kind: this.monaco.languages.CompletionItemKind.Snippet,
+            insertText:
+              "## !!scene --title=${1:step-1} --duration=${2:5} --background=${3:transparent}",
+            insertTextRules:
+              this.monaco.languages.CompletionItemInsertTextRule
+                .InsertAsSnippet,
+            detail: "Create a new scene",
+            documentation: {
+              value: [
+                "### Scene Template",
+                this.properties.scene.description,
+                "",
+                "**Arguments:**",
+                Object.entries(this.properties.scene.arguments)
+                  .map(([key, arg]) => `- ${key}: ${arg.description}`)
+                  .join("\n"),
+              ].join("\n"),
+              isTrusted: true,
+            },
+            range: {
+              startLineNumber: position.lineNumber,
+              endLineNumber: position.lineNumber,
+              startColumn: position.column - hashCount,
+              endColumn: position.column,
+            },
+          },
+        ],
+      };
+    }
+
+    // Check for code block context
+    if (lineContent.trim().match(/^`{1,3}$/)) {
+      if (this.isClosingCodeBlock(model, position.lineNumber)) {
+        return null;
+      }
+      return {
+        suggestions: Object.entries(this.codeBlockTemplates).map(
+          ([lang, template]) => {
+            return {
+              label: template.label,
+              kind: this.monaco.languages.CompletionItemKind.Snippet,
+              insertText: template.insertText,
+              insertTextRules:
+                this.monaco.languages.CompletionItemInsertTextRule
+                  .InsertAsSnippet,
+              sortText: "0" + lang, // Ensures sorting
+              detail: "Code Block Template",
+              documentation: {
+                value: `Create a ${template.label} code block`,
+                isTrusted: true,
+              },
+              range: {
+                startLineNumber: position.lineNumber,
+                endLineNumber: position.lineNumber,
+                startColumn: position.column - lineContent.trim().length,
+                endColumn: position.column,
+              },
+            };
+          },
+        ),
+      };
+    }
 
     // Check for comment context
     const isInComment = lineContent.trimStart().startsWith("//");
@@ -298,6 +415,7 @@ export class EditorCompletionProvider {
         .map((prop) => this.createPropertySuggestion(prop, position)),
     };
   }
+
   private getArgumentContext(lineContent: string): {
     propertyName: string;
     isAfterDoubleDash: boolean;
@@ -439,8 +557,7 @@ export const configureCompletions = (monaco: Monaco) => {
 
   return monaco.languages.registerCompletionItemProvider("markdown", {
     // Trigger on ! for properties and space for arguments
-    triggerCharacters: ["!", " ", "-", "="],
-
+    triggerCharacters: ["!", " ", "-", "=", "#", "`"],
     /**
      * Provides completion suggestions based on context
      */

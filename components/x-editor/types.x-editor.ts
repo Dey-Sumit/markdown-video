@@ -1,5 +1,7 @@
 import { editor, MarkerSeverity } from "monaco-editor";
-
+export interface LinterRule {
+  validate: (context: LinterContext) => LinterError | null;
+}
 export interface ValidationIssue {
   code: string;
   message: string;

@@ -10,7 +10,7 @@ import { useEditorShortcuts } from "./hooks/use-editor-shortcuts";
 import { monacoCustomTheme } from "./theme";
 import { configureFoldingProvider } from "./utils/configure-folding-provider";
 import { configureHoverProvider } from "./utils/configure-hover-provider";
-import { provideCodeActions } from "./utils/quick-fixes";
+// import { provideCodeActions } from "./utils/quick-fixes";
 import {
   configureJSX,
   configureKeyboardShortcuts,
@@ -22,6 +22,7 @@ import { configureDiagnostics } from "./utils/configure-diagnostics.new";
 import { configureContextMenu } from "./utils/context-menu/configure-context-menu.new";
 import { configureSnippets } from "./utils/snippets";
 import CommandMenu, { type Position } from "./command-menu";
+import { provideCodeActions } from "./utils/code-action/code-action.new";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 function XEditor() {
@@ -74,14 +75,15 @@ function XEditor() {
     editor: editorRef.current,
     monaco: monacoRef.current,
   });
-  // useEffect(() => {
-  //   loadSavedContent(); // TODO : need to check this, sometimes it's not able to parse the content on mount in useMdxProcessor hook.
-  // }, [loadSavedContent]);
+  useEffect(() => {
+    loadSavedContent(); // TODO : need to check this, sometimes it's not able to parse the content on mount in useMdxProcessor hook.
+  }, [loadSavedContent]);
 
   // Prevent hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
+
   const calculatePosition = useCallback(
     (editorPosition: { top: number; left: number }) => {
       const viewportHeight = window.innerHeight;
@@ -103,6 +105,43 @@ function XEditor() {
   if (!mounted) return null;
 
   const handleEditorMount: OnMount = (editor, monaco) => {
+    editorRef.current = editor;
+    monacoRef.current = monaco;
+
+    monaco.editor.defineTheme("custom", monacoCustomTheme);
+    monaco.editor.setTheme("custom");
+    monaco.languages.register({ id: "markdown" });
+
+    configureCompletions(monaco);
+
+    // Set up decoration listener
+    const contentChangeDisposable = editor.onDidChangeModelContent(() => {
+      updateDecorations();
+    });
+
+    // Initial decoration update
+    updateDecorations();
+
+    const model = editor.getModel();
+    let disposable: IDisposable;
+    if (model) disposable = configureDiagnostics(monaco, model);
+    monaco.languages.registerCodeActionProvider("markdown", {
+      provideCodeActions: provideCodeActions,
+    });
+    configureContextMenu(monaco, editor);
+    configureFoldingProvider(monaco);
+    // configureKeyboardShortcuts(editor, monaco);
+    configureHoverProvider(monaco);
+
+    // Cleanup when editor is disposed
+    // TODO : I don't this should work. xD
+    return () => {
+      contentChangeDisposable.dispose();
+      disposable.dispose();
+    };
+  };
+
+  const _handleEditorMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
     monacoRef.current = monaco;
     // Register tokenizer first
@@ -136,7 +175,6 @@ function XEditor() {
     });
     // configureSnippets(monaco);
     configureCompletions(monaco);
-
     // Set up decoration listener
     const contentChangeDisposable = editor.onDidChangeModelContent(() => {
       updateDecorations();
@@ -150,7 +188,11 @@ function XEditor() {
     const model = editor.getModel();
     let disposable: IDisposable;
     if (model) disposable = configureDiagnostics(monaco, model);
+    monaco.languages.registerCodeActionProvider("markdown", {
+      provideCodeActions: provideCodeActions,
+    });
     configureContextMenu(monaco, editor);
+
     // Cleanup when editor is disposed
     // TODO : I don't this should work. xD
     return () => {
@@ -166,9 +208,6 @@ function XEditor() {
     // configureHoverProvider(editor, monaco);
     // configureContextMenu(editor, monaco);
     // configureFoldingProvider(monaco);
-    // monaco.languages.registerCodeActionProvider("markdown", {
-    //   provideCodeActions: provideCodeActions,
-    // });
   };
 
   return (

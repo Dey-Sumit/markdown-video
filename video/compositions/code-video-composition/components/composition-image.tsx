@@ -17,13 +17,6 @@ const CompositionImage = ({
   const TRANSITION_DURATION_IN_FRAMES = 10;
   const BUFFER_IN_FRAMES = 15;
   const FALLBACK_STILL_DURATION = 10;
-  console.log({
-    slideDurationInFrames,
-    mediaAppearanceDelay,
-    frame,
-    TRANSITION_DURATION_IN_FRAMES,
-    BUFFER_IN_FRAMES,
-  });
 
   const stillDuration =
     slideDurationInFrames -

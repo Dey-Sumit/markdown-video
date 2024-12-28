@@ -27,8 +27,6 @@ const { scene: scenes, title } = parseRoot(
   }),
 );
 
-console.log("AT ROOT", { scenes, title });
-
 const HARDCODED_STYLES: CompositionStore["styles"] = {
   backgroundContainer: {
     background: {
@@ -59,7 +57,6 @@ export default function CodeTransitionCompositionLoader() {
       }}
       calculateMetadata={({ props }) => {
         const duration = calculateCompositionDuration(props.scenes) || 30;
-        console.log("DURATION", duration);
 
         return {
           durationInFrames: duration,

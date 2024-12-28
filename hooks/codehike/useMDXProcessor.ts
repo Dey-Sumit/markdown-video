@@ -57,8 +57,6 @@ export const useMdxProcessor = () => {
           }),
         );
 
-        console.log("parsed steps", scenes, { title });
-
         if (!cancelled) {
           setScenes(scenes);
           setError(null);

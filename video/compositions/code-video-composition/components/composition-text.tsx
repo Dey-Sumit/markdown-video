@@ -427,8 +427,6 @@ const CompositionText = ({
   delay?: number; // Delay in frames before starting the animation
   applyTo?: "word" | "sentence";
 }) => {
-  console.log("CompositionText", delay);
-
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
