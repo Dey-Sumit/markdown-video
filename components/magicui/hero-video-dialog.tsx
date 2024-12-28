@@ -94,7 +94,7 @@ export default function HeroVideoDialog({
           alt={thumbnailAlt}
           // width={1920}
           // height={1080}
-          className="max-h-full w-full rounded-md object-cover shadow-lg transition-all duration-200 ease-out group-hover:brightness-[0.8]"
+          className="max-h-full w-full rounded-xl object-cover shadow-lg transition-all duration-200 ease-out group-hover:brightness-[0.8]"
         />
         {/* <video
           src="/landing-page/compare-video.mp4"

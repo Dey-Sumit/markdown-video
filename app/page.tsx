@@ -19,7 +19,7 @@ const LandingPage = () => {
         <div className="fixed inset-x-0 top-20 h-[40vh] md:top-20 md:h-[60vh]">
           <Particles
             className="h-full w-full"
-            quantity={200}
+            quantity={150}
             color="#ffffff"
             ease={200}
             refresh
@@ -55,8 +55,9 @@ const LandingPage = () => {
         <ContainerScroll />
       </section>
       {/* <section className="h-screen bg-black p-10"></section> */}
-      <div className="flex flex-col gap-y-16 px-4 py-20 md:px-20">
+      <div className="flex flex-col gap-y-20 px-4 py-16 md:px-20">
         <Waitlist />
+
         <Playground />
         <div className="py-20">
           <SparklesText text="Markdown Video" />

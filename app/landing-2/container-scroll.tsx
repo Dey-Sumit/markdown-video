@@ -40,11 +40,11 @@ const ContainerScroll = () => {
   return (
     <section ref={containerRef} className="pb-[100px]">
       <motion.div
-        className="relative h-[14rem] w-full md:h-[40rem]"
+        className="relative h-[14rem] w-full md:h-[46rem]"
         style={{ perspective: perspective, transformStyle: "preserve-3d" }}
       >
         <motion.div
-          className="relative mx-auto h-full max-w-full overflow-hidden rounded-xl bg-gradient-to-br from-purple-800 to-blue-800 p-2"
+          className="relative mx-auto h-full max-w-full overflow-hidden rounded-2xl bg-gradient-to-br from-purple-800 to-blue-800 p-2"
           style={{
             transformStyle: "preserve-3d",
             rotateX: rotateX,

@@ -7,6 +7,7 @@ import { Player, type PlayerRef } from "@remotion/player";
 import { useRef, useState } from "react";
 import PlayerControls from "./player-controls";
 import { Button } from "../ui/button";
+import { RefreshCcw } from "lucide-react";
 
 const XPlayer = () => {
   const playerRef = useRef<PlayerRef>(null);
@@ -47,17 +48,20 @@ const XPlayer = () => {
           ref={playerRef}
           errorFallback={({ error }) => {
             return (
-              <div className="flex h-full w-full flex-col items-center justify-center gap-8 p-10 text-4xl">
-                <pre className="whitespace-pre-line leading-10">
-                  There was an error: {JSON.stringify(error.message)}{" "}
-                </pre>
+              <div className="flex h-full w-full items-center justify-center">
+                <div className="flex h-[90%] w-[90%] flex-col items-center justify-center gap-8 border bg-gray-950 p-8 text-4xl">
+                  <pre className="whitespace-pre-line leading-10">
+                    There was an error: {JSON.stringify(error.message)}{" "}
+                  </pre>
 
-                <Button
-                  size={"lg"}
-                  onClick={() => setReloadKey((prev) => prev + 1)}
-                >
-                  Reload Player
-                </Button>
+                  <Button
+                    className="flex items-center justify-center gap-4 p-16 text-4xl"
+                    onClick={() => setReloadKey((prev) => prev + 1)}
+                  >
+                    Reload Player
+                    <RefreshCcw className="ml-4 size-14" />
+                  </Button>
+                </div>
               </div>
             );
           }}

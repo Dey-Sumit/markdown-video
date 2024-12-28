@@ -13,9 +13,58 @@ export async function MyCode({ codeblock }: { codeblock: RawCode }) {
 // React component you want, including inline styles,
 // components from other libraries, and more.
 
+const InlineCode = ({ children }: { children: React.ReactNode }) => {
+  console.log("inline code children", children);
+
+  return (
+    <code className="rounded bg-[#161a1e] px-1.5 py-0.5 text-sm font-medium text-white">
+      {children}
+    </code>
+  );
+};
+const CustomCode = ({ children }: { children: React.ReactNode }) => {
+  // If children is an array of spans (as shown in your data structure)
+  if (Array.isArray(children)) {
+    return (
+      <>
+        {children.map((child, index) => {
+          console.log("child", child);
+
+          console.log(
+            "child.props.children?.toString()",
+            child.props?.children?.toString(),
+          );
+
+          if (
+            typeof child === "object" &&
+            "props" in child &&
+            child.props.children?.toString().startsWith("`")
+          ) {
+            console.log("here", child);
+
+            // This is the backtick-wrapped content
+            const content = child.props.children.slice(1, -1);
+            return (
+              <code
+                key={index}
+                className="rounded bg-[#161a1e] px-1.5 py-0.5 text-sm font-medium text-white"
+              >
+                {content}
+              </code>
+            );
+          }
+          // Return other spans as-is
+          return child;
+        })}
+      </>
+    );
+  }
+
+  // Return as-is if not an array
+  return children;
+};
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
-    // Allows customizing built-in components, e.g. to add styling.
     h1: ({ children }) => <h1 className="text-3xl">{children}</h1>,
     img: (props) => (
       <Image
@@ -25,8 +74,8 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       />
     ),
     callout: Callout,
+    // Handle code blocks (with triple backticks)
     pre: ({ children, className, ...props }) => {
-      // Check if it's a scene block
       const isScene = className?.includes("language-markdown");
 
       return (
@@ -38,7 +87,40 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         </pre>
       );
     },
+    // code: (props) => {
+    //   // if there are backticks in the content, extract and style only that part
+    //   const content = String(props.children);
 
+    //   if (content.includes("`")) {
+    //     // Match content between backticks
+    //     const parts = content.split(/(`.*?`)/).map((part, index) => {
+    //       if (part.startsWith("`") && part.endsWith("`")) {
+    //         // Remove backticks and style the content
+    //         const codeContent = part.slice(1, -1);
+    //         return (
+    //           <code
+    //             key={index}
+    //             className="rounded bg-[red] px-1.5 py-0.5 text-sm font-medium text-white"
+    //           >
+    //             {codeContent}
+    //           </code>
+    //         );
+    //       }
+    //       return part;
+    //     });
+
+    //     return <>{parts}</>;
+    //   }
+
+    //   // Regular code block or inline code without surrounding text
+    //   return (
+    //     <code
+    //       className="rounded bg-[#161a1e] px-1.5 py-0.5 text-sm font-medium text-white"
+    //       {...props}
+    //     />
+    //   );
+    // },
+    // code: ({ children }) => <CustomCode>{children}</CustomCode>,
     ...components,
   };
 }

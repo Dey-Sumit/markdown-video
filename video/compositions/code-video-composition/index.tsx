@@ -94,8 +94,7 @@ const CodeVideoComposition = ({
                   <TransitionSeries.Transition
                     {...createTransitionConfig({
                       direction: "from-bottom", // TODO : it's hardcoded
-                      durationInSeconds:
-                        CODE_COMP_TRANSITION_DURATION_IN_SECONDS,
+                      durationInSeconds: currentTransitionDurationInSeconds,
                       fps,
                       type: currentTransitionType,
                     })}
