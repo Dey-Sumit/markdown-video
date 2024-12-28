@@ -91,7 +91,7 @@ export function Waitlist() {
               />
 
               <Button
-                className="w-full rounded-[5px] px-4 md:w-max"
+                className="w-full rounded-[5px] px-4 peer-invalid:bg-gray-600 md:w-max"
                 disabled={isMutating}
               >
                 {isMutating ? (
