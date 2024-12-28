@@ -112,6 +112,30 @@ function XEditor() {
     monaco.editor.setTheme("custom");
     monaco.languages.register({ id: "markdown" });
 
+    editor.onKeyDown((e: IKeyboardEvent) => {
+      if (e.browserEvent.key === "\\") {
+        // Remove any backslash handling logic, just show the menu
+        const position = editor.getPosition();
+        if (!position) return;
+
+        // Show menu after the backslash is typed
+        requestAnimationFrame(() => {
+          const coords = editor.getContainerDomNode().getBoundingClientRect();
+          const pos = editor.getScrolledVisiblePosition(position);
+
+          if (pos) {
+            setMenuPosition(
+              calculatePosition({
+                top: coords.top + pos.top,
+                left: coords.left + pos.left,
+              }),
+            );
+            setShowCommandMenu(true);
+          }
+        });
+      }
+    });
+
     configureCompletions(monaco);
 
     // Set up decoration listener
