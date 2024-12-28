@@ -1,7 +1,6 @@
 import React from "react";
 import ContainerScroll from "./landing-2/container-scroll";
 import Particles from "@/components/magicui/particles";
-import AnimatedGradientText from "@/components/magicui/animated-gradient-text";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 
@@ -44,9 +43,9 @@ const LandingPage = () => {
               <div
                 className={cn(
                   "flex items-center justify-center",
-                  "font-mono text-base font-medium md:text-2xl",
+                  "font-mono text-base font-normal md:text-2xl",
                   `${caveat.className}`,
-                  "absolute -right-4 bottom-[110%] rotate-12 md:-bottom-10 md:-right-24 md:-rotate-12",
+                  "absolute -right-4 bottom-[110%] rotate-12 md:-bottom-6 md:-right-20 md:-rotate-12",
                   "",
                 )}
               >
