@@ -167,7 +167,6 @@ class PropsParser {
           ? /--(\w+)=\s*(?:"([^"]*?)"|([^\s]*))/g
           : /--(\w+)=\s*([^\s]*)/g;
       const matches = [...input.matchAll(paramRegex)];
-      console.log("matches", type, matches);
 
       if (matches.length === 0) {
         return this.processValues(config, config.defaults);

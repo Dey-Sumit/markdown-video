@@ -1,178 +1,89 @@
 import type { Monaco } from "@monaco-editor/react";
-import { editor } from "monaco-editor";
-
-const DEFAULT_HOVER_CONFIG = {
-  showHoverIndicator: false,
-};
+import { CORE_PROPS_CONFIG } from "../config/property-config";
 
 const HOVER_DOCS = {
-  steps: {
-    title: "Step Declaration",
-    description: "Defines a new step in the code transition sequence",
-    example: "## !!steps step-name",
+  scene: {
+    title: "Scene Declaration",
+    description: "Defines a new scene with configurable duration and styling",
+    args: {
+      title: "Unique identifier for the scene",
+      duration: "Duration in seconds for this scene",
+      background: "Background color/style for the scene",
+    },
   },
-  duration: {
-    title: "Duration Configuration",
-    description: "Sets the duration (in frames) for this step",
-    example: "!duration 180",
+  text: {
+    title: "Text Component",
+    description: "Adds animated text content to the scene",
+    args: {
+      content: "Text content to display",
+      applyTo: "Target scope (word | line | block)",
+      fontSize: "Font size in pixels",
+      fontWeight: "Font weight (100-900)",
+      animation: "Animation style",
+      duration: "Animation duration",
+      delay: "Delay before animation",
+    },
+  },
+  media: {
+    title: "Media Component",
+    description: "Displays image or video content",
+    // args: CORE_PROPS_CONFIG.media.arguments,
+    args: {
+      src: "URL of the media file",
+      duration: "Duration in seconds",
+      animation: "Animation style",
+      delay: "Delay before animation",
+      withMotion: "Enable motion effect",
+    },
   },
   transition: {
-    title: "Transition Effect",
-    description: "Configures how this step transitions in",
-    example: "!transition name:fade duration:500ms delay:0ms",
+    title: "Transition Component",
+    description: "Configures scene transition effects",
+    // args: CORE_PROPS_CONFIG.transition.arguments,
+    args: {
+      type: "Transition effect type",
+      duration: "Transition duration",
+      delay: "Delay before transition",
+    },
   },
-  font: {
-    title: "Font Utilities",
-    description: "Controls text appearance in this step",
-    example: "!font fontSize:54px",
+  mark: {
+    title: "Code Mark",
+    description: "Highlights code segments for animation",
+    // args: CORE_PROPS_CONFIG.mark.arguments,
+    args: {
+      color: "Highlight color",
+      delay: "Delay before animation",
+      duration: "Animation duration",
+      type: "Highlight type",
+    },
   },
-  codeBlockUtils: {
-    title: "Code Block Utilities",
-    description: "Controls code block appearance and behavior",
-    example: "!codeBlockUtils centered",
-  },
-  callout: {
-    title: "Code Callout",
-    description: "Highlights specific code with annotations",
-    example: "// !callout[/pattern/] Your description here",
-  },
-} as const;
+};
 
-function getTransitionPropDescription(prop: string): string {
-  const descriptions: Record<string, string> = {
-    name: "The type of transition effect (e.g., fade, slide-from-top)",
-    duration: "How long the transition takes to complete",
-    delay: "Time to wait before starting the transition",
-  };
-  return descriptions[prop] || "Transition property";
-}
-
-export const configureHoverProvider = (
-  editorInstance: editor.IStandaloneCodeEditor,
-  monaco: Monaco,
-) => {
-  if (DEFAULT_HOVER_CONFIG.showHoverIndicator) {
-    // Handle decorations for hoverable elements
-    const updateDecorations = () => {
-      const model = editorInstance.getModel();
-      if (!model) return;
-
-      const text = model.getValue();
-      const lines = text.split("\n");
-      const decorations: editor.IModelDeltaDecoration[] = [];
-
-      lines.forEach((line, index) => {
-        // Step declarations
-        const stepsMatch = line.match(/##\s*!!steps\s+(.+)/);
-        if (stepsMatch) {
-          decorations.push({
-            range: new monaco.Range(
-              index + 1,
-              stepsMatch.index || 0,
-              index + 1,
-              line.length,
-            ),
-            options: { inlineClassName: "hover-decoration" },
-          });
-        }
-
-        // Directives
-        const directiveMatch = line.match(
-          /!(duration|transition|font|codeBlockUtils)/,
-        );
-        if (directiveMatch) {
-          decorations.push({
-            range: new monaco.Range(
-              index + 1,
-              directiveMatch.index || 0,
-              index + 1,
-              line.length,
-            ),
-            options: { inlineClassName: "hover-decoration" },
-          });
-        }
-
-        // Callouts
-        const calloutMatch = line.match(/!callout\[(.+?)\]/);
-        if (calloutMatch) {
-          decorations.push({
-            range: new monaco.Range(
-              index + 1,
-              calloutMatch.index || 0,
-              index + 1,
-              (calloutMatch.index || 0) + calloutMatch[0].length,
-            ),
-            options: { inlineClassName: "hover-decoration" },
-          });
-        }
-      });
-
-      editorInstance.createDecorationsCollection(decorations);
-    };
-
-    // Update decorations on content change
-    editorInstance.onDidChangeModelContent(updateDecorations);
-
-    // Initial decoration update
-    updateDecorations();
-  }
-
-  // Register hover provider
+export const configureHoverProvider = (monaco: Monaco) => {
   monaco.languages.registerHoverProvider("markdown", {
     provideHover: (model, position) => {
       const line = model.getLineContent(position.lineNumber);
 
-      // Step declaration hover
-      const stepsMatch = line.match(/##\s*!!steps\s+(.+)/);
-      if (stepsMatch) {
+      // Scene hover
+      if (line.match(/^##\s*!!scene/)) {
         return {
-          contents: [
-            { value: "# " + HOVER_DOCS.steps.title },
-            { value: HOVER_DOCS.steps.description },
-            { value: "```markdown\n" + HOVER_DOCS.steps.example + "\n```" },
-          ],
+          contents: getHoverContent(HOVER_DOCS.scene),
         };
       }
 
-      // Directive hovers
-      const directiveMatch = line.match(
-        /!(duration|transition|font|codeBlockUtils)/,
-      );
-      if (directiveMatch) {
-        const directive = directiveMatch[1] as keyof typeof HOVER_DOCS;
-        const doc = HOVER_DOCS[directive];
+      // Component hovers
+      const componentMatch = line.match(/!(text|media|transition)/);
+      if (componentMatch) {
+        const component = componentMatch[1] as keyof typeof HOVER_DOCS;
         return {
-          contents: [
-            { value: "# " + doc.title },
-            { value: doc.description },
-            { value: "```markdown\n" + doc.example + "\n```" },
-          ],
+          contents: getHoverContent(HOVER_DOCS[component]),
         };
       }
 
-      // Transition property hover
-      const transitionPropMatch = line.match(
-        /!transition.*?(name|duration|delay):/,
-      );
-      if (transitionPropMatch) {
-        const prop = transitionPropMatch[1];
+      // Code mark hover
+      if (line.match(/!mark/)) {
         return {
-          contents: [
-            { value: "## Transition Property: " + prop },
-            { value: getTransitionPropDescription(prop) },
-          ],
-        };
-      }
-
-      // Callout hover
-      const calloutMatch = line.match(/!callout\[(.+?)\]/);
-      if (calloutMatch) {
-        return {
-          contents: [
-            { value: "# " + HOVER_DOCS.callout.title },
-            { value: HOVER_DOCS.callout.description },
-            { value: "```markdown\n" + HOVER_DOCS.callout.example + "\n```" },
-          ],
+          contents: getHoverContent(HOVER_DOCS.mark),
         };
       }
 
@@ -180,3 +91,18 @@ export const configureHoverProvider = (
     },
   });
 };
+
+// TODO : we can add more stuff in the docs like examples, required fields , available values for properties etc
+function getHoverContent(doc: (typeof HOVER_DOCS)[keyof typeof HOVER_DOCS]) {
+  return [
+    { value: `# ${doc.title}` },
+    { value: doc.description },
+    {
+      value:
+        "### Arguments\n" +
+        Object.entries(doc.args)
+          .map(([key, desc]) => `- --${key}: ${desc}`)
+          .join("\n"),
+    },
+  ];
+}

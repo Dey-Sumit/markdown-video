@@ -3,9 +3,39 @@ import { sceneRules } from "./rules/scene-rules";
 
 import type { Monaco } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
-import type { LinterError, LinterContext } from "../../types.x-editor";
+import type {
+  LinterError,
+  LinterContext,
+  LinterRule,
+} from "../../types.x-editor";
 import { propertyRules } from "./rules/property-rules";
 
+const codeBlockRules: LinterRule[] = [
+  {
+    validate: ({ line, lineNumber }) => {
+      if (!line.trimStart().startsWith("```")) return null;
+
+      const match = line.match(/^```(\w+)(!?)(\s*)(!?)/);
+      if (!match) return null;
+
+      const [, lang, , whitespace, exclamation] = match;
+      const hasSpaceWithoutBang = whitespace && !exclamation;
+
+      if ((!whitespace && exclamation) || !exclamation || hasSpaceWithoutBang) {
+        return {
+          message: "Code block requires a space followed by ! after language",
+          severity: "error",
+          line: lineNumber,
+          startColumn: line.indexOf(lang) + lang.length + 1,
+          endColumn: line.length,
+          code: "invalid-code-block-format", // Unique code for this error, this will be used for code actions (quick fixes)
+        };
+      }
+
+      return null;
+    },
+  },
+];
 export class EditorLinter {
   private monaco: Monaco;
   private model: editor.ITextModel;
@@ -39,6 +69,10 @@ export class EditorLinter {
       if (line.trimStart().startsWith("!")) {
         errors.push(...this.validateProperty(context));
       }
+
+      if (line.trimStart().startsWith("```")) {
+        errors.push(...this.validateCodeBlock(context));
+      }
     });
 
     return errors;
@@ -60,6 +94,14 @@ export class EditorLinter {
    */
   private validateProperty(context: LinterContext): LinterError[] {
     return propertyRules.reduce((errors: LinterError[], rule) => {
+      const error = rule.validate(context);
+      if (error) errors.push(error);
+      return errors;
+    }, []);
+  }
+
+  private validateCodeBlock(context: LinterContext): LinterError[] {
+    return codeBlockRules.reduce((errors: LinterError[], rule) => {
       const error = rule.validate(context);
       if (error) errors.push(error);
       return errors;
