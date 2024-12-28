@@ -29,11 +29,16 @@ const LandingPage = () => {
         <div className="mb-16 mt-20 flex flex-col items-center justify-center gap-y-6 text-center md:mb-20 md:mt-36">
           <h1 className="relative text-4xl font-bold text-white md:text-5xl lg:text-6xl xl:text-[7rem]">
             Markdown to Video
-            <div className="absolute -bottom-8 -right-20 flex -rotate-12 items-center justify-center gap-2 rounded-full border bg-gray-100/20 px-4 py-2 font-sans text-base font-normal tracking-wide">
+            <div
+              className={cn(
+                "absolute -right-4 bottom-[140%] flex rotate-12 items-center justify-center gap-2 rounded-full border border-gray-400/40 bg-gray-100/20 px-3 py-1 md:-bottom-10 md:-right-20 md:-rotate-12 md:px-4 md:py-2",
+                "font-mono text-sm font-normal md:text-base",
+              )}
+            >
               <p className="inline-block bg-white bg-clip-text text-transparent">
                 as simple as that
               </p>
-              <span>🤌</span>
+              <span>✨</span>
             </div>
           </h1>
 

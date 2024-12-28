@@ -17,7 +17,7 @@ const Playground = () => {
   const isMobile = useIsMobile();
   return (
     <section>
-      <div className="flex flex-col items-center justify-center gap-8">
+      <div className="mb-12 flex flex-col items-center justify-center gap-8">
         <div className={cn("relative flex items-start justify-center gap-8")}>
           <SparklesText text="Playground" className="md:text-7xl" />
           <RainbowButton className="h-9 rounded-full px-6 text-primary">
@@ -33,14 +33,14 @@ const Playground = () => {
           </h3>
         </div>
       ) : (
-        <div className="relative mt-12 h-[90vh]">
-          <div className="absolute -inset-x-10 h-0.5 bg-border" />
-          <div className="absolute -inset-y-10 w-0.5 bg-border" />
-          <div className="absolute -inset-x-10 top-full h-0.5 bg-border" />
-          <div className="absolute -inset-y-10 left-full w-0.5 bg-border" />
+        <div className="relative h-[90vh]">
+          <div className="absolute -inset-x-4 h-px bg-border md:-inset-x-10" />
+          <div className="absolute -inset-y-4 w-px bg-border md:-inset-y-10" />
+          <div className="absolute -inset-x-4 top-full h-px bg-border md:-inset-x-10" />
+          <div className="absolute -inset-y-4 left-full w-px bg-border md:-inset-y-10" />
 
           <div className="absolute inset-0">
-            <div className={cn("relative h-[90vh] w-full rounded-lg p-0.5")}>
+            <div className={cn("relative h-[90vh] w-full rounded-lg p-px")}>
               <ResizablePanelGroup
                 direction="horizontal"
                 className="min-h-[200px] bg-black md:min-w-[450px]"

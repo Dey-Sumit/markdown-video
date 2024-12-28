@@ -38,9 +38,9 @@ const ContainerScroll = () => {
   const scale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
 
   return (
-    <section ref={containerRef} className="pb-[100px]">
+    <section ref={containerRef} className="pb-[50px] md:pb-[100px]">
       <motion.div
-        className="relative h-[14rem] w-full md:h-[48rem]"
+        className="relative h-[13rem] w-full md:h-[48rem]"
         style={{ perspective: perspective, transformStyle: "preserve-3d" }}
       >
         <motion.div
