@@ -11,7 +11,7 @@ import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 const AUTO_SAVE_INTERVAL = 5 * 1000; // 5 seconds
-const DEFAULT_TEMPLATE = `## !!scene --title=Text --duration=4 --background=#1a1a1a
+const DEFAULT_TEMPLATE = `## !!scene --title=Text --duration=4 --background=red
 !text --content="Your Text With Animation" --animation=fadeInSlideUp --duration=3 --delay=0.5
 !transition --type=slide --duration=0.3 --direction=from-left
 

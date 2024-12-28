@@ -11,6 +11,7 @@ import ClientXPlayer from "./x-editor/dynamic-x-player";
 import SparklesText from "./sparkle-text";
 import { RainbowButton } from "./ui/rainbow-button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import MinimalDocs from "./minimal-docs";
 
 const Playground = () => {
   const isMobile = useIsMobile();
@@ -23,9 +24,6 @@ const Playground = () => {
             Beta
           </RainbowButton>
         </div>
-        <div className="text-sm">
-          <p>I know the docs is pending :), I am working on it.</p>
-        </div>
       </div>
 
       {isMobile ? (
@@ -35,31 +33,54 @@ const Playground = () => {
           </h3>
         </div>
       ) : (
-        <div className={cn("relative mt-12 h-[90vh] w-full rounded-lg")}>
-          <ResizablePanelGroup
-            direction="horizontal"
-            className="min-h-[200px] bg-black md:min-w-[450px]"
-            style={{
-              boxShadow:
-                "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003",
-            }}
-          >
-            <ResizablePanel
-              defaultSize={50}
-              minSize={20}
-              className="border border-r-0 pt-14"
-            >
-              <ClientSideEditor />
-            </ResizablePanel>
-            <ResizableHandle withHandle />
-            <ResizablePanel
-              defaultSize={50}
-              minSize={20}
-              className="border border-l-0 pt-14"
-            >
-              <ClientXPlayer />
-            </ResizablePanel>
-          </ResizablePanelGroup>
+        <div className="relative mt-12 h-[90vh]">
+          <div className="absolute -inset-x-10 h-0.5 bg-border" />
+          <div className="absolute -inset-y-10 w-0.5 bg-border" />
+          <div className="absolute -inset-x-10 top-full h-0.5 bg-border" />
+          <div className="absolute -inset-y-10 left-full w-0.5 bg-border" />
+
+          <div className="absolute inset-0">
+            <div className={cn("relative h-[90vh] w-full rounded-lg p-0.5")}>
+              <ResizablePanelGroup
+                direction="horizontal"
+                className="min-h-[200px] bg-black md:min-w-[450px]"
+                style={{
+                  boxShadow:
+                    "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003",
+                }}
+              >
+                <ResizablePanel
+                  defaultSize={50}
+                  minSize={20}
+                  className="border-r-0 pt-14"
+                >
+                  <ClientSideEditor />
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                <ResizablePanel
+                  defaultSize={50}
+                  minSize={20}
+                  className="border-l-0"
+                >
+                  <ResizablePanelGroup direction="vertical">
+                    <ResizablePanel
+                      defaultSize={58}
+                      minSize={20}
+                      className="border-b-0 pb-0"
+                    >
+                      <ClientXPlayer />
+                    </ResizablePanel>
+                    <ResizableHandle withHandle />
+                    <ResizablePanel defaultSize={42} minSize={20}>
+                      <div className="h-full overflow-scroll">
+                        <MinimalDocs />
+                      </div>
+                    </ResizablePanel>
+                  </ResizablePanelGroup>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </div>
+          </div>
         </div>
       )}
     </section>

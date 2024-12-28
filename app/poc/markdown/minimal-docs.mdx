@@ -1,0 +1,46 @@
+## Overview
+The video is composed of sequential scenes, where each scene represents a distinct segment of your video. These scenes can contain different components eg. code, text overlays, media(image,video,audio), and transitions.
+
+```markdown
+Scene Directive (`## !!scene`)
+├── Scene Props
+   ├── Title = Value (`--title={titleText}`)
+   ├── Duration = Value (`--duration={timeInSeconds}`)
+   ├── Background = Value (`--background={colorCode|colorName|transparent}`)
+├── Components
+   ├── Text Component (`!text`)       
+   │   ├── Content = Value (`--content={text}`)
+   │   ├── ApplyTo = Value (`--applyTo={word|line|block}`)
+   │   ├── FontSize = Value (`--fontSize={pixels}`)
+   │   ├── FontWeight = Value (`--fontWeight={100-900}`)
+   │   ├── Animation = Value (`--animation={fadeInSlideUp|fadeIn}`)
+   │   ├── Duration = Value (`--duration={timeInSeconds}`)
+   │   └── Delay = Value (`--delay={timeInSeconds}`)
+   ├── Media Component (`!media`)
+   │   ├── Src = Value (`--src={imageUrl|videoUrl}`)
+   │   ├── Animation = Value (`--animation={fade|slide}`)
+   │   ├── Duration = Value (`--duration={timeInSeconds}`)
+   │   ├── Delay = Value (`--delay={timeInSeconds}`)
+   │   └── WithMotion = Value (`--withMotion={true|false}`)
+   ├── Transition Component (`!transition`)
+   │   ├── Type = Value (`--type={magic|fade}`)
+   │   ├── Direction = Value (`--direction={from-bottom}`)
+   │   └── Duration = Value (`--duration={timeInSeconds}`)
+   └── Code Component (```js ! ```)
+       ├── Family = Value (`--family={fontFamily}`)
+       ├── Size = Value (`--size={pixels}`)
+       ├── Weight = Value (`--weight={100-900}`)
+       └── Inline Components
+           ├── Mark (`!mark`)
+           │   ├── Type = Value (`--type={highlight}`)
+           │   ├── Color = Value (`--color={colorValue}`)
+           │   ├── Duration = Value (`--duration={timeInSeconds}`)
+           │   └── Delay = Value (`--delay={timeInSeconds}`)
+           └── Annotation (`!annotation`)
+               ├── Content = Value (`--content={annotationText}`)
+               ├── Position = Value (`--position={top|bottom|left|right}`)
+               ├── Duration = Value (`--duration={timeInSeconds}`)
+               ├── Delay = Value (`--delay={timeInSeconds}`)
+               └── Style = Value (`--style={normal|warning|error}`)
+```
+
