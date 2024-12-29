@@ -75,9 +75,9 @@ function XEditor() {
     editor: editorRef.current,
     monaco: monacoRef.current,
   });
-  useEffect(() => {
-    loadSavedContent(); // TODO : need to check this, sometimes it's not able to parse the content on mount in useMdxProcessor hook.
-  }, [loadSavedContent]);
+  // useEffect(() => {
+  //   loadSavedContent(); // TODO : need to check this, sometimes it's not able to parse the content on mount in useMdxProcessor hook.
+  // }, [loadSavedContent]);
 
   // Prevent hydration mismatch
   useEffect(() => {
