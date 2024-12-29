@@ -18,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { db } from "@/lib/dexie-db";
 
 const CATEGORIES = [
   "Tutorial",
@@ -43,6 +42,7 @@ export function CreateProjectDialog() {
     const category = formData.get("category") as string;
 
     try {
+      const db = (await import("../lib/dexie-db")).db;
       const projectId = await db.createProject(title, description, category);
       router.push(`/projects/${projectId}`);
     } catch (error) {
