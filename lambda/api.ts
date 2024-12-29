@@ -1,8 +1,11 @@
+import type {
+  ProgressRequest,
+  ProgressResponse,
+} from "@/app/remotion-lambda-deploy/schema";
+import type { ApiResponse } from "@/app/remotion-lambda-deploy/utils";
+import type { CompositionMap } from "@/hooks/use-rendering";
 import type { RenderMediaOnLambdaOutput } from "@remotion/lambda/client";
 import { z } from "zod";
-import type { CompositionMap } from "~/helpers/use-rendering";
-import type { ApiResponse } from "../helpers/api-response";
-import { ProgressRequest, type ProgressResponse } from "../types/schema";
 
 const makeRequest = async <Res>(
   endpoint: string,

@@ -1,6 +1,6 @@
 "use client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Editor, OnMount } from "@monaco-editor/react";
+import { Editor, type OnMount } from "@monaco-editor/react";
 import { monacoCustomOptions } from "./x-editor/editor-config";
 import { monacoCustomTheme } from "./x-editor/theme";
 

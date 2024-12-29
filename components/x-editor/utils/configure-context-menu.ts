@@ -1,7 +1,10 @@
-import { Monaco } from "@monaco-editor/react";
+import { type Monaco } from "@monaco-editor/react";
 import { editor, languages } from "monaco-editor";
 
-export function configureContextMenu(editor: editor.IStandaloneCodeEditor, monaco: Monaco) {
+export function configureContextMenu(
+  editor: editor.IStandaloneCodeEditor,
+  monaco: Monaco,
+) {
   // Remove default context menu items
   editor.createContextKey("removeDefaultItems", true);
 

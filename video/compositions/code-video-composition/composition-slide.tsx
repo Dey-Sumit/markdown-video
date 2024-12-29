@@ -220,7 +220,6 @@ export function CompositionSlide(props: CompositionSlideProps) {
 const CompositionTextProcessor = ({ value }: { value: string }) => {
   const { fps } = useVideoConfig();
   const textProps = propsParser.text(value);
-  console.log("text", textProps);
   if (!textProps.content) return null;
   return (
     <CompositionText

@@ -1,4 +1,5 @@
 import { db } from "@/lib/dexie-db";
+import { useProjectStore } from "@/store/project-store";
 import type { Monaco } from "@monaco-editor/react";
 import { type editor, type IDisposable } from "monaco-editor";
 import { useCallback, useEffect } from "react";
@@ -16,18 +17,22 @@ export const useEditorShortcuts = ({
   content,
 }: EditorShortcutsProps) => {
   const handleSave = useCallback(async () => {
+    const {
+      currentProject: { id, content, styles },
+    } = useProjectStore.getState();
+    if (!id) return;
+
     try {
-      await db.editorContent.put({
-        id: 1,
+      await db.updateProject(id, {
         content,
-        updatedAt: new Date(),
+        styles,
+        lastModified: new Date(),
       });
-      toast.success("Saved successfully", { duration: 1000 });
+      toast.success("Saved successfully");
     } catch (error) {
-      console.error("Manual save failed:", error);
       toast.error("Failed to save");
     }
-  }, [content]);
+  }, []);
 
   useEffect(() => {
     if (!editor || !monaco) return;
