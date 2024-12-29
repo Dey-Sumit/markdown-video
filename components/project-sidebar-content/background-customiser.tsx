@@ -8,8 +8,8 @@ import { ColorPicker } from "../ui/color-picker";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Slider } from "../ui/slider";
-import useCompositionStore from "@/store/composition-store";
 import { SidebarContent, SidebarHeader, SidebarInput } from "../ui/sidebar";
+import { useProjectStore } from "@/store/project-store";
 
 interface BackgroundSettings {
   padding: number;
@@ -41,8 +41,11 @@ const gradientPresets = [
 ];
 
 export default function BackgroundCustomiser() {
-  const styles = useCompositionStore((state) => state.styles);
-  const setStyles = useCompositionStore((state) => state.setStyles);
+  const {
+    currentProject: { styles },
+    updateStyles,
+    
+  } = useProjectStore();
 
   // const styles = {
   //   backgroundContainer: {
@@ -90,7 +93,7 @@ export default function BackgroundCustomiser() {
     key: keyof BackgroundSettings,
     value: number,
   ) => {
-    setStyles({
+    updateStyles({
       ...styles,
       sceneContainer: {
         ...styles.sceneContainer,
@@ -105,7 +108,7 @@ export default function BackgroundCustomiser() {
   };
 
   const handleApplyGradient = (gradientFrom: string, gradientTo: string) => {
-    setStyles({
+    updateStyles({
       ...styles,
       backgroundContainer: {
         ...styles.backgroundContainer,

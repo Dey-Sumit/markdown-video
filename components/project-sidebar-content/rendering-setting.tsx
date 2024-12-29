@@ -12,9 +12,9 @@ import { ArrowUpFromDot } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useRendering } from "@/hooks/use-rendering";
-import useCompositionStore from "@/store/composition-store";
 import { Slider } from "../ui/slider";
 import { useSearchParams } from "next/navigation";
+import { useProjectStore } from "@/store/project-store";
 
 const Megabytes: React.FC<{
   sizeInBytes: number;
@@ -35,8 +35,9 @@ const RenderingSettingStuff = () => {
   const renderDisabled = owner !== "sumit";
 
   // const
-  const scenes = useCompositionStore((state) => state.scenes);
-  const styles = useCompositionStore((state) => state.styles);
+  const {
+    currentProject: { scenes, styles },
+  } = useProjectStore();
   const { renderMedia, state, undo } = useRendering(
     "code-transition-composition",
     {

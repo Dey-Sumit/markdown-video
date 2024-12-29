@@ -1,17 +1,22 @@
+// Update imports
+import { useProjectStore } from "@/store/project-store";
+import { compile, run } from "@mdx-js/mdx";
 import { validateMarkdown } from "@/components/x-editor/utils";
 import { chConfig } from "@/lib/config/config.codehike";
-import useCompositionStore from "@/store/composition-store";
-import { SceneSchema } from "@/video/compositions/code-video-composition/types.composition";
-import { compile, run } from "@mdx-js/mdx";
-import { Block, HighlightedCodeBlock, parseRoot } from "codehike/blocks";
-import { recmaCodeHike, remarkCodeHike } from "codehike/mdx";
-import { editor } from "monaco-editor";
-import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
-
+import { useCallback, useEffect } from "react";
+import { recmaCodeHike, remarkCodeHike } from "codehike/mdx";
+import { editor } from "monaco-editor";
+import { Block, HighlightedCodeBlock, parseRoot } from "codehike/blocks";
+import { SceneSchema } from "@/video/compositions/code-video-composition/types.composition";
 export const useMdxProcessor = () => {
-  const { content, setScenes, setLoading, setError } = useCompositionStore();
+  const {
+    currentProject: { content },
+    updateScenes,
+    isLoading,
+    error,
+  } = useProjectStore();
 
   const compileAndRun = useCallback(async (mdxContent: string) => {
     try {
@@ -24,7 +29,6 @@ export const useMdxProcessor = () => {
       const result = await run(String(compiled), runtime);
       return { content: result.default, error: undefined };
     } catch (e) {
-      console.error("Error compiling and running", e);
       return { content: undefined, error: (e as Error).message };
     }
   }, []);
@@ -34,23 +38,20 @@ export const useMdxProcessor = () => {
 
     let cancelled = false;
     const model = editor.createModel(content, "markdown");
-    setLoading(true);
 
     const processContent = async () => {
       try {
         const { hasErrors, issues } = validateMarkdown(model);
         if (hasErrors) {
           toast.error("Invalid markdown content");
-          console.error("Validation errors:", Array.from(issues.values()));
           return;
         }
 
         const { content: compiledContent, error: compileError } =
           await compileAndRun(content);
-
         if (compileError) throw new Error(compileError);
 
-        const { scene: scenes, title } = parseRoot(
+        const { scene: scenes } = parseRoot(
           compiledContent!,
           Block.extend({
             scene: z.array(SceneSchema),
@@ -58,19 +59,10 @@ export const useMdxProcessor = () => {
         );
 
         if (!cancelled) {
-          setScenes(scenes);
-          setError(null);
+          updateScenes(scenes);
         }
       } catch (err) {
-        console.log("Error processing content", err);
-
-        if (!cancelled) {
-          setError((err as Error).message);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        console.error("Error processing content", err);
       }
     };
 
@@ -81,5 +73,5 @@ export const useMdxProcessor = () => {
       clearTimeout(debounceTimer);
       model.dispose();
     };
-  }, [content, setScenes, setLoading, setError, compileAndRun]);
+  }, [content, updateScenes]);
 };

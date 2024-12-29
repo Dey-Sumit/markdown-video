@@ -1,5 +1,9 @@
+"use client";
 import { MOCK_PROJECTS } from "@/data/mock.projects";
+import { db, type Project } from "@/lib/dexie-db";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { CreateProjectDialog } from "./create-project-dialog";
 
 const getRandomEmoji = () => {
   const emojis = ["🎥", "📹", "🎬", "🎦", "📽️", "🎭", "🎪", "🎨"];
@@ -7,37 +11,22 @@ const getRandomEmoji = () => {
 };
 
 const ProjectsList = () => {
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  useEffect(() => {
+    const loadProjects = async () => {
+      const allProjects = await db.getAllProjects();
+      setProjects(allProjects);
+    };
+    loadProjects();
+  }, []);
+
+  // Replace MOCK_PROJECTS.map with projects.map
   return (
     <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-      <button
-        type="button"
-        className="group flex min-h-52 gap-y-2 rounded-2xl border border-dashed border-gray-300 bg-gray-100 p-1 hover:border-gray-400 focus:border-gray-400 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600 dark:focus:border-neutral-600"
-        data-hs-overlay="#hs-pro-shcpm"
-      >
-        <div className="flex h-full min-h-40 w-full flex-col items-center justify-center rounded-xl bg-white shadow-sm dark:bg-neutral-900">
-          <svg
-            className="size-7 shrink-0 text-primary dark:text-primary"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M5 12h14" />
-            <path d="M12 5v14" />
-          </svg>
+      <CreateProjectDialog />
 
-          <span className="text-sm text-primary dark:text-primary">
-            Create new project
-          </span>
-        </div>
-      </button>
-
-      {MOCK_PROJECTS.map((project) => (
+      {projects.map((project) => (
         <Link href={`/projects/${project.id}`} key={project.id}>
           <div
             key={project.id}
