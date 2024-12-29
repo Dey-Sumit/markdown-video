@@ -22,7 +22,6 @@ import React, { useRef, useState } from "react";
 const ContainerScroll = () => {
   const containerRef = useRef(null);
   const isMobile = useIsMobile();
-  console.log({ isMobile });
 
   const { scrollYProgress } = useScroll({
     target: containerRef,

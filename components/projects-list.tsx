@@ -1,9 +1,10 @@
 "use client";
-import { MOCK_PROJECTS } from "@/data/mock.projects";
-import { db, type Project } from "@/lib/dexie-db";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CreateProjectDialog } from "./create-project-dialog";
+import dynamic from "next/dynamic";
+import type { Project } from "@/lib/dexie-db";
 
 const getRandomEmoji = () => {
   const emojis = ["🎥", "📹", "🎬", "🎦", "📽️", "🎭", "🎪", "🎨"];
@@ -15,6 +16,7 @@ const ProjectsList = () => {
 
   useEffect(() => {
     const loadProjects = async () => {
+      const db = (await import("../lib/dexie-db")).db;
       const allProjects = await db.getAllProjects();
       setProjects(allProjects);
     };
