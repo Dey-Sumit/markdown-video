@@ -38,7 +38,7 @@ const LandingPage = () => {
 
         <div className="relative z-10">
           <div className="mb-16 mt-20 flex flex-col items-center justify-center gap-y-6 text-center md:mb-8 md:mt-36">
-            <h1 className="relative text-4xl font-bold md:text-5xl lg:text-6xl xl:text-[7rem]">
+            <h1 className="relative text-4xl font-bold tracking-wide md:text-5xl lg:text-6xl xl:text-[7rem]">
               Markdown to Video
               <div
                 className={cn(
@@ -49,7 +49,7 @@ const LandingPage = () => {
                   "",
                 )}
               >
-                <p className="inline-block pr-3 text-transparent text-white">
+                <p className="inline-block pr-3 tracking-normal text-transparent text-white">
                   as simple as that
                 </p>
                 <span className="md:text-lg">✨</span>
