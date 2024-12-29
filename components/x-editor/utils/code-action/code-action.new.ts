@@ -7,12 +7,6 @@ export function provideCodeActions(
   const actions: languages.CodeAction[] = [];
 
   context.markers.forEach((marker) => {
-    console.log("Marker:", {
-      code: marker.code,
-      message: marker.message,
-      severity: marker.severity,
-      startLineNumber: marker.startLineNumber,
-    });
     switch (marker.code) {
       case "invalid-code-block-format":
         actions.push(createCodeBlockFormatFix(model, marker));

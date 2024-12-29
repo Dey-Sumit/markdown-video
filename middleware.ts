@@ -5,8 +5,8 @@ import { createClient } from "./utils/supabase/server";
 export async function middleware(request: NextRequest) {
   const supabase = await createClient();
   try {
-    const { data } = await supabase.auth.getSession();
-    console.log({ data });
+    const { data: authSession } = await supabase.auth.getSession();
+    console.log({ authSession });
   } catch (error) {
     console.log({ error });
   }

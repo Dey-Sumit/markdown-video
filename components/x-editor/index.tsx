@@ -30,7 +30,6 @@ function XEditor() {
   const { id: projectId } = useParams<{
     id: string;
   }>();
-  console.log({ projectId });
 
   const [mounted, setMounted] = useState(false);
 

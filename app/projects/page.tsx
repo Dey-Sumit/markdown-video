@@ -1,5 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
-import ProjectsList from "@/components/projects-list";
+import DynamicProjectsList from "@/components/dynamic-projects-list";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -40,7 +40,8 @@ export default function Page() {
         <div className="flex flex-1 flex-col gap-4 px-4 pb-4 pt-0">
           <div className="h-48 rounded-md bg-neutral-900"></div>
 
-          <ProjectsList />
+          {/* <ProjectsList /> */}
+          <DynamicProjectsList />
         </div>
       </SidebarInset>
     </SidebarProvider>
