@@ -6,20 +6,35 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { devtools } from "zustand/middleware";
-import {
-  db,
-  DEFAULT_COMPOSITION_STYLES,
-  type ProjectStyles,
-} from "../lib/dexie-db";
+import { db, type ProjectStyles } from "../lib/dexie-db";
 import { toast } from "sonner";
 import { editor } from "monaco-editor";
 import { validateMarkdown } from "@/components/x-editor/utils";
 import type { Scene } from "@/video/compositions/code-video-composition/types.composition";
 import { calculateCompositionDuration } from "@/video/compositions/composition.utils";
+import { DEFAULT_COMPOSITION_STYLES } from "@/lib/const";
 
-const AUTO_SAVE_DELAY = 10 * 1000; // 10 seconds
+const AUTO_SAVE_DELAY = 5 * 1000; // 10 seconds
 
 export const DEFAULT_PROJECT_TEMPLATE = `## !!scene --title=Text --duration=4 --background=blue
+!text --content="Your Text With Animation" --animation=fadeInSlideUp --duration=3 --delay=0.5
+!transition --type=slide --duration=0.3 --direction=from-left
+
+## !!scene --title=Code --duration=4 --background=transparent
+!transition --type=slide --duration=0.8 --direction=from-bottom
+\`\`\`js !
+const fastestEditor = () => {
+    return "markdownvideo.com"
+}
+fastestEditor()
+\`\`\`
+
+## !!scene --title=Scene --duration=5
+!transition --type=fade --duration=0.3
+\`\`\`js !
+\`\`\``;
+
+export const PLAYGROUND_PROJECT_TEMPLATE = `## !!scene --title=Text --duration=4 --background=blue
 !text --content="Your Text With Animation" --animation=fadeInSlideUp --duration=3 --delay=0.5
 !transition --type=slide --duration=0.3 --direction=from-left
 
@@ -72,7 +87,7 @@ export const useProjectStore = create<ProjectStore>()(
         content: "",
         styles: DEFAULT_COMPOSITION_STYLES,
         scenes: [],
-        duration: 0,
+        duration: 3,
         lastModified: new Date(),
       },
       isLoading: false,
@@ -94,10 +109,23 @@ export const useProjectStore = create<ProjectStore>()(
        * @param id - Project ID to load
        */
       loadProject: async (id: string) => {
+        const PLAYGROUND_PROJECT_ID = "playground";
+        console.log("Loading project", id);
+
         set((state) => {
           state.isLoading = true;
           state.error = null;
         });
+
+        if (!id) {
+          set((state) => {
+            state.currentProject.id = PLAYGROUND_PROJECT_ID;
+            state.currentProject.content = PLAYGROUND_PROJECT_TEMPLATE;
+            state.currentProject.styles = DEFAULT_COMPOSITION_STYLES;
+            state.isLoading = false;
+          });
+          return;
+        }
 
         try {
           const project = await db.projects.get(id);
@@ -127,14 +155,12 @@ export const useProjectStore = create<ProjectStore>()(
       updateContent: (content: string) => {
         const state = get();
         if (!state.currentProject.id) return;
+        console.log("state.currentProject.id", state.currentProject.id);
 
         // Validate content before saving
         const model = editor.createModel(content, "markdown");
         const { hasErrors } = validateMarkdown(model);
         model.dispose();
-
-        console.log("updateContent", state.currentProject.id);
-
         // if (hasErrors) return;
 
         set((state) => {

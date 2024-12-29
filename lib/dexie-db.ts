@@ -7,6 +7,7 @@ import { nanoid } from "nanoid";
 
 import Dexie, { type Table } from "dexie";
 import { DEFAULT_PROJECT_TEMPLATE } from "@/store/project-store";
+import { DEFAULT_COMPOSITION_STYLES } from "./const";
 
 /**
  * Background configuration for the project
@@ -56,24 +57,6 @@ export interface Project {
   lastModified: Date;
 }
 
-export const DEFAULT_COMPOSITION_STYLES: ProjectStyles = {
-  backgroundContainer: {
-    background: {
-      color: "",
-      gradient: {
-        angle: 0,
-        colors: ["#4338ca", "#5b21b6"],
-      },
-      image: "",
-      activeType: "color",
-    },
-  },
-  sceneContainer: {
-    inset: 0,
-    padding: 40,
-    borderRadius: 10,
-  },
-};
 /**
  * Database class extending Dexie with typed tables
  */
@@ -104,7 +87,7 @@ export class EditorDatabase extends Dexie {
       title,
       description,
       category,
-      duration: "0:00",
+      duration: "5",
       content: DEFAULT_PROJECT_TEMPLATE,
       styles: DEFAULT_COMPOSITION_STYLES,
       createdAt: new Date(),

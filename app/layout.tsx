@@ -31,10 +31,10 @@ export const metadata: Metadata = {
     "educational video creation",
     "markdown video creator",
   ],
-  twitter: {
-    site: "@markdownvideo",
-    creator: "@markdownvideo",
-  },
+  // twitter: {
+  //   site: "@markdownvideo",
+  //   creator: "@markdownvideo",
+  // },
   creator: "Sumit Dey",
   category:
     "Software Development Tools, Content Creation Tools, Developer Productivity, Video Editing Software, Educational Software",

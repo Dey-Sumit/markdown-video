@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CreateProjectDialog } from "./create-project-dialog";
 import dynamic from "next/dynamic";
-import type { Project } from "@/lib/dexie-db";
+import { db, type Project } from "@/lib/dexie-db";
 
 const getRandomEmoji = () => {
   const emojis = ["🎥", "📹", "🎬", "🎦", "📽️", "🎭", "🎪", "🎨"];
@@ -13,17 +13,25 @@ const getRandomEmoji = () => {
 
 const ProjectsList = () => {
   const [projects, setProjects] = useState<Project[]>([]);
+  // const {
+  //   createProject,
+  //   getAllProjects,
+  //   updateProject,
+  //   deleteProject,
+  //   isReady,
+  // } = useProjectDb();
+  // console.log("ProjectsList", { isReady });
 
   useEffect(() => {
     const loadProjects = async () => {
-      const db = (await import("../lib/dexie-db")).db;
       const allProjects = await db.getAllProjects();
+      console.log("ProjectsList", allProjects);
+
       setProjects(allProjects);
     };
     loadProjects();
   }, []);
 
-  // Replace MOCK_PROJECTS.map with projects.map
   return (
     <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-4">
       <CreateProjectDialog />
