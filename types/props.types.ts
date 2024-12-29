@@ -1,4 +1,5 @@
 import type { TransitionType } from "@/video/compositions/code-video-composition/types.composition";
+import type { AnimationOptions } from "@tsparticles/engine";
 export type IndividualReturnType = string | number | boolean;
 
 type PostProcessor = (value: string) => IndividualReturnType;
@@ -59,7 +60,7 @@ export interface Media {
 export interface TextProps {
   content: string;
   duration: number;
-  animation: string;
+  animation: AnimationOptions;
   delay: number;
   fontSize: string;
   fontWeight: string;

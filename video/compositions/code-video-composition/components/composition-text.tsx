@@ -382,7 +382,7 @@ export const typewriter: AnimationFn = ({ frame, index, delay = 10 }) => {
   };
 };
 
-type AnimationType =
+export type AnimationOptions =
   | "fadeInSlideUp"
   | "fadeInSlideDown"
   | "fadeInOnly"
@@ -395,7 +395,7 @@ type AnimationType =
   | "fadeInWithColor"
   | "wave"
   | "typewriter";
-const ANIMATION_MAP: Record<AnimationType, AnimationFn> = {
+const ANIMATION_MAP: Record<AnimationOptions, AnimationFn> = {
   fadeInSlideUp,
   fadeInSlideDown,
   fadeInOnly,
@@ -422,7 +422,7 @@ const CompositionText = ({
   applyTo = "word",
   delay = 0, // Delay for the entire animation to start
 }: {
-  animationType?: AnimationType;
+  animationType?: AnimationOptions;
   text?: string;
   delay?: number; // Delay in frames before starting the animation
   applyTo?: "word" | "sentence";
