@@ -45,8 +45,8 @@ import { FileDropzone } from "./file-dropzone";
 import { AssetGallery } from "./project-assets-gallery";
 import { Button } from "./ui/button";
 import { useRendering } from "@/hooks/use-rendering";
-import useCompositionStore from "@/store/composition-store";
 import { Input } from "./ui/input";
+import { useProjectStore } from "@/store/project-store";
 
 const data = {
   user: {
@@ -124,8 +124,9 @@ export const SidebarBlock = ({
   </div>
 );
 const RenderSectionSidebarContent = () => {
-  const scenes = useCompositionStore((state) => state.scenes);
-  const styles = useCompositionStore((state) => state.styles);
+  const {
+    currentProject: { scenes, styles },
+  } = useProjectStore();
   const { renderMedia, state, undo } = useRendering(
     "code-transition-composition",
     {

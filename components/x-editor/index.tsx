@@ -1,7 +1,6 @@
 "use client";
 
 import { useMdxProcessor } from "@/hooks/codehike/useMDXProcessor";
-import useCompositionStore from "@/store/composition-store";
 import { Editor, type Monaco, type OnMount } from "@monaco-editor/react";
 import { editor, type IDisposable, type IKeyboardEvent } from "monaco-editor";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -23,11 +22,21 @@ import { configureContextMenu } from "./utils/context-menu/configure-context-men
 import { configureSnippets } from "./utils/snippets";
 import CommandMenu, { type Position } from "./command-menu";
 import { provideCodeActions } from "./utils/code-action/code-action.new";
+import { useProjectStore } from "@/store/project-store";
+import { useParams } from "next/navigation";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 function XEditor() {
+  const { id: projectId } = useParams<{
+    id: string;
+  }>();
+  console.log({ projectId });
+
   const [mounted, setMounted] = useState(false);
-  const { content, setContent, loadSavedContent } = useCompositionStore();
+
+  const { currentProject, updateContent, loadProject } = useProjectStore();
+  const { content, styles } = currentProject;
+
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
   const activeDecorationsRef = useRef<string[]>([]); // Add this ref
@@ -75,9 +84,10 @@ function XEditor() {
     editor: editorRef.current,
     monaco: monacoRef.current,
   });
-  // useEffect(() => {
-  //   loadSavedContent(); // TODO : need to check this, sometimes it's not able to parse the content on mount in useMdxProcessor hook.
-  // }, [loadSavedContent]);
+
+  useEffect(() => {
+    loadProject(projectId);
+  }, [projectId, loadProject]);
 
   // Prevent hydration mismatch
   useEffect(() => {
@@ -240,7 +250,7 @@ function XEditor() {
         height="100%"
         defaultLanguage="markdown"
         value={content}
-        onChange={(value) => setContent(value ?? "")}
+        onChange={(value) => updateContent(value ?? "")}
         onMount={handleEditorMount}
         options={monacoCustomOptions}
       />

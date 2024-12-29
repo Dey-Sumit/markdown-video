@@ -1,6 +1,5 @@
 "use client";
 
-import useCompositionStore from "@/store/composition-store";
 import CodeVideoComposition from "@/video/compositions/code-video-composition";
 import { compositionMetaData } from "@/video/compositions/code-video-composition/config";
 import { Player, type PlayerRef } from "@remotion/player";
@@ -8,13 +7,14 @@ import { useRef, useState } from "react";
 import PlayerControls from "./player-controls";
 import { Button } from "../ui/button";
 import { RefreshCcw } from "lucide-react";
+import { useProjectStore } from "@/store/project-store";
 
 const XPlayer = () => {
   const playerRef = useRef<PlayerRef>(null);
-  const duration = useCompositionStore((state) => state.duration);
-  const scenes = useCompositionStore((state) => state.scenes);
+  const {
+    currentProject: { duration, scenes, styles },
+  } = useProjectStore();
 
-  const styles = useCompositionStore((state) => state.styles);
   const { width, height, fps } = compositionMetaData;
   const [reloadKey, setReloadKey] = useState(1);
 
