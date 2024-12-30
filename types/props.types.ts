@@ -64,4 +64,6 @@ export interface TextProps {
   delay: number;
   fontSize: string;
   fontWeight: string;
+  applyTo: string;
+  color: string;
 }

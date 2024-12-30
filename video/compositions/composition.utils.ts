@@ -1,10 +1,7 @@
 import { fade } from "@remotion/transitions/fade";
 import { type SlideDirection, slide } from "@remotion/transitions/slide";
 import { type WipeDirection, wipe } from "@remotion/transitions/wipe";
-import {
-  CODE_COMP_TRANSITION_DURATION_IN_SECONDS,
-  FALLBACK_PROPS_RAW_FORMAT,
-} from "./code-video-composition/config";
+import { type FlipDirection, flip } from "@remotion/transitions/flip";
 import type { Scene } from "./code-video-composition/types.composition";
 import { linearTiming } from "@remotion/transitions";
 import { none } from "@remotion/transitions/none";
@@ -60,6 +57,10 @@ export const createTransitionConfig = ({
       type: "magic";
       direction: string;
     }
+  | {
+      type: "flip";
+      direction: FlipDirection;
+    }
 ) & {
   durationInSeconds: number;
   fps: number;
@@ -67,6 +68,13 @@ export const createTransitionConfig = ({
   timing: ReturnType<typeof linearTiming>;
   presentation: ReturnType<typeof slide | typeof fade | typeof wipe>;
 } => {
+  console.log("createTransitionConfig", {
+    type,
+    durationInSeconds,
+    direction,
+    fps,
+  });
+
   switch (type) {
     case "slide": {
       return {
@@ -89,6 +97,13 @@ export const createTransitionConfig = ({
           durationInFrames: convertSecondsToFramerate(durationInSeconds, fps),
         }),
         presentation: wipe({ direction }),
+      };
+    case "flip":
+      return {
+        timing: linearTiming({
+          durationInFrames: convertSecondsToFramerate(durationInSeconds, fps),
+        }),
+        presentation: flip({ direction }),
       };
     //! does not matter
     case "none":

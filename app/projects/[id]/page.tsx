@@ -38,11 +38,11 @@ function Page() {
             direction="horizontal"
             className="min-h-[200px] md:min-w-[450px]"
           >
-            <ResizablePanel defaultSize={100} minSize={20}>
+            <ResizablePanel defaultSize={60} minSize={20}>
               <ClientSideEditor />
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={0} minSize={20}>
+            <ResizablePanel defaultSize={40} minSize={20}>
               <ClientXPlayer />
             </ResizablePanel>
           </ResizablePanelGroup>

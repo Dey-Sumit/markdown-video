@@ -3,6 +3,7 @@
 import type { Monaco } from "@monaco-editor/react";
 import { EditorLinter } from "./linter";
 import type { editor } from "monaco-editor";
+import { EDITOR_LANGUAGE } from "../const";
 
 export const configureDiagnostics = (
   monaco: Monaco,
@@ -27,7 +28,7 @@ export const configureDiagnostics = (
     }));
 
     // Set markers directly using Monaco's marker service
-    monaco.editor.setModelMarkers(model, "markdown", markers);
+    monaco.editor.setModelMarkers(model, EDITOR_LANGUAGE, markers);
   };
 
   const disposable = model.onDidChangeContent(() => {

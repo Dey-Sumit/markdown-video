@@ -83,6 +83,7 @@ type TextArgs = {
   fontSize: string;
   fontWeight: string;
   applyTo: string;
+  color: string;
 };
 
 const CORE_PROPS_CONFIG = {
@@ -105,7 +106,7 @@ const CORE_PROPS_CONFIG = {
         type: "string",
         required: false,
         default: "transparent",
-        values: ["#1a1a1a", "#713f12", "transparent"],
+        values: ["black", "white", "red", "blue", "green", "yellow"],
       },
     },
   },
@@ -208,7 +209,7 @@ const CORE_PROPS_CONFIG = {
       },
       animation: {
         type: "string",
-        default: "fadeInSlideUp",
+        default: "none",
         values: ["fadeInSlideUp", "fadeInSlideDown", "fadeInOnly", "wobble"],
       },
       delay: {
@@ -228,6 +229,11 @@ const CORE_PROPS_CONFIG = {
       applyTo: {
         type: "string",
         default: "word",
+      },
+      color: {
+        type: "string",
+        default: "white",
+        values: ["black", "white", "red", "blue", "green", "yellow"],
       },
     },
   },

@@ -382,25 +382,85 @@ export const typewriter: AnimationFn = ({ frame, index, delay = 10 }) => {
   };
 };
 
+export const none: AnimationFn = () => {
+  return {
+    opacity: 1,
+    transform: "none",
+    clipPath: undefined,
+  };
+};
+export const slideFromBehind: AnimationFn = ({
+  frame,
+  index,
+  delay = 20, // Delay between each word's appearance
+}) => {
+  const startFrame = index * delay; // Each word starts after the previous one
+  const adjustedFrame = frame - startFrame; // Frame adjusted for the delay
+
+  // For the first word, no sliding, just fading in
+  if (index === 0) {
+    const opacity = interpolate(
+      adjustedFrame,
+      [0, 10], // Fade in over 10 frames
+      [0, 1],
+      { extrapolateRight: "clamp" },
+    );
+
+    return {
+      opacity,
+      transform: "none", // No sliding for the first word
+    };
+  }
+
+  // Prevent premature animation for subsequent words
+  if (adjustedFrame < 0) {
+    return {
+      opacity: 0, // Initially hidden
+      transform: `translateX(-100px)`, // Start behind the previous word
+    };
+  }
+
+  // Calculate opacity and position for sliding
+  const opacity = interpolate(
+    adjustedFrame,
+    [0, 10], // Fade in over 10 frames
+    [0, 1],
+    { extrapolateRight: "clamp" },
+  );
+
+  const translateX = interpolate(
+    adjustedFrame,
+    [0, 10], // Smooth slide over 10 frames
+    [-100, 0], // Slide from behind
+    { extrapolateRight: "clamp" },
+  );
+
+  return {
+    opacity, // Fading in
+    transform: `translateX(${translateX}px)`, // Sliding for subsequent words
+  };
+};
+
 export type AnimationOptions =
   | "fadeInSlideUp"
   | "fadeInSlideDown"
   | "fadeInOnly"
   | "scaleIn"
-  //   | "rotateIn"
   | "bounceIn"
   | "flipIn"
   | "zoomOut"
   | "wobble"
   | "fadeInWithColor"
   | "wave"
-  | "typewriter";
+  | "typewriter"
+  | "none"
+  | "slideFromBehind";
+
 const ANIMATION_MAP: Record<AnimationOptions, AnimationFn> = {
   fadeInSlideUp,
   fadeInSlideDown,
   fadeInOnly,
   scaleIn,
-  //   rotateIn,
   bounceIn,
   flipIn,
   zoomOut,
@@ -408,24 +468,39 @@ const ANIMATION_MAP: Record<AnimationOptions, AnimationFn> = {
   fadeInWithColor,
   wave,
   typewriter,
+  slideFromBehind,
+  none,
 };
-const Wrapper = ({ children }: { children: React.ReactNode }) => {
+
+const Wrapper = ({
+  children,
+  style,
+}: {
+  children: React.ReactNode;
+  style: React.CSSProperties;
+}) => {
   return (
-    <div className="absolute inset-0 flex w-full flex-col items-center justify-center gap-10 p-16">
+    <div
+      className="absolute inset-0 flex w-full flex-col items-center justify-center gap-10 p-16 font-sans text-[7.5rem] font-black tracking-wide text-white"
+      style={style}
+    >
       {children}
     </div>
   );
 };
+
 const CompositionText = ({
-  animationType = "wave",
+  animationType = "none",
   text = "Hello, This is the next step",
   applyTo = "word",
   delay = 0, // Delay for the entire animation to start
+  color = "white",
 }: {
-  animationType?: AnimationOptions;
+  animationType: AnimationOptions;
   text?: string;
   delay?: number; // Delay in frames before starting the animation
   applyTo?: "word" | "sentence";
+  color?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -433,7 +508,7 @@ const CompositionText = ({
   let animationFn = ANIMATION_MAP[animationType]; // Select the animation function
 
   if (!animationFn) {
-    animationFn = ANIMATION_MAP["wave"]; // Default to "wave" animation
+    animationFn = ANIMATION_MAP["none"]; // Default to "none" animation
     // throw new Error(`Unknown animation type: ${animationType}`);
   }
 
@@ -446,9 +521,12 @@ const CompositionText = ({
     });
 
     return (
-      <Wrapper>
+      <Wrapper
+        style={{
+          color,
+        }}
+      >
         <h1
-          className="font-sans text-[7.5rem] font-black tracking-wide text-white"
           style={{
             opacity,
             transform,
@@ -465,8 +543,12 @@ const CompositionText = ({
   const words = text.split(" ");
 
   return (
-    <Wrapper>
-      <h1 className="font-sans text-[7.5rem] font-black tracking-wide text-white">
+    <Wrapper
+      style={{
+        color,
+      }}
+    >
+      <h1>
         {words.map((word, index) => {
           const { opacity, transform, clipPath } = animationFn({
             frame: frame - delay, // Apply the delay globally
@@ -482,6 +564,9 @@ const CompositionText = ({
                 opacity,
                 transform,
                 ...(clipPath && { clipPath }), // Apply clipPath only when defined
+
+                zIndex: words.length - index, // Reverse z-index: higher for earlier words
+                position: "relative", // Ensure z-index works
               }}
             >
               {word}&nbsp;

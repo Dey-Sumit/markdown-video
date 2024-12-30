@@ -47,7 +47,7 @@ export function parseColorToRGBA(
 }
 
 export function getMediaType(url: string): string | null {
-  const imageExtensions = ["jpg", "jpeg", "png"];
+  const imageExtensions = ["jpg", "jpeg", "png", "webp", "svg", "bmp", "ico",];
   const gifExtensions = ["gif"];
   const videoExtensions = ["mp4", "webm", "ogg"];
 

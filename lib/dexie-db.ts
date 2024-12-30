@@ -49,7 +49,7 @@ export interface Project {
   id: string; // Changed from number to string for UUID
   title: string; // Changed from name
   category: string; // Added
-  duration: string; // Added
+  duration: number; // Added
   description: string;
   content: string;
   styles: ProjectStyles;
@@ -87,7 +87,7 @@ export class EditorDatabase extends Dexie {
       title,
       description,
       category,
-      duration: "5",
+      duration: 0,
       content: DEFAULT_PROJECT_TEMPLATE,
       styles: DEFAULT_COMPOSITION_STYLES,
       createdAt: new Date(),
@@ -126,7 +126,7 @@ export class EditorDatabase extends Dexie {
    * @param id - Project ID
    * @returns Promise resolving when deletion is complete
    */
-  async deleteProject(id: number): Promise<void> {
+  async deleteProject(id: string): Promise<void> {
     await this.projects.delete(id);
   }
 }

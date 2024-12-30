@@ -14,7 +14,7 @@ import type { Scene } from "@/video/compositions/code-video-composition/types.co
 import { calculateCompositionDuration } from "@/video/compositions/composition.utils";
 import { DEFAULT_COMPOSITION_STYLES } from "@/lib/const";
 
-const AUTO_SAVE_DELAY = 5 * 1000; // 10 seconds
+const AUTO_SAVE_DELAY = 20 * 1000; // 10 seconds
 
 export const DEFAULT_PROJECT_TEMPLATE = `## !!scene --title=Text --duration=4 --background=blue
 !text --content="Your Text With Animation" --animation=fadeInSlideUp --duration=3 --delay=0.5
@@ -63,6 +63,8 @@ interface ProjectState {
   };
   isLoading: boolean;
   error: Error | null;
+  _lastSaveTimestamp: number;
+  _pendingChanges: boolean;
 }
 
 interface ProjectActions {
@@ -75,7 +77,7 @@ interface ProjectActions {
 }
 
 type ProjectStore = ProjectState & ProjectActions;
-
+let saveTimeout: NodeJS.Timeout | null = null;
 /**
  * Creates and configures the project store with Zustand
  */
@@ -92,7 +94,8 @@ export const useProjectStore = create<ProjectStore>()(
       },
       isLoading: false,
       error: null,
-
+      _lastSaveTimestamp: Date.now(),
+      _pendingChanges: false,
       updateScenes: (scenes) =>
         set((state) => {
           state.currentProject.scenes = scenes;
@@ -153,36 +156,31 @@ export const useProjectStore = create<ProjectStore>()(
        * @param content - New content to save
        */
       updateContent: (content: string) => {
-        const state = get();
-        if (!state.currentProject.id) return;
-        console.log("state.currentProject.id", state.currentProject.id);
-
-        // Validate content before saving
-        const model = editor.createModel(content, "markdown");
-        const { hasErrors } = validateMarkdown(model);
-        model.dispose();
-        // if (hasErrors) return;
+        // Clear existing timeout
+        if (saveTimeout) {
+          clearTimeout(saveTimeout);
+        }
 
         set((state) => {
           state.currentProject.content = content;
+          state._pendingChanges = true;
         });
 
-        // Handle auto-save
-        if ((state as any)._saveTimeout) {
-          clearTimeout((state as any)._saveTimeout);
-        }
+        saveTimeout = setTimeout(async () => {
+          const currentState = get();
+          if (!currentState._pendingChanges) return;
 
-        (state as any)._saveTimeout = setTimeout(async () => {
           try {
-            await db.updateProject(state.currentProject.id!, {
+            await db.updateProject(currentState.currentProject.id!, {
               content,
-              lastModified: new Date(),
             });
-            toast.success("Changes saved", { duration: 1000 });
+            set((state) => {
+              state._lastSaveTimestamp = Date.now();
+              state._pendingChanges = false;
+            });
+            toast.success("Changes saved");
           } catch (error) {
-            console.log("Failed to save changes", error);
-
-            toast.error("Failed to save changes");
+            toast.error("Save failed");
           }
         }, AUTO_SAVE_DELAY);
       },

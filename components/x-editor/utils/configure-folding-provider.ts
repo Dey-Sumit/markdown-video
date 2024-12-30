@@ -1,5 +1,6 @@
 import type { Monaco } from "@monaco-editor/react";
 import { languages } from "monaco-editor";
+import { EDITOR_LANGUAGE } from "../const";
 
 interface FoldingRange {
   start: number;
@@ -8,7 +9,7 @@ interface FoldingRange {
 }
 
 export const configureFoldingProvider = (monaco: Monaco) => {
-  monaco.languages.registerFoldingRangeProvider("markdown", {
+  monaco.languages.registerFoldingRangeProvider(EDITOR_LANGUAGE, {
     provideFoldingRanges: (model) => {
       const ranges: FoldingRange[] = [];
       const lineCount = model.getLineCount();

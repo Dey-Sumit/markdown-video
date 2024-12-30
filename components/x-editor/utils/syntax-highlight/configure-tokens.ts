@@ -1,7 +1,8 @@
 import type { Monaco } from "@monaco-editor/react";
+import { EDITOR_LANGUAGE } from "../../const";
 
 export const configureTokenizer = (monaco: Monaco) => {
-  monaco.languages.setMonarchTokensProvider("markdown", {
+  monaco.languages.setMonarchTokensProvider(EDITOR_LANGUAGE, {
     defaultToken: "",
     tokenizer: {
       root: [

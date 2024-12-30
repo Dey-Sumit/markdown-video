@@ -3,6 +3,7 @@ import { editor, languages, Position, type IRange } from "monaco-editor";
 import { type Monaco } from "@monaco-editor/react";
 import { type SceneProperty } from "../types.x-editor";
 import { CORE_PROPS_CONFIG } from "../config/property-config";
+import { EDITOR_LANGUAGE } from "../const";
 
 export class EditorCompletionProvider {
   constructor(
@@ -555,7 +556,7 @@ export class EditorCompletionProvider {
 export const configureCompletions = (monaco: Monaco) => {
   const provider = new EditorCompletionProvider(monaco, CORE_PROPS_CONFIG);
 
-  return monaco.languages.registerCompletionItemProvider("markdown", {
+  return monaco.languages.registerCompletionItemProvider(EDITOR_LANGUAGE, {
     // Trigger on ! for properties and space for arguments
     triggerCharacters: ["!", " ", "-", "=", "#", "`"],
     /**

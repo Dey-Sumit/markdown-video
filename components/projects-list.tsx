@@ -3,8 +3,19 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CreateProjectDialog } from "./create-project-dialog";
-import dynamic from "next/dynamic";
 import { db, type Project } from "@/lib/dexie-db";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const getRandomEmoji = () => {
   const emojis = ["🎥", "📹", "🎬", "🎦", "📽️", "🎭", "🎪", "🎨"];
@@ -13,14 +24,6 @@ const getRandomEmoji = () => {
 
 const ProjectsList = () => {
   const [projects, setProjects] = useState<Project[]>([]);
-  // const {
-  //   createProject,
-  //   getAllProjects,
-  //   updateProject,
-  //   deleteProject,
-  //   isReady,
-  // } = useProjectDb();
-  // console.log("ProjectsList", { isReady });
 
   useEffect(() => {
     const loadProjects = async () => {
@@ -33,15 +36,15 @@ const ProjectsList = () => {
   }, []);
 
   return (
-    <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+    <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       <CreateProjectDialog />
 
       {projects.map((project) => (
-        <Link href={`/projects/${project.id}`} key={project.id}>
-          <div
-            key={project.id}
-            className="flex min-h-52 cursor-pointer flex-col rounded-lg border border-gray-200 bg-gray-100 p-1 dark:border-neutral-700 dark:bg-neutral-800"
-          >
+        <div
+          key={project.id}
+          className="flex min-h-52 cursor-pointer flex-col rounded-lg border border-gray-200 bg-gray-100 p-1 dark:border-neutral-700 dark:bg-neutral-800"
+        >
+          <Link href={`/projects/${project.id}`} key={project.id}>
             <div className="flex h-full min-h-40 flex-col justify-between rounded-md bg-white p-4 shadow-sm dark:bg-neutral-900">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <div className="grow">
@@ -93,30 +96,57 @@ const ProjectsList = () => {
                 </div>
               </div>
             </div>
-
-            <div className="mt-auto">
-              <ul className="flex flex-wrap items-center justify-center gap-3">
-                <li className="relative inline-flex items-center pe-3.5 text-xs text-gray-500 after:absolute after:end-0 after:top-1/2 after:inline-block after:h-3 after:w-px after:-translate-y-1/2 after:bg-gray-300 last:pe-0 last:after:hidden dark:text-neutral-500 dark:after:bg-neutral-600">
-                  <button
-                    type="button"
-                    disabled
-                    className="py-3 text-xs font-medium text-gray-800 underline underline-offset-4 hover:text-indigo-600 focus:text-indigo-600 focus:outline-none disabled:pointer-events-none disabled:no-underline disabled:opacity-50 dark:text-neutral-200 dark:hover:text-indigo-400 dark:focus:text-indigo-400"
-                  >
-                    Remove
-                  </button>
-                </li>
-                <li className="relative inline-flex items-center pe-3.5 text-xs text-gray-500 after:absolute after:end-0 after:top-1/2 after:inline-block after:h-3 after:w-px after:-translate-y-1/2 after:bg-gray-300 last:pe-0 last:after:hidden dark:text-neutral-500 dark:after:bg-neutral-600">
-                  <button
-                    type="button"
-                    className="py-3 text-xs font-medium text-gray-800 hover:text-indigo-600 focus:text-indigo-600 focus:outline-none disabled:pointer-events-none disabled:no-underline disabled:opacity-50 dark:text-neutral-200 dark:hover:text-indigo-400 dark:focus:text-indigo-400"
-                  >
-                    Share
-                  </button>
-                </li>
-              </ul>
-            </div>
+          </Link>
+          <div className="mt-auto">
+            <ul className="flex flex-wrap items-center justify-center gap-3">
+              <li className="relative inline-flex items-center pe-3.5 text-xs text-gray-500 after:absolute after:end-0 after:top-1/2 after:inline-block after:h-3 after:w-px after:-translate-y-1/2 after:bg-gray-300 last:pe-0 last:after:hidden dark:text-neutral-500 dark:after:bg-neutral-600">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <button
+                      type="button"
+                      className="py-3 text-xs font-medium text-red-600 underline-offset-4 hover:text-red-500 disabled:pointer-events-none disabled:no-underline disabled:opacity-50"
+                    >
+                      Delete
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete your project and remove it.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        className="bg-red-600 hover:bg-red-700"
+                        onClick={async () => {
+                          await db.deleteProject(project.id);
+                          setProjects((prevProjects) =>
+                            prevProjects.filter((p) => p.id !== project.id),
+                          );
+                        }}
+                      >
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </li>
+              <li className="relative inline-flex items-center pe-3.5 text-xs text-gray-500 after:absolute after:end-0 after:top-1/2 after:inline-block after:h-3 after:w-px after:-translate-y-1/2 after:bg-gray-300 last:pe-0 last:after:hidden dark:text-neutral-500 dark:after:bg-neutral-600">
+                <button
+                  type="button"
+                  className="py-3 text-xs font-medium text-gray-800 hover:text-indigo-600 focus:text-indigo-600 focus:outline-none disabled:pointer-events-none disabled:no-underline disabled:opacity-50 dark:text-neutral-200 dark:hover:text-indigo-400 dark:focus:text-indigo-400"
+                >
+                  Share
+                </button>
+              </li>
+            </ul>
           </div>
-        </Link>
+        </div>
       ))}
     </div>
   );

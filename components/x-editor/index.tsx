@@ -24,6 +24,7 @@ import CommandMenu, { type Position } from "./command-menu";
 import { provideCodeActions } from "./utils/code-action/code-action.new";
 import { useProjectStore } from "@/store/project-store";
 import { useParams } from "next/navigation";
+import { EDITOR_LANGUAGE } from "./const";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 function XEditor() {
@@ -119,7 +120,7 @@ function XEditor() {
 
     monaco.editor.defineTheme("custom", monacoCustomTheme);
     monaco.editor.setTheme("custom");
-    monaco.languages.register({ id: "markdown" });
+    monaco.languages.register({ id: EDITOR_LANGUAGE });
 
     editor.onKeyDown((e: IKeyboardEvent) => {
       if (e.browserEvent.key === "\\") {
@@ -158,7 +159,7 @@ function XEditor() {
     const model = editor.getModel();
     let disposable: IDisposable;
     if (model) disposable = configureDiagnostics(monaco, model);
-    monaco.languages.registerCodeActionProvider("markdown", {
+    monaco.languages.registerCodeActionProvider(EDITOR_LANGUAGE, {
       provideCodeActions: provideCodeActions,
     });
     configureContextMenu(monaco, editor);
@@ -181,7 +182,7 @@ function XEditor() {
     // configureTokenizer(monaco);
     monaco.editor.defineTheme("custom", monacoCustomTheme);
     monaco.editor.setTheme("custom");
-    monaco.languages.register({ id: "markdown" });
+    monaco.languages.register({ id: EDITOR_LANGUAGE });
 
     editor.onKeyDown((e: IKeyboardEvent) => {
       if (e.browserEvent.key === "\\") {
@@ -221,7 +222,7 @@ function XEditor() {
     const model = editor.getModel();
     let disposable: IDisposable;
     if (model) disposable = configureDiagnostics(monaco, model);
-    monaco.languages.registerCodeActionProvider("markdown", {
+    monaco.languages.registerCodeActionProvider(EDITOR_LANGUAGE, {
       provideCodeActions: provideCodeActions,
     });
     configureContextMenu(monaco, editor);
@@ -234,7 +235,7 @@ function XEditor() {
     };
 
     // configureLinting(editor, monaco);
-    // monaco.languages.register({ id: "markdown" });
+    // monaco.languages.register({ id: EDITOR_LANGUAGE });
     // configureCompletions(monaco);
 
     /* --------- ON DEV : comment above code block to make the hot reload faster --------- */
@@ -247,7 +248,7 @@ function XEditor() {
     <>
       <Editor
         height="100%"
-        defaultLanguage="markdown"
+        defaultLanguage={EDITOR_LANGUAGE}
         value={content}
         onChange={(value) => updateContent(value ?? "")}
         onMount={handleEditorMount}

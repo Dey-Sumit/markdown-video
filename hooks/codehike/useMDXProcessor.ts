@@ -10,6 +10,7 @@ import { recmaCodeHike, remarkCodeHike } from "codehike/mdx";
 import { editor } from "monaco-editor";
 import { Block, HighlightedCodeBlock, parseRoot } from "codehike/blocks";
 import { SceneSchema } from "@/video/compositions/code-video-composition/types.composition";
+import { EDITOR_LANGUAGE } from "@/components/x-editor/const";
 export const useMdxProcessor = () => {
   const {
     currentProject: { content },
@@ -37,7 +38,7 @@ export const useMdxProcessor = () => {
     if (!content) return;
 
     let cancelled = false;
-    const model = editor.createModel(content, "markdown");
+    const model = editor.createModel(content, EDITOR_LANGUAGE);
 
     const processContent = async () => {
       try {
