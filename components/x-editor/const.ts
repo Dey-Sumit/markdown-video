@@ -7,3 +7,5 @@ export const XMONACO_CONSTANTS = {
   VALID_DIRECTIVES,
   VALID_TRANSITIONS,
 };
+
+export const EDITOR_LANGUAGE = "mdx";

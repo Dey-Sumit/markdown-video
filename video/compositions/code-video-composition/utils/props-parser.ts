@@ -23,16 +23,6 @@ interface ParserOptions {
   silent?: boolean;
 }
 
-// TODO : remove this after testing
-/* const FALLBACK_PROPS_RAW_FORMAT = {
-  sceneMeta: "--title= --duration=3 --background=transparent",
-  transition: "--type=magic --duration=0.3 --direction=from-bottom",
-  code: "--family=arial --size=16 --weight=400",
-  media: "--src= --duration=1 --animation=fade --delay=0.5 --withMotion=true",
-  mark: "--delay=0 --duration=1 --type=highlight --color=yellow",
-  text: "--content= --duration=3 --applyTo=word --animation=fadeInSlideUp --delay=0 --fontSize=60 --fontWeight=700 ",
-};
- */
 const configs: PropsParserConfig = {
   sceneMeta: {
     defaults: { title: "", duration: "3", background: "transparent" },
@@ -89,11 +79,12 @@ const configs: PropsParserConfig = {
     defaults: {
       content: "",
       duration: "3",
-      animation: "fadeInSlideUp",
+      animation: "none",
       delay: "0",
       fontSize: "60",
       fontWeight: "700",
       applyTo: "word",
+      color: "white",
     },
     validKeys: [
       "content",
@@ -103,6 +94,7 @@ const configs: PropsParserConfig = {
       "fontSize",
       "fontWeight",
       "applyTo",
+      "color",
     ],
     processors: {
       duration: (value) => Number(value),

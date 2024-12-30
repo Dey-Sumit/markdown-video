@@ -1,5 +1,6 @@
 import { editor, languages, Position, type IRange } from "monaco-editor";
 import { type Monaco } from "@monaco-editor/react";
+import { EDITOR_LANGUAGE } from "../const";
 
 interface SnippetDefinition {
   prefix: string;
@@ -133,7 +134,7 @@ export class SnippetProvider {
    * Registers the snippet provider with Monaco
    */
   public register(): void {
-    this.monaco.languages.registerCompletionItemProvider("markdown", {
+    this.monaco.languages.registerCompletionItemProvider(EDITOR_LANGUAGE, {
       triggerCharacters: ["s", "c", "t"], // Trigger for scene, code, text
       provideCompletionItems: (model, position) => ({
         suggestions: this.getSnippetSuggestions(model, position),

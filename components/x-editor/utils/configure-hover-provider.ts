@@ -1,5 +1,6 @@
 import type { Monaco } from "@monaco-editor/react";
 import { CORE_PROPS_CONFIG } from "../config/property-config";
+import { EDITOR_LANGUAGE } from "../const";
 
 const HOVER_DOCS = {
   scene: {
@@ -60,7 +61,7 @@ const HOVER_DOCS = {
 };
 
 export const configureHoverProvider = (monaco: Monaco) => {
-  monaco.languages.registerHoverProvider("markdown", {
+  monaco.languages.registerHoverProvider(EDITOR_LANGUAGE, {
     provideHover: (model, position) => {
       const line = model.getLineContent(position.lineNumber);
 

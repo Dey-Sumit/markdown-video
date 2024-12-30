@@ -72,7 +72,13 @@ const CompositionImage = ({
       }}
       className="absolute inset-[35px] flex items-center justify-center backdrop-blur-sm"
     >
-      <Img src={src} className="h-full rounded-2xl shadow-2xl" />
+      <Img
+        src={src}
+        className="h-full rounded-2xl shadow-2xl"
+        onError={(e) => {
+          console.log("Error loading image", e);
+        }}
+      />
     </div>
   );
 };
