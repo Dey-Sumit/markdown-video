@@ -98,8 +98,8 @@ function BaseSlide({
         </div>
       )} */}
 
+      {scene.text && <CompositionTextProcessor value={scene.text} />}
       <div className="flex w-full flex-1 flex-col bg-transparent">
-        {scene.text && <CompositionTextProcessor value={scene.text} />}
         {newCode && (
           <Pre
             ref={codeRef}
@@ -114,8 +114,8 @@ function BaseSlide({
             }}
           />
         )}
-
-        {media?.src && getMediaType(media.src) === "image" && (
+        {media?.src && (
+          // {media?.src && getMediaType(media.src) === "image" && (
           <CompositionImage
             src={media.src}
             slideDurationInFrames={slideDurationInFrames}
@@ -143,6 +143,8 @@ export function CompositionSlide(props: CompositionSlideProps) {
 const CompositionTextProcessor = ({ value }: { value: string }) => {
   const { fps } = useVideoConfig();
   const textProps = propsParser.text(value);
+  console.log({ textProps, value });
+
   if (!textProps.content) return null;
   return (
     <CompositionText
