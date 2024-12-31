@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { Img, interpolate, useCurrentFrame } from "remotion";
 
 const CompositionImage = ({
@@ -68,14 +69,19 @@ const CompositionImage = ({
     <div
       style={{
         opacity,
-        transform,
-        zIndex: 10,
+        zIndex: 10, // will come at the top most layer
       }}
-      className="absolute inset-[145px] flex items-center justify-center backdrop-blur-sm"
+      className="absolute inset-0 flex items-center justify-center backdrop-blur-lg"
     >
       <Img
+        style={{
+          transform,
+        }}
         src={src}
-        className="h-full rounded-2xl shadow-2xl"
+        className={cn(
+          "rounded-2xl border-4 border-white shadow-2xl",
+          "h-[60%] w-[60%]",
+        )}
         onError={(e) => {
           console.log("Error loading image", e);
         }}

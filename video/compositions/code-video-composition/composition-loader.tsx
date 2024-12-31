@@ -33,7 +33,7 @@ const HARDCODED_STYLES: CompositionStore["styles"] = {
       color: "#000000",
       gradient: {
         angle: 0,
-        colors: ["red", "green"],
+        colors: ["#65C7F7", "#0052D4"],
       },
     },
   },

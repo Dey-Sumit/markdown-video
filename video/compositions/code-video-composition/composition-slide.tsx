@@ -114,16 +114,16 @@ function BaseSlide({
             }}
           />
         )}
-        {media?.src && (
-          // {media?.src && getMediaType(media.src) === "image" && (
-          <CompositionImage
-            src={media.src}
-            slideDurationInFrames={slideDurationInFrames}
-            mediaAppearanceDelay={convertSecondsToFramerate(media.delay, fps)}
-            withMotion={media.withMotion}
-          />
-        )}
       </div>
+      {media?.src && (
+        // {media?.src && getMediaType(media.src) === "image" && (
+        <CompositionImage
+          src={media.src}
+          slideDurationInFrames={slideDurationInFrames}
+          mediaAppearanceDelay={convertSecondsToFramerate(media.delay, fps)}
+          withMotion={media.withMotion}
+        />
+      )}
     </div>
   );
 }
