@@ -68,13 +68,6 @@ export const createTransitionConfig = ({
   timing: ReturnType<typeof linearTiming>;
   presentation: ReturnType<typeof slide | typeof fade | typeof wipe>;
 } => {
-  console.log("createTransitionConfig", {
-    type,
-    durationInSeconds,
-    direction,
-    fps,
-  });
-
   switch (type) {
     case "slide": {
       return {

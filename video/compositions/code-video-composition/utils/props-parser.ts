@@ -155,7 +155,7 @@ class PropsParser {
     try {
       const params: Record<string, string> = {};
       const paramRegex =
-        type === "text"
+        type === "text" || type === "sceneMeta"
           ? /--(\w+)=\s*(?:"([^"]*?)"|([^\s]*))/g
           : /--(\w+)=\s*([^\s]*)/g;
       const matches = [...input.matchAll(paramRegex)];

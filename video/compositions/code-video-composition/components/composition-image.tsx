@@ -69,6 +69,7 @@ const CompositionImage = ({
       style={{
         opacity,
         transform,
+        zIndex: 10,
       }}
       className="absolute inset-[35px] flex items-center justify-center backdrop-blur-sm"
     >

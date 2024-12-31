@@ -19,3 +19,13 @@ Code Editor :
 2. Quick Fix:  Remove the extra white spaces after = sign.
 3. Autocomplete: once ## is typed, it should suggest the scene keyword. with !!scene --duration=5 
 
+
+
+---
+-----
+--presetStyle=fancy 
+--presetStyle=fancy()
+--presetStyle=fancy(red, 2) // color and padding
+--presetStyle=fancy(--color=red,--padding=2) // color and padding
+
+----
