@@ -521,9 +521,7 @@ const CompositionText = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const borderComponent = {
-    color: "red",
-  };
+  console.log("CompositionText", { text, delay });
 
   let animationFn = ANIMATION_MAP[animationType]; // Select the animation function
 

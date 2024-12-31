@@ -71,7 +71,7 @@ const CompositionImage = ({
         transform,
         zIndex: 10,
       }}
-      className="absolute inset-[35px] flex items-center justify-center backdrop-blur-sm"
+      className="absolute inset-[145px] flex items-center justify-center backdrop-blur-sm"
     >
       <Img
         src={src}
