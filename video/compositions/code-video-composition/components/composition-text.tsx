@@ -521,8 +521,6 @@ const CompositionText = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  console.log("CompositionText", { text, delay });
-
   let animationFn = ANIMATION_MAP[animationType]; // Select the animation function
 
   if (!animationFn) {
