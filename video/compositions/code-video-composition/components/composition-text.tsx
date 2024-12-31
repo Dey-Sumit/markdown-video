@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type CSSProperties } from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
 type AnimationFn = (params: {
@@ -441,7 +441,7 @@ export const slideFromBehind: AnimationFn = ({
   };
 };
 
-export type AnimationOptions =
+export type TextAnimationType =
   | "fadeInSlideUp"
   | "fadeInSlideDown"
   | "fadeInOnly"
@@ -456,7 +456,7 @@ export type AnimationOptions =
   | "none"
   | "slideFromBehind";
 
-const ANIMATION_MAP: Record<AnimationOptions, AnimationFn> = {
+const ANIMATION_MAP: Record<TextAnimationType, AnimationFn> = {
   fadeInSlideUp,
   fadeInSlideDown,
   fadeInOnly,
@@ -472,6 +472,17 @@ const ANIMATION_MAP: Record<AnimationOptions, AnimationFn> = {
   none,
 };
 
+interface Props {
+  blend: CSSProperties["mixBlendMode"];
+  align: CSSProperties["textAlign"];
+  presetStyle: string;
+}
+const props: Props = {
+  blend: "luminosity",
+  align: "center",
+  presetStyle: "fancy(--color=red --padding=2)",
+};
+
 const Wrapper = ({
   children,
   style,
@@ -481,8 +492,13 @@ const Wrapper = ({
 }) => {
   return (
     <div
+      id="comp-text-wrapper"
       className="absolute inset-0 flex w-full flex-col items-center justify-center gap-10 p-16 font-sans text-[7.5rem] font-black tracking-wide text-white"
-      style={style}
+      style={{
+        ...style,
+        zIndex: 5,
+        // mixBlendMode: props.blend
+      }}
     >
       {children}
     </div>
@@ -496,7 +512,7 @@ const CompositionText = ({
   delay = 0, // Delay for the entire animation to start
   color = "white",
 }: {
-  animationType: AnimationOptions;
+  animationType: TextAnimationType;
   text?: string;
   delay?: number; // Delay in frames before starting the animation
   applyTo?: "word" | "sentence";
@@ -504,6 +520,10 @@ const CompositionText = ({
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+
+  const borderComponent = {
+    color: "red",
+  };
 
   let animationFn = ANIMATION_MAP[animationType]; // Select the animation function
 
@@ -548,34 +568,103 @@ const CompositionText = ({
         color,
       }}
     >
-      <h1>
-        {words.map((word, index) => {
-          const { opacity, transform, clipPath } = animationFn({
-            frame: frame - delay, // Apply the delay globally
-            fps,
-            index, // Use index for stagger effect if needed
-          });
+      <h1
+        className="relative px-10 py-0"
+        style={{
+          // border: `1px solid ${borderComponent.color}`,
+          textAlign: props.align,
+        }}
+      >
+        <>
+          {words.map((word, index) => {
+            const { opacity, transform, clipPath } = animationFn({
+              frame: frame - delay, // Apply the delay globally
+              fps,
+              index, // Use index for stagger effect if needed
+            });
 
-          return (
-            <span
-              key={index}
-              style={{
-                display: "inline-block",
-                opacity,
-                transform,
-                ...(clipPath && { clipPath }), // Apply clipPath only when defined
+            return (
+              <>
+                <span
+                  key={index}
+                  style={{
+                    display: "inline-block",
+                    opacity,
+                    transform,
+                    ...(clipPath && { clipPath }), // Apply clipPath only when defined
 
-                zIndex: words.length - index, // Reverse z-index: higher for earlier words
-                position: "relative", // Ensure z-index works
-              }}
-            >
-              {word}&nbsp;
-            </span>
-          );
-        })}
+                    zIndex: words.length - index, // Reverse z-index: higher for earlier words
+                    position: "relative", // Ensure z-index works
+                  }}
+                >
+                  {word}
+                  {index === words.length - 1 ? "" : "\u00A0"}
+                </span>
+              </>
+            );
+          })}
+          {/* <div
+            className="absolute -left-2 -top-2 size-4"
+            style={{
+              backgroundColor: borderComponent.color,
+            }}
+          ></div>
+          <div
+            className="absolute -right-2 -top-2 size-4"
+            style={{
+              backgroundColor: borderComponent.color,
+            }}
+          ></div>
+          <div
+            className="absolute -bottom-2 -left-2 size-4"
+            style={{
+              backgroundColor: borderComponent.color,
+            }}
+          ></div>
+          <div
+            className="absolute -bottom-2 -right-2 size-4"
+            style={{
+              backgroundColor: borderComponent.color,
+            }}
+          ></div> */}
+        </>
       </h1>
     </Wrapper>
   );
 };
 
 export default CompositionText;
+
+const Fancy = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <>
+      {" "}
+      // here we need to create the h1 and updat the styles using react.clone
+      maybe
+      <div
+        className="absolute -left-2 -top-2 size-4"
+        style={{
+          backgroundColor: "red",
+        }}
+      ></div>
+      <div
+        className="absolute -right-2 -top-2 size-4"
+        style={{
+          backgroundColor: "red",
+        }}
+      ></div>
+      <div
+        className="absolute -bottom-2 -left-2 size-4"
+        style={{
+          backgroundColor: "red",
+        }}
+      ></div>
+      <div
+        className="absolute -bottom-2 -right-2 size-4"
+        style={{
+          backgroundColor: "red",
+        }}
+      ></div>
+    </>
+  );
+};

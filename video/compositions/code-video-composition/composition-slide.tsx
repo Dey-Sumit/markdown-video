@@ -14,6 +14,7 @@ import CompositionImage from "./components/composition-image";
 import { convertSecondsToFramerate } from "../composition.utils";
 import { useVideoConfig } from "remotion";
 import CompositionText from "./components/composition-text";
+import type { SceneMetaResult } from "@/types/props.types";
 
 const { fontFamily } = loadFont();
 
@@ -60,6 +61,14 @@ function CodeTransitionWrapper({
   return children({ code, ref });
 }
 
+const getBackground = (sceneMeta: SceneMetaResult): string => {
+  const bg = sceneMeta.background;
+  if (!bg) return "";
+  console.log({ bg });
+
+  return /^'?https?:/.test(bg) ? `url(${bg})` : bg;
+};
+
 function BaseSlide({
   code,
   codeRef,
@@ -73,8 +82,12 @@ function BaseSlide({
 
   return (
     <div
+      id="composition-slide"
       className={cn("flex h-full w-full flex-col px-8 py-4")}
-      style={{ fontFamily, background: sceneMeta.background }}
+      style={{
+        fontFamily,
+        background: getBackground(sceneMeta),
+      }}
     >
       {/* {newCode && (
         <div
@@ -84,7 +97,9 @@ function BaseSlide({
           {newCode?.meta}
         </div>
       )} */}
-      <div className="flex w-full flex-1 flex-col">
+
+      <div className="flex w-full flex-1 flex-col bg-transparent">
+        {scene.text && <CompositionTextProcessor value={scene.text} />}
         {newCode && (
           <Pre
             ref={codeRef}
@@ -99,16 +114,7 @@ function BaseSlide({
             }}
           />
         )}
-        {/* {text.content && (
-          <CompositionText
-            text={text.content}
-            animationType={text.animation}
-            delay={convertSecondsToFramerate(text.delay || 0, fps)}
-            fontSize={text.fontSize}
-            fontWeight={text.fontWeight}
-          />
-        )} */}
-        {scene.text && <CompositionTextProcessor value={scene.text} />}
+
         {media?.src && getMediaType(media.src) === "image" && (
           <CompositionImage
             src={media.src}
@@ -141,11 +147,11 @@ const CompositionTextProcessor = ({ value }: { value: string }) => {
   return (
     <CompositionText
       text={textProps.content}
-      animationType={textProps.animation}
       delay={convertSecondsToFramerate(textProps.delay || 0, fps)}
-      fontSize={textProps.fontSize}
-      fontWeight={textProps.fontWeight}
+      // fontSize={textProps.fontSize}
+      // fontWeight={textProps.fontWeight}
       color={textProps.color}
+      animationType={textProps.animation}
     />
   );
 };
