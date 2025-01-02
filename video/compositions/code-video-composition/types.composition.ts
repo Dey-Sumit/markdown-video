@@ -23,6 +23,7 @@ const BaseSchema = z.object({
   codeBlockUtils: z.string().optional().default(""),
   media: z.string().optional().default(""),
   text: z.string().optional().default(""),
+  contentLayout: z.string().optional().default(""),
 });
 
 export const SceneSchema = Block.extend(BaseSchema.shape);

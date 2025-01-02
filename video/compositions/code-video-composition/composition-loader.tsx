@@ -15,7 +15,8 @@ import { SceneSchema, type CompositionStore } from "./types.composition";
 //   },
 // };
 
-import SampleMarkdownContent from "../../../samples/background-sample.md";
+import SampleMarkdownContent from "../../../samples/layout-sample.md";
+// import SampleMarkdownContent from "../../../samples/background-sample.md";
 import { Block, parseRoot } from "codehike/blocks";
 import { z } from "zod";
 

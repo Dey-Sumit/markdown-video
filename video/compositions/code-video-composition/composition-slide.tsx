@@ -15,6 +15,7 @@ import { convertSecondsToFramerate } from "../composition.utils";
 import { useVideoConfig } from "remotion";
 import CompositionText from "./components/composition-text";
 import type { SceneMetaResult } from "@/types/props.types";
+import ComponentLayoutRenderer from "./components/compone-layout-renderer";
 
 const { fontFamily } = loadFont();
 
@@ -79,6 +80,9 @@ function BaseSlide({
   const { fps } = useVideoConfig();
   const media = scene.media ? propsParser.media(scene.media) : null;
   const sceneMeta = propsParser.sceneMeta(scene.title || "");
+  // TODO : we can put this logic and all inside the ComponentLayoutRenderer
+  const contentLayout = propsParser.contentLayout(scene.contentLayout || "");
+  console.log("BaseSlide", { contentLayout });
 
   return (
     <div
@@ -99,6 +103,12 @@ function BaseSlide({
       )} */}
 
       {scene.text && <CompositionTextProcessor value={scene.text} />}
+
+      {contentLayout?.name && (
+        <div className="absolute inset-0">
+          {ComponentLayoutRenderer(contentLayout)}
+        </div>
+      )}
       <div className="flex w-full flex-1 flex-col bg-transparent">
         {newCode && (
           <Pre
@@ -115,6 +125,7 @@ function BaseSlide({
           />
         )}
       </div>
+
       {media?.src && (
         // {media?.src && getMediaType(media.src) === "image" && (
         <CompositionImage

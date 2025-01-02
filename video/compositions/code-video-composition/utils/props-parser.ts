@@ -10,6 +10,7 @@ import type {
   TypeConfig,
 } from "@/types/props.types";
 import { generateFallbackPropsFormat } from "@/utils/utils";
+import type { contentLayoutReturnType } from "../components/compone-layout-renderer";
 
 class PraseError extends Error {
   constructor(message: string) {
@@ -103,6 +104,36 @@ const configs: PropsParserConfig = {
       fontWeight: (value) => value,
     },
   },
+  contentLayout: {
+    defaults: {},
+    validKeys: ["component"],
+    processors: {
+      component: (value: string) => {
+        console.log("inside contentLayout processors", { value });
+
+        const match = value.match(/(\w+)\((.*)\)/);
+        if (!match) return { name: value, data: {} };
+
+        const [, name, paramsString] = match;
+        const params: Record<string, number | string> = {};
+
+        const paramMatches = paramsString.matchAll(/--(\w+)=([^\s]*)/g);
+        for (const [, key, value] of paramMatches) {
+          params[key] = !isNaN(Number(value)) ? Number(value) : value;
+        }
+        console.log("contentLayout processors", {
+          value,
+          name,
+          params,
+        });
+
+        return {
+          name,
+          data: params,
+        };
+      },
+    },
+  },
   /*  zoom: {
     defaults: { level: "1", delay: "0", point: "(0,0)" },
     validKeys: ["level", "delay", "point"],
@@ -154,11 +185,16 @@ class PropsParser {
 
     try {
       const params: Record<string, string> = {};
+
       const paramRegex =
         type === "text" || type === "sceneMeta"
           ? /--(\w+)=\s*(?:"([^"]*?)"|([^\s]*))/g
-          : /--(\w+)=\s*([^\s]*)/g;
+          : type === "contentLayout"
+            ? /--(\w+)=\s*((?:\w+\([^)]*\)|[^\s]*))/g
+            : /--(\w+)=\s*([^\s]*)/g;
+
       const matches = [...input.matchAll(paramRegex)];
+      console.log({ matches });
 
       if (matches.length === 0) {
         return this.processValues(config, config.defaults);
@@ -237,6 +273,11 @@ class PropsParser {
 
   mark(input: string, options?: ParserOptions): Mark {
     return this.parseArgs("mark", input, options) as unknown as Mark;
+  }
+
+  contentLayout(input: string, options?: ParserOptions) {
+    return this.parseArgs("contentLayout", input, options)
+      .component as contentLayoutReturnType;
   }
 }
 
