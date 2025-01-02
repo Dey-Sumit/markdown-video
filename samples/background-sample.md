@@ -25,3 +25,14 @@
 !media --src=https://png.pngtree.com/background/20230317/original/pngtree-cartoon-cute-illustration-background-picture-image_2149850.jpg --animation=fadeInSlideUp --duration=5 --delay=2
 !transition --type=fade --duration=0.5 
 
+
+## !!scene --duration=7
+!contentLayout --component=Oxgrid(--gridRows=2, --gridColumns=2)
+type : "contentLayout",
+component : {
+    name : "Oxgrid",
+    data : {
+        gridRows : 2,
+        gridColumns : 2
+    }
+}
