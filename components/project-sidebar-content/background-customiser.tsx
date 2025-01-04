@@ -47,8 +47,6 @@ export default function BackgroundCustomize() {
     updateStyles,
   } = useProjectStore();
 
-  console.log("BackgroundCustomize", styles);
-
   const {
     background: {
       color,

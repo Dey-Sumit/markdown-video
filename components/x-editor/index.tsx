@@ -27,6 +27,8 @@ import { useParams } from "next/navigation";
 import { EDITOR_LANGUAGE } from "./const";
 import { Button } from "../ui/button";
 import { formatDocument } from "./format-document";
+import { PluginRegistry } from "./core/registry";
+import { SceneAdapter } from "./plugins/scene/adapter";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 const files = ["Scenes", "Global"] as const;
@@ -121,6 +123,25 @@ function XEditor() {
   if (!mounted) return null;
 
   const handleEditorMount: OnMount = (editor, monaco) => {
+    editorRef.current = editor;
+    monacoRef.current = monaco;
+
+    monaco.editor.defineTheme("custom", monacoCustomTheme);
+    monaco.editor.setTheme("custom");
+    monaco.languages.register({ id: EDITOR_LANGUAGE });
+
+    // Initialize plugin registry
+    const registry = new PluginRegistry(monaco);
+
+    // Register scene plugin
+    const scenePlugin = new SceneAdapter(monaco);
+    registry.register(scenePlugin);
+
+    // Register completions
+    registry.registerCompletions(editor.getModel()!);
+  };
+
+  const __handleEditorMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
     monacoRef.current = monaco;
 
