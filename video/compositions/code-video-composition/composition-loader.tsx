@@ -15,7 +15,7 @@ import { SceneSchema, type CompositionStore } from "./types.composition";
 //   },
 // };
 
-import SampleMarkdownContent from "../../../samples/layout-sample.md";
+import SampleMarkdownContent from "../../../samples/layout-sample-v2.md";
 // import SampleMarkdownContent from "../../../samples/background-sample.md";
 import { Block, parseRoot } from "codehike/blocks";
 import { z } from "zod";
@@ -34,7 +34,7 @@ const HARDCODED_STYLES: CompositionStore["styles"] = {
       color: "#000000",
       gradient: {
         angle: 0,
-        colors: ["#65C7F7", "#0052D4"],
+        colors: ["#203A43", "#2C5364"],
       },
     },
   },
