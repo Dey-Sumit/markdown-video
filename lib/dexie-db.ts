@@ -37,6 +37,7 @@ export interface Container {
 export interface ProjectStyles {
   backgroundContainer: {
     background: Background;
+    fontFamily: string;
   };
   sceneContainer: Container;
 }

@@ -10,6 +10,7 @@ import { Label } from "../ui/label";
 import { Slider } from "../ui/slider";
 import { SidebarContent, SidebarHeader, SidebarInput } from "../ui/sidebar";
 import { useProjectStore } from "@/store/project-store";
+import FontPicker from "./font-picker";
 
 interface BackgroundSettings {
   padding: number;
@@ -334,6 +335,26 @@ export default function BackgroundCustomize() {
                 onValueChange={([value]) => handleSettingChange("inset", value)}
                 max={100}
                 step={1}
+              />
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Fonts</Label>
+                <Button variant="outline" size="sm">
+                  Reset Font
+                </Button>
+              </div>
+              <FontPicker
+                currentFont={styles.backgroundContainer.fontFamily}
+                onFontChange={(fontFamily) => {
+                  updateStyles({
+                    ...styles,
+                    backgroundContainer: {
+                      ...styles.backgroundContainer,
+                      fontFamily,
+                    },
+                  });
+                }}
               />
             </div>
           </div>

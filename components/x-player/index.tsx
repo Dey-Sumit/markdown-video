@@ -14,7 +14,7 @@ const XPlayer = () => {
   const {
     currentProject: { duration, scenes, styles },
   } = useProjectStore();
-  console.log("XPlayer", styles);
+
 
   const { width, height, fps } = compositionMetaData;
   const [reloadKey, setReloadKey] = useState(1);

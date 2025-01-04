@@ -44,6 +44,7 @@ export const CodeTransitionCompositionPropsSchema = z.object({
         image: z.string().optional(),
         activeType: z.enum(["color", "gradient", "image"]),
       }),
+      fontFamily: z.string().optional(),
     }),
     sceneContainer: z.object({
       inset: z.number().optional(),
