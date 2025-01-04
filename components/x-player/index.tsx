@@ -14,6 +14,7 @@ const XPlayer = () => {
   const {
     currentProject: { duration, scenes, styles },
   } = useProjectStore();
+  console.log("XPlayer", styles);
 
   const { width, height, fps } = compositionMetaData;
   const [reloadKey, setReloadKey] = useState(1);
@@ -37,7 +38,6 @@ const XPlayer = () => {
           }}
           className=""
           loop
-          initiallyMuted
           overflowVisible
           inputProps={{
             scenes: scenes,
@@ -46,23 +46,7 @@ const XPlayer = () => {
           key={reloadKey}
           ref={playerRef}
           errorFallback={({ error }) => {
-            return (
-              <div className="flex h-full w-full items-center justify-center">
-                <div className="flex h-[90%] w-[90%] flex-col items-center justify-center gap-8 border bg-gray-950 p-8 text-4xl">
-                  <pre className="whitespace-pre-line leading-10">
-                    There was an error: {JSON.stringify(error.message)}{" "}
-                  </pre>
-
-                  <Button
-                    className="flex items-center justify-center gap-4 p-16 text-4xl"
-                    onClick={() => setReloadKey((prev) => prev + 1)}
-                  >
-                    Reload Player
-                    <RefreshCcw className="ml-4 size-14" />
-                  </Button>
-                </div>
-              </div>
-            );
+            return <ErrorView error={error} setReloadKey={setReloadKey} />;
           }}
         />
       </div>
@@ -76,3 +60,29 @@ const XPlayer = () => {
 };
 
 export default XPlayer;
+
+const ErrorView = ({
+  error,
+  setReloadKey,
+}: {
+  error: Error;
+  setReloadKey: React.Dispatch<React.SetStateAction<number>>;
+}) => {
+  return (
+    <div className="flex h-full w-full items-center justify-center">
+      <div className="flex h-[90%] w-[90%] flex-col items-center justify-center gap-8 border bg-gray-950 p-8 text-4xl">
+        <pre className="whitespace-pre-line leading-10">
+          There was an error: {JSON.stringify(error.message)}{" "}
+        </pre>
+
+        <Button
+          className="flex items-center justify-center gap-4 p-16 text-4xl"
+          onClick={() => setReloadKey((prev) => prev + 1)}
+        >
+          Reload Player
+          <RefreshCcw className="ml-4 size-14" />
+        </Button>
+      </div>
+    </div>
+  );
+};

@@ -29,7 +29,7 @@ import { Button } from "../ui/button";
 import { formatDocument } from "./format-document";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
-const files = ["Global", "Scenes"] as const;
+const files = ["Scenes", "Global"] as const;
 type FileName = (typeof files)[number];
 
 function XEditor() {
@@ -86,7 +86,7 @@ function XEditor() {
 
   useMdxProcessor();
   useEditorShortcuts({
-    content,
+    content: content.sceneLevel, // TODO :  Is it correct?
     editor: editorRef.current,
     monaco: monacoRef.current,
   });

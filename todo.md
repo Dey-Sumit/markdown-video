@@ -29,3 +29,6 @@ Code Editor :
 --presetStyle=fancy(--color=red,--padding=2) // color and padding
 
 ----
+Widget : progress bar , end screen etc
+- put the shadow (shadow2xl) at the background ui level (with options soft, medium, hard)
+- add an option to update the bg with image, video or three js shader

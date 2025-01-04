@@ -40,32 +40,13 @@ const gradientPresets = [
   { from: "#36D1DC", to: "#5B86E5" }, // Cool aqua to deep blue
 ];
 
-export default function BackgroundCustomiser() {
+export default function BackgroundCustomize() {
   const {
     currentProject: { styles },
     updateStyles,
-    
   } = useProjectStore();
 
-  // const styles = {
-  //   backgroundContainer: {
-  //     background: {
-  //       color: "#000000",
-  //       gradient: {
-  //         colors: ["#000000", "#000000"],
-  //         angle: 0,
-  //       },
-  //       image: "",
-  //       activeType: "gradient",
-  //     },
-  //   },
-  //   sceneContainer: {
-  //     padding: 20,
-  //     borderRadius: 8,
-  //     inset: 0,
-  //   },
-  // };
-  // const setStyles = (obj: any) => {};
+  console.log("BackgroundCustomize", styles);
 
   const {
     background: {
@@ -75,25 +56,23 @@ export default function BackgroundCustomiser() {
       activeType,
     },
   } = styles.backgroundContainer;
+
   const [activeTab, setActiveTab] = useState("gradient");
   const [gradientFrom, gradientTo] = colors;
-  // const [gradientColors, setGradientColors] = useState({
-  //   from: gradient.colors[0],
-  //   to: gradient.colors[1],
-  // });
+
   const [solidColor, setSolidColor] = useState("#3F37C9");
-  const [settings, setSettings] = useState<BackgroundSettings>({
-    padding: styles.sceneContainer.padding || 0,
-    borderRadius: styles.sceneContainer.borderRadius || 0,
-    inset: 0,
-  });
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+
+  // const [settings, setSettings] = useState<BackgroundSettings>({
+  //   padding: styles.sceneContainer.padding || 0,
+  //   borderRadius: styles.sceneContainer.borderRadius || 0,
+  //   inset: 0,
+  // });
 
   const handleSettingChange = (
     key: keyof BackgroundSettings,
     value: number,
   ) => {
-    updateStyles({
+    console.log("Setting change", key, value, {
       ...styles,
       sceneContainer: {
         ...styles.sceneContainer,
@@ -101,10 +80,13 @@ export default function BackgroundCustomiser() {
       },
     });
 
-    setSettings((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+    updateStyles({
+      ...styles,
+      sceneContainer: {
+        ...styles.sceneContainer,
+        [key]: value,
+      },
+    });
   };
 
   const handleApplyGradient = (gradientFrom: string, gradientTo: string) => {
@@ -306,7 +288,7 @@ export default function BackgroundCustomiser() {
                 </Button>
               </div>
               <Slider
-                value={[settings.padding]}
+                value={[styles.sceneContainer.padding]}
                 onValueChange={([value]) =>
                   handleSettingChange("padding", value)
                 }
@@ -327,7 +309,7 @@ export default function BackgroundCustomiser() {
                 </Button>
               </div>
               <Slider
-                value={[settings.borderRadius]}
+                value={[styles.sceneContainer.borderRadius]}
                 onValueChange={([value]) =>
                   handleSettingChange("borderRadius", value)
                 }
@@ -348,7 +330,7 @@ export default function BackgroundCustomiser() {
                 </Button>
               </div>
               <Slider
-                value={[settings.inset]}
+                value={[styles.sceneContainer.inset]}
                 onValueChange={([value]) => handleSettingChange("inset", value)}
                 max={100}
                 step={1}

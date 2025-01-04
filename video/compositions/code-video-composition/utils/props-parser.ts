@@ -26,7 +26,7 @@ interface ParserOptions {
 
 const configs: PropsParserConfig = {
   sceneMeta: {
-    defaults: { title: "", duration: "3", background: "transparent" },
+    defaults: { title: "", duration: "3", background: "#030712" },
     validKeys: ["title", "duration", "background"],
     processors: {
       duration: (value) => Number(value),
@@ -109,7 +109,6 @@ const configs: PropsParserConfig = {
     validKeys: ["component"],
     processors: {
       component: (value: string) => {
-
         const match = value.match(/(\w+)\((.*)\)/);
         if (!match) return { name: value, data: {} };
 
