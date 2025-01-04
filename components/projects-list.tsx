@@ -28,7 +28,6 @@ const ProjectsList = () => {
   useEffect(() => {
     const loadProjects = async () => {
       const allProjects = await db.getAllProjects();
-      console.log("ProjectsList", allProjects);
 
       setProjects(allProjects);
     };

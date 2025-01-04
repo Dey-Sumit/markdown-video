@@ -86,7 +86,6 @@ function BaseSlide({
   // const section = propsParser.contentLayout(scene.contentLayout || "");
   const sectionArgs = scene.section;
   const section = sectionParser.parse(`!section ${sectionArgs}`);
-  console.log({ sectionArgs, section });
 
   return (
     <div

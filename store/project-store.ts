@@ -55,7 +55,10 @@ fastestEditor()
 interface ProjectState {
   currentProject: {
     id: string | null;
-    content: string;
+    content: {
+      global: string;
+      sceneLevel: string;
+    };
     styles: ProjectStyles;
     scenes: Scene[];
     duration: number;
@@ -66,10 +69,9 @@ interface ProjectState {
   _lastSaveTimestamp: number;
   _pendingChanges: boolean;
 }
-
 interface ProjectActions {
   loadProject: (id: string) => Promise<void>;
-  updateContent: (content: string) => void;
+  updateContent: (type: "global" | "sceneLevel", content: string) => void;
   updateStyles: (styles: ProjectStyles) => void;
   updateScenes: (scenes: Scene[]) => void;
   setDuration: (duration: number) => void;
@@ -86,7 +88,10 @@ export const useProjectStore = create<ProjectStore>()(
     immer((set, get) => ({
       currentProject: {
         id: null,
-        content: "",
+        content: {
+          global: "",
+          sceneLevel: "",
+        },
         styles: DEFAULT_COMPOSITION_STYLES,
         scenes: [],
         duration: 3,
@@ -112,34 +117,23 @@ export const useProjectStore = create<ProjectStore>()(
        * @param id - Project ID to load
        */
       loadProject: async (id: string) => {
-        const PLAYGROUND_PROJECT_ID = "playground";
-        console.log("Loading project", id);
-
         set((state) => {
           state.isLoading = true;
           state.error = null;
         });
 
-        if (!id) {
-          set((state) => {
-            state.currentProject.id = PLAYGROUND_PROJECT_ID;
-            state.currentProject.content = PLAYGROUND_PROJECT_TEMPLATE;
-            state.currentProject.styles = DEFAULT_COMPOSITION_STYLES;
-            state.isLoading = false;
-          });
-          return;
-        }
-
-        try {
+        /*      try {
           const project = await db.projects.get(id);
           if (!project) throw new Error("Project not found");
 
           set((state) => {
             state.currentProject.id = project.id;
-            state.currentProject.content = project.content;
+            state.currentProject.content = {
+              global: project.content.global || "",
+              sceneLevel: project.content.sceneLevel || project.content || "", // Fallback for existing projects
+            };
             state.currentProject.styles = project.styles;
             state.currentProject.lastModified = project.lastModified;
-
             state.isLoading = false;
           });
         } catch (error) {
@@ -148,31 +142,30 @@ export const useProjectStore = create<ProjectStore>()(
             state.isLoading = false;
           });
           toast.error("Failed to load project");
-        }
+        } */
       },
 
       /**
        * Updates project content with auto-save
        * @param content - New content to save
        */
-      updateContent: (content: string) => {
-        // Clear existing timeout
+      updateContent: (type: "global" | "sceneLevel", content: string) => {
         if (saveTimeout) {
           clearTimeout(saveTimeout);
         }
 
         set((state) => {
-          state.currentProject.content = content;
+          state.currentProject.content[type] = content;
           state._pendingChanges = true;
         });
 
-        saveTimeout = setTimeout(async () => {
+        /*   saveTimeout = setTimeout(async () => {
           const currentState = get();
           if (!currentState._pendingChanges) return;
 
           try {
             await db.updateProject(currentState.currentProject.id!, {
-              content,
+              content: currentState.currentProject.content,
             });
             set((state) => {
               state._lastSaveTimestamp = Date.now();
@@ -182,7 +175,7 @@ export const useProjectStore = create<ProjectStore>()(
           } catch (error) {
             toast.error("Save failed");
           }
-        }, AUTO_SAVE_DELAY);
+        }, AUTO_SAVE_DELAY); */
       },
 
       /**
@@ -221,7 +214,10 @@ export const useProjectStore = create<ProjectStore>()(
         set((state) => {
           state.currentProject = {
             id: null,
-            content: "",
+            content: {
+              global: "",
+              sceneLevel: "",
+            },
             styles: DEFAULT_COMPOSITION_STYLES,
             scenes: [],
             duration: 0,
@@ -230,6 +226,7 @@ export const useProjectStore = create<ProjectStore>()(
           state.error = null;
         });
       },
+      
     })),
     {
       name: "composition-store",
@@ -237,3 +234,13 @@ export const useProjectStore = create<ProjectStore>()(
     },
   ),
 );
+
+export const mergeContent = (global: string, sceneLevel: string): string => {
+  const trimmedGlobal = global.trim();
+  const trimmedSceneLevel = sceneLevel.trim();
+
+  if (!trimmedGlobal) return trimmedSceneLevel;
+  if (!trimmedSceneLevel) return trimmedGlobal;
+
+  return `${trimmedGlobal}\n\n${trimmedSceneLevel}`;
+};

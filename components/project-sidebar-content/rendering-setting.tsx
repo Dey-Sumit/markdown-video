@@ -30,7 +30,6 @@ const Megabytes: React.FC<{
 
 const RenderingSettingStuff = () => {
   const searchParams = useSearchParams();
-  console.log(searchParams);
   const owner = searchParams.get("owner");
   const renderDisabled = owner !== "sumit";
 
