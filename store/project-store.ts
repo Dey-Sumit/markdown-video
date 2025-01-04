@@ -183,28 +183,27 @@ export const useProjectStore = create<ProjectStore>()(
        * @param styles - New styles configuration
        */
       updateStyles: (styles: ProjectStyles) => {
-        const state = get();
-        if (!state.currentProject.id) return;
+        console.log("updateStyles", styles);
 
         set((state) => {
           state.currentProject.styles = styles;
         });
 
         // Auto-save styles
-        if ((state as any)._stylesSaveTimeout) {
-          clearTimeout((state as any)._stylesSaveTimeout);
-        }
+        // if ((state as any)._stylesSaveTimeout) {
+        //   clearTimeout((state as any)._stylesSaveTimeout);
+        // }
 
-        (state as any)._stylesSaveTimeout = setTimeout(async () => {
-          try {
-            await db.updateProject(state.currentProject.id!, {
-              styles,
-              lastModified: new Date(),
-            });
-          } catch (error) {
-            toast.error("Failed to save style changes");
-          }
-        }, AUTO_SAVE_DELAY);
+        // (state as any)._stylesSaveTimeout = setTimeout(async () => {
+        //   try {
+        //     await db.updateProject(state.currentProject.id!, {
+        //       styles,
+        //       lastModified: new Date(),
+        //     });
+        //   } catch (error) {
+        //     toast.error("Failed to save style changes");
+        //   }
+        // }, AUTO_SAVE_DELAY);
       },
 
       /**
@@ -226,7 +225,6 @@ export const useProjectStore = create<ProjectStore>()(
           state.error = null;
         });
       },
-      
     })),
     {
       name: "composition-store",

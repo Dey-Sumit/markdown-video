@@ -31,7 +31,7 @@ type BaseSlideProps = {
 
 type CompositionSlideProps = {
   oldCode?: HighlightedCode;
-  newCode: HighlightedCode;
+  newCode?: HighlightedCode;
   tokenTransitionDurationInFrames: number;
   disableTransition?: boolean;
   slideDurationInFrames: number;

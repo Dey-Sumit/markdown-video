@@ -15,6 +15,12 @@ import ClientSideEditor from "@/components/x-editor/dynamic-x-editor";
 import { ProjectSidebar2 } from "@/components/project-sidebar-2";
 import ClientXPlayer from "@/components/x-editor/dynamic-x-player";
 
+
+
+
+
+
+
 function Page() {
   return (
     <SidebarProvider

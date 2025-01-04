@@ -1,23 +1,38 @@
 import React from "react";
 
-import { TransitionSeries } from "@remotion/transitions";
-import { AbsoluteFill, useVideoConfig } from "remotion";
+import { linearTiming, TransitionSeries } from "@remotion/transitions";
+import { AbsoluteFill, Audio, useVideoConfig } from "remotion";
 
 import { CompositionSlide } from "./composition-slide";
-import {
-  CODE_COMP_TRANSITION_DURATION_IN_SECONDS,
-  FALLBACK_PROPS_RAW_FORMAT,
-} from "./config";
+import { FALLBACK_PROPS_RAW_FORMAT } from "./config";
 import type {
   CodeTransitionCompositionProps,
   TransitionType,
 } from "./types.composition";
+
 import {
   convertSecondsToFramerate,
   createTransitionConfig,
 } from "../composition.utils";
+
 import propsParser from "./utils/props-parser";
 import { createGradient } from "@/utils/utils";
+
+import { slide, type SlideDirection } from "@remotion/transitions/slide";
+import { staticFile } from "remotion";
+import { addSound } from "./utils/add-sound";
+
+const presentation = slide();
+const withSound = addSound(
+  presentation,
+  staticFile("sfx/sweep-transition.wav"),
+);
+const withSoundDynamic = (presentation: any) =>
+  addSound(presentation, staticFile("sfx/sweep-transition.wav"));
+const slideWithSound = addSound(
+  slide(),
+  staticFile("sfx/sweep-transition.wav"),
+);
 
 const CodeVideoComposition = ({
   scenes,
@@ -38,9 +53,8 @@ const CodeVideoComposition = ({
         background: createGradient(gradient.colors, gradient.angle),
       }}
     >
-      {/* <ProgressBar steps={steps} /> */}
       <div
-        className="absolute !h-auto !w-auto overflow-hidden border-gray-800 bg-gray-950 shadow-2xl"
+        className="absolute !h-auto !w-auto overflow-hidden shadow-2xl"
         style={{
           inset: padding,
           borderRadius: borderRadius,
@@ -86,6 +100,15 @@ const CodeVideoComposition = ({
               }
             }
 
+            const __presentation = slide({
+              direction: transitionDirection as SlideDirection,
+            });
+
+            const presentationWithSound = addSound(
+              __presentation,
+              staticFile("sfx/sweep-transition.wav"),
+            );
+
             return (
               <React.Fragment key={index}>
                 {/* the first slide by default will have a transition type wipe from bottom */}
@@ -121,21 +144,40 @@ const CodeVideoComposition = ({
                 {nextSceneTransitionType &&
                   nextSceneTransitionType !== "magic" &&
                   nextSceneTransitionType !== "none" && (
-                    //@ts-ignore
                     <TransitionSeries.Transition
-                      {...createTransitionConfig({
-                        direction: transitionDirection,
-                        durationInSeconds: nextTransitionDurationInSeconds,
-                        fps,
-                        type: nextSceneTransitionType,
+                      presentation={withSoundDynamic(
+                        slide({
+                          direction: transitionDirection as SlideDirection,
+                        }),
+                      )}
+                      // presentation={presentationWithSound}
+                      timing={linearTiming({
+                        durationInFrames: convertSecondsToFramerate(
+                          nextTransitionDurationInSeconds,
+                          fps,
+                        ),
                       })}
                     />
                   )}
+                {/* {nextSceneTransitionType &&
+                  nextSceneTransitionType !== "magic" &&
+                  nextSceneTransitionType !== "none" && (
+                    <TransitionSeries.Transition
+                      presentation={withSound(slide())}
+                      timing={linearTiming({
+                        durationInFrames: convertSecondsToFramerate(
+                          nextTransitionDurationInSeconds,
+                          fps,
+                        ),
+                      })}
+                    />
+                  )} */}
               </React.Fragment>
             );
           })}
         </TransitionSeries>
       </div>
+      <Audio src={staticFile("audio/rock-happy-1.mp3")} />
     </AbsoluteFill>
   );
 };
