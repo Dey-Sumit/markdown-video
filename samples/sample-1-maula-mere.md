@@ -97,6 +97,3 @@ const repeatedString = repeatStringWithEllipsis("Maula mere", 3);
 console.log(repeatedString); // Outputs: "Maula mere, Maula mere, Maula mere..."
 ```
 
-/* -------------------------------------------------------------------------- */
-/*          Create repeatStringWithEllipsis() function in javascript          */
-/* -------------------------------------------------------------------------- */
