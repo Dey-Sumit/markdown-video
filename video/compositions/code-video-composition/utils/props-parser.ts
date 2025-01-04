@@ -109,7 +109,6 @@ const configs: PropsParserConfig = {
     validKeys: ["component"],
     processors: {
       component: (value: string) => {
-        console.log("inside contentLayout processors", { value });
 
         const match = value.match(/(\w+)\((.*)\)/);
         if (!match) return { name: value, data: {} };
@@ -121,11 +120,6 @@ const configs: PropsParserConfig = {
         for (const [, key, value] of paramMatches) {
           params[key] = !isNaN(Number(value)) ? Number(value) : value;
         }
-        console.log("contentLayout processors", {
-          value,
-          name,
-          params,
-        });
 
         return {
           name,

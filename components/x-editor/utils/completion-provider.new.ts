@@ -251,7 +251,6 @@ export class EditorCompletionProvider {
     model: editor.ITextModel,
     lineNumber: number,
   ): boolean {
-    console.log("Checking for closing code block");
 
     for (let i = lineNumber - 1; i >= 1; i--) {
       const line = model.getLineContent(i);
@@ -259,7 +258,6 @@ export class EditorCompletionProvider {
         return line.trim().match(/^```\w+/) !== null;
       }
     }
-    console.log("No code block found");
 
     return false;
   }

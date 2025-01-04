@@ -29,10 +29,14 @@ import { Button } from "../ui/button";
 import { formatDocument } from "./format-document";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
+const files = ["Global", "Scenes"] as const;
+type FileName = (typeof files)[number];
+
 function XEditor() {
   const { id: projectId } = useParams<{
     id: string;
   }>();
+  const [activeFile, setActiveFile] = useState<FileName>("Scenes");
 
   const [mounted, setMounted] = useState(false);
 
@@ -87,9 +91,9 @@ function XEditor() {
     monaco: monacoRef.current,
   });
 
-  useEffect(() => {
+  /*   useEffect(() => {
     loadProject(projectId);
-  }, [projectId, loadProject]);
+  }, [projectId, loadProject]); */
 
   // Prevent hydration mismatch
   useEffect(() => {
@@ -253,10 +257,10 @@ function XEditor() {
 
     const content = model.getValue();
     const formatted = formatDocument(content);
-    console.log({
-      content,
-      formatted,
-    });
+    // console.log({
+    //   content,
+    //   formatted,
+    // });
 
     model.pushEditOperations(
       [],
@@ -270,31 +274,53 @@ function XEditor() {
     );
   };
 
+  const handleEditorChange = (value: string | undefined) => {
+    const fileType = activeFile === "Global" ? "global" : "sceneLevel";
+    updateContent(fileType, value ?? "");
+  };
+
   return (
     <>
-      <Button
-        onClick={handleFormat}
-        className="absolute right-4 top-2 z-10"
-        size="sm"
-        variant="outline"
-      >
-        Format Editor &nbsp; 🧹
-      </Button>
-      <Editor
-        height="100%"
-        defaultLanguage={EDITOR_LANGUAGE}
-        value={content}
-        onChange={(value) => updateContent(value ?? "")}
-        onMount={handleEditorMount}
-        options={monacoCustomOptions}
-      />
-      <CommandMenu
-        position={menuPosition}
-        isVisible={showCommandMenu}
-        editor={editorRef.current}
-        monaco={monacoRef.current}
-        onClose={() => setShowCommandMenu(false)}
-      />
+      <div className="flex h-full flex-col gap-2">
+        <div className="flex justify-between gap-2 border-b">
+          <div>
+            {files.map((fileName, index) => (
+              <Button
+                key={fileName}
+                variant="outline"
+                onClick={() => setActiveFile(fileName)}
+                size="sm"
+                className={`${activeFile === fileName ? "bg-accent" : ""} rounded-none border-y-0`}
+              >
+                {fileName}
+              </Button>
+            ))}
+          </div>
+          <Button
+            onClick={handleFormat}
+            size="sm"
+            variant="outline"
+            className="rounded-none border-y-0"
+          >
+            Format Editor &nbsp; 🧹
+          </Button>
+        </div>
+        <Editor
+          height="100%"
+          defaultLanguage={EDITOR_LANGUAGE}
+          onMount={handleEditorMount}
+          options={monacoCustomOptions}
+          value={activeFile === "Scenes" ? content.sceneLevel : content.global}
+          onChange={handleEditorChange}
+        />
+        <CommandMenu
+          position={menuPosition}
+          isVisible={showCommandMenu}
+          editor={editorRef.current}
+          monaco={monacoRef.current}
+          onClose={() => setShowCommandMenu(false)}
+        />
+      </div>
     </>
   );
 }

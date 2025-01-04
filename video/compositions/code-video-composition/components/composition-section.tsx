@@ -17,7 +17,6 @@ interface SectionProps {
 }
 
 const Section = ({ data }: SectionProps) => {
-  console.log({ data });
   const { fps } = useVideoConfig();
 
   const { cols, rows, direction, gap = 0, items } = data;
@@ -38,7 +37,6 @@ const Section = ({ data }: SectionProps) => {
           case "section":
             return <Section key={index} type="section" data={item.data} />;
           case "text": {
-            console.log("inside section", { item });
 
             return (
               <div

@@ -20,10 +20,18 @@ import SampleMarkdownContent from "../../../samples/layout-sample-v2.md";
 import { Block, parseRoot } from "codehike/blocks";
 import { z } from "zod";
 
-const { scene: scenes, title } = parseRoot(
+const {
+  scene: scenes,
+  title,
+  global,
+} = parseRoot(
   SampleMarkdownContent,
   Block.extend({
     scene: z.array(SceneSchema),
+    global: z.object({
+      title: z.string(),
+      scene: z.string(),
+    }),
   }),
 );
 

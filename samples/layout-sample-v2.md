@@ -1,3 +1,10 @@
+
+<!-- # global starts -->
+## !global 
+!scene --background=red
+
+<!-- # global ends -->
+
 ## !!scene --duration=2
 !text --content="Introducing Layout 👋" --fontSize=48 --animation=fadeInSlideUp
 

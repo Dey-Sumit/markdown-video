@@ -1,5 +1,5 @@
 // Update imports
-import { useProjectStore } from "@/store/project-store";
+import { mergeContent, useProjectStore } from "@/store/project-store";
 import { compile, run } from "@mdx-js/mdx";
 import { validateMarkdown } from "@/components/x-editor/utils";
 import { chConfig } from "@/lib/config/config.codehike";
@@ -11,13 +11,9 @@ import { editor } from "monaco-editor";
 import { Block, HighlightedCodeBlock, parseRoot } from "codehike/blocks";
 import { SceneSchema } from "@/video/compositions/code-video-composition/types.composition";
 import { EDITOR_LANGUAGE } from "@/components/x-editor/const";
+
 export const useMdxProcessor = () => {
-  const {
-    currentProject: { content },
-    updateScenes,
-    isLoading,
-    error,
-  } = useProjectStore();
+  const { currentProject, updateScenes, isLoading, error } = useProjectStore();
 
   const compileAndRun = useCallback(async (mdxContent: string) => {
     try {
@@ -35,29 +31,44 @@ export const useMdxProcessor = () => {
   }, []);
 
   useEffect(() => {
-    if (!content) return;
+   
+
+    if (!currentProject.content.global && !currentProject.content.sceneLevel)
+      return;
 
     let cancelled = false;
-    const model = editor.createModel(content, EDITOR_LANGUAGE);
+    // const model = editor.createModel(content.sceneLevel, EDITOR_LANGUAGE);
 
     const processContent = async () => {
       try {
-        const { hasErrors, issues } = validateMarkdown(model);
-        if (hasErrors) {
-          toast.error("Invalid markdown content");
-          return;
-        }
+        // const { hasErrors, issues } = validateMarkdown(model);
+        // if (hasErrors) {
+        //   toast.error("Invalid markdown content");
+        //   return;
+        // }
+
+        const combinedContent = mergeContent(
+          currentProject.content.global,
+          currentProject.content.sceneLevel,
+        );
 
         const { content: compiledContent, error: compileError } =
-          await compileAndRun(content);
+          await compileAndRun(combinedContent);
         if (compileError) throw new Error(compileError);
 
-        const { scene: scenes } = parseRoot(
+        const { scene: scenes, global } = parseRoot(
           compiledContent!,
           Block.extend({
             scene: z.array(SceneSchema),
+            global: z
+              .object({
+                title: z.string(),
+                scene: z.string(),
+              })
+              .optional(),
           }),
         );
+        console.log({ scenes, global });
 
         if (!cancelled) {
           updateScenes(scenes);
@@ -72,7 +83,11 @@ export const useMdxProcessor = () => {
     return () => {
       cancelled = true;
       clearTimeout(debounceTimer);
-      model.dispose();
+      // model.dispose();
     };
-  }, [content, updateScenes]);
+  }, [
+    currentProject.content.global,
+    currentProject.content.sceneLevel,
+    updateScenes,
+  ]);
 };
