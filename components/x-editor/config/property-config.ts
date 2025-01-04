@@ -86,6 +86,16 @@ type TextArgs = {
   color: string;
 };
 
+type SectionArgs = {
+  cols: number;
+  rows: number;
+  gap: number;
+  items: Array<{
+    type: "section" | "text" | "image";
+    data: any;
+  }>;
+};
+
 const CORE_PROPS_CONFIG = {
   scene: {
     name: "scene",
@@ -237,6 +247,31 @@ const CORE_PROPS_CONFIG = {
       },
     },
   },
+  section: {
+    name: "section",
+    prefix: "!" as const,
+    arguments: {
+      cols: {
+        type: "number",
+        default: "1",
+        processor: (value: string) => Number(value),
+      },
+      rows: {
+        type: "number",
+        default: "1",
+        processor: (value: string) => Number(value),
+      },
+      gap: {
+        type: "number",
+        default: "0",
+        processor: (value: string) => Number(value),
+      },
+      items: {
+        type: "string",
+        default: "",
+      },
+    },
+  },
 } satisfies CorePropsConfigType;
 
 export type CorePropsConfigType = {
@@ -245,6 +280,7 @@ export type CorePropsConfigType = {
   media: CorePropertyConfig<MediaArgs>;
   mark: CorePropertyConfig<MarkArgs>;
   text: CorePropertyConfig<TextArgs>;
+  section: CorePropertyConfig<SectionArgs>;
 };
 
 type RuntimePropertyConfig<T> = {

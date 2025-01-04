@@ -493,10 +493,11 @@ const Wrapper = ({
   return (
     <div
       id="comp-text-wrapper"
-      className="absolute inset-0 flex w-full flex-col items-center justify-center gap-10 p-16 font-sans text-[7.5rem] font-black tracking-wide text-white"
+      className="absolute inset-0 flex w-full flex-col items-center justify-center gap-10 p-2 font-sans text-8xl font-black tracking-wider text-white"
       style={{
         ...style,
         zIndex: 5,
+
         // mixBlendMode: props.blend
       }}
     >
@@ -511,15 +512,18 @@ const CompositionText = ({
   applyTo = "word",
   delay = 0, // Delay for the entire animation to start
   color = "white",
+  fontSize,
 }: {
   animationType: TextAnimationType;
   text?: string;
   delay?: number; // Delay in frames before starting the animation
   applyTo?: "word" | "sentence";
   color?: string;
+  fontSize?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  console.log({ text, applyTo, delay, color, fontSize });
 
   let animationFn = ANIMATION_MAP[animationType]; // Select the animation function
 
@@ -540,6 +544,7 @@ const CompositionText = ({
       <Wrapper
         style={{
           color,
+          fontSize,
         }}
       >
         <h1
@@ -562,6 +567,7 @@ const CompositionText = ({
     <Wrapper
       style={{
         color,
+        fontSize,
       }}
     >
       <h1

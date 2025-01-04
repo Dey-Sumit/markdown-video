@@ -24,6 +24,7 @@ const BaseSchema = z.object({
   media: z.string().optional().default(""),
   text: z.string().optional().default(""),
   contentLayout: z.string().optional().default(""),
+  section: z.string().optional().default(""),
 });
 
 export const SceneSchema = Block.extend(BaseSchema.shape);

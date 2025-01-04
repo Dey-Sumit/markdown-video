@@ -25,6 +25,8 @@ import { provideCodeActions } from "./utils/code-action/code-action.new";
 import { useProjectStore } from "@/store/project-store";
 import { useParams } from "next/navigation";
 import { EDITOR_LANGUAGE } from "./const";
+import { Button } from "../ui/button";
+import { formatDocument } from "./format-document";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 function XEditor() {
@@ -244,8 +246,40 @@ function XEditor() {
     // configureFoldingProvider(monaco);
   };
 
+  const handleFormat = () => {
+    if (!editorRef.current) return;
+    const model = editorRef.current.getModel();
+    if (!model) return;
+
+    const content = model.getValue();
+    const formatted = formatDocument(content);
+    console.log({
+      content,
+      formatted,
+    });
+
+    model.pushEditOperations(
+      [],
+      [
+        {
+          range: model.getFullModelRange(),
+          text: formatted,
+        },
+      ],
+      () => null,
+    );
+  };
+
   return (
     <>
+      <Button
+        onClick={handleFormat}
+        className="absolute right-4 top-2 z-10"
+        size="sm"
+        variant="outline"
+      >
+        Format Editor &nbsp; 🧹
+      </Button>
       <Editor
         height="100%"
         defaultLanguage={EDITOR_LANGUAGE}

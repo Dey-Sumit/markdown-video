@@ -16,6 +16,8 @@ import { useVideoConfig } from "remotion";
 import CompositionText from "./components/composition-text";
 import type { SceneMetaResult } from "@/types/props.types";
 import ComponentLayoutRenderer from "./components/compone-layout-renderer";
+import { sectionParser } from "@/parsers/SectionParser";
+import Section from "./components/composition-section";
 
 const { fontFamily } = loadFont();
 
@@ -65,7 +67,6 @@ function CodeTransitionWrapper({
 const getBackground = (sceneMeta: SceneMetaResult): string => {
   const bg = sceneMeta.background;
   if (!bg) return "";
-  console.log({ bg });
 
   return /^'?https?:/.test(bg) ? `url(${bg})` : bg;
 };
@@ -82,12 +83,15 @@ function BaseSlide({
   const sceneMeta = propsParser.sceneMeta(scene.title || "");
   // TODO : we can put this logic and all inside the ComponentLayoutRenderer
   const contentLayout = propsParser.contentLayout(scene.contentLayout || "");
-  console.log("BaseSlide", { contentLayout });
+  // const section = propsParser.contentLayout(scene.contentLayout || "");
+  const sectionArgs = scene.section;
+  const section = sectionParser.parse(`!section ${sectionArgs}`);
+  console.log({ sectionArgs, section });
 
   return (
     <div
       id="composition-slide"
-      className={cn("flex h-full w-full flex-col px-8 py-4")}
+      className={cn("flex h-full w-full flex-col p-6")}
       style={{
         fontFamily,
         background: getBackground(sceneMeta),
@@ -103,13 +107,16 @@ function BaseSlide({
       )} */}
 
       {scene.text && <CompositionTextProcessor value={scene.text} />}
+      {section.type === "section" && (
+        <Section data={section.data} type={section.type} />
+      )}
 
-      {contentLayout?.name && (
+      {/* {contentLayout?.name && (
         <div className="absolute inset-0">
           {ComponentLayoutRenderer(contentLayout)}
         </div>
-      )}
-      <div className="flex w-full flex-1 flex-col bg-transparent">
+      )} */}
+      {/* <div className="flex w-full flex-1 flex-col bg-transparent">
         {newCode && (
           <Pre
             ref={codeRef}
@@ -124,7 +131,7 @@ function BaseSlide({
             }}
           />
         )}
-      </div>
+      </div> */}
 
       {media?.src && (
         // {media?.src && getMediaType(media.src) === "image" && (
@@ -154,7 +161,6 @@ export function CompositionSlide(props: CompositionSlideProps) {
 const CompositionTextProcessor = ({ value }: { value: string }) => {
   const { fps } = useVideoConfig();
   const textProps = propsParser.text(value);
-  console.log({ textProps, value });
 
   if (!textProps.content) return null;
   return (
