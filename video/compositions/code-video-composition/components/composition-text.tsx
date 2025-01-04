@@ -1,3 +1,4 @@
+import { useProjectStore } from "@/store/project-store";
 import React, { type CSSProperties } from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
@@ -521,6 +522,11 @@ const CompositionText = ({
   color?: string;
   fontSize?: string;
 }) => {
+  const {
+    currentProject: { styles },
+    updateStyles,
+  } = useProjectStore();
+
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -567,6 +573,7 @@ const CompositionText = ({
       style={{
         color,
         fontSize,
+        fontFamily: styles.backgroundContainer.fontFamily,
       }}
     >
       <h1

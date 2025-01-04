@@ -41,7 +41,7 @@ const CodeVideoComposition = ({
   const { fps } = useVideoConfig();
 
   const {
-    backgroundContainer: { background },
+    backgroundContainer: { background, fontFamily },
     sceneContainer: { inset, padding, borderRadius },
   } = styles;
 
@@ -59,6 +59,7 @@ const CodeVideoComposition = ({
           inset: padding,
           borderRadius: borderRadius,
           borderWidth: inset,
+          fontFamily: fontFamily,
         }}
       >
         <TransitionSeries layout="none">

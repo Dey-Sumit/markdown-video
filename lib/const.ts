@@ -11,6 +11,7 @@ export const DEFAULT_COMPOSITION_STYLES: ProjectStyles = {
       image: "",
       activeType: "color",
     },
+    fontFamily: "Inter",
   },
   sceneContainer: {
     inset: 0,
