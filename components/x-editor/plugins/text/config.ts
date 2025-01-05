@@ -8,7 +8,7 @@ const textConfig: AdapterConfig = {
   id: "text",
   pattern: {
     type: "component",
-    prefix: ["!"],
+    pattern: "^\\s*!text\\b",
   },
   template: 'text --content="${1:Hello}" --size=${2:30} --family=${3:sans}',
   arguments: {

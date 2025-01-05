@@ -17,8 +17,8 @@ export abstract class AbstractAdapter implements BaseAdapter {
     if (!type) return [];
 
     switch (type) {
-      case "directive":
-        return this.getDirectiveCompletion(context);
+      case "command":
+        return this.getCommandCompletion(context);
       case "value":
         return this.getValueCompletions(context);
       case "argument":
@@ -30,11 +30,11 @@ export abstract class AbstractAdapter implements BaseAdapter {
 
   protected getCompletionType(
     context: CommandContext,
-  ): "directive" | "value" | "argument" | null {
+  ): "command" | "value" | "argument" | null {
     const { lineContent, position } = context;
     const trimmed = lineContent.trim();
 
-    if (this.isDirectiveStart(trimmed)) return "directive";
+    if (this.isCommandStart(trimmed)) return "command";
     if (!this.matchesPattern(lineContent)) return null;
     if (this.isValueContext(lineContent, position)) return "value";
     if (this.requiresWhitespace(lineContent, position)) return "argument";
@@ -43,34 +43,17 @@ export abstract class AbstractAdapter implements BaseAdapter {
   }
 
   protected matchesPattern(lineContent: string): boolean {
-    const prefixes = Array.isArray(this.config.pattern.prefix)
-      ? this.config.pattern.prefix
-      : [this.config.pattern.prefix];
-
-    if (this.config.pattern.type === "directive") {
-      const leadingSymbols = this.config.pattern.leadingSymbols ?? [];
-      const pattern = new RegExp(
-        `^\\s*(${leadingSymbols.join("|")})\\s*(${prefixes.join("|")})${this.config.id}\\b`,
-      );
-      return pattern.test(lineContent);
-    }
-
-    const pattern = new RegExp(
-      `^\\s*(${prefixes.join("|")})${this.config.id}\\b`,
-    );
-    return pattern.test(lineContent);
+    return new RegExp(this.config.pattern.pattern).test(lineContent);
   }
 
-  protected isDirectiveStart(trimmed: string): boolean {
-    console.log("isDirectiveStart:", {
-      trimmed,
-      prefixes: this.config.pattern.prefix,
-      type: this.config.pattern.type,
-    });
-
-    // For components, treat prefix as directive start
+  protected isCommandStart(trimmed: string): boolean {
     if (this.config.pattern.type === "component") {
-      return this.config.pattern.prefix.includes(trimmed);
+      const trigger = this.config.pattern.pattern.match(/\^\\s\*(\S+?)\w/)?.[1];
+      return trimmed === trigger;
+    }
+
+    if (this.config.pattern.type === "codeComponent") {
+      // TODO : add the
     }
 
     const leadingSymbols = this.config.pattern.leadingSymbols ?? [];
@@ -78,7 +61,6 @@ export abstract class AbstractAdapter implements BaseAdapter {
       (symbol) => trimmed === symbol || trimmed === symbol.trim(),
     );
   }
-
   protected createRange(
     position: Position,
     startColumn?: number,
@@ -125,7 +107,7 @@ export abstract class AbstractAdapter implements BaseAdapter {
     return matchesWhitespace && matchesValue;
   }
 
-  protected getDirectiveCompletion(
+  protected getCommandCompletion(
     context: CommandContext,
   ): languages.CompletionItem[] {
     const { position, wordRange } = context;
