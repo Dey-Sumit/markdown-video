@@ -65,4 +65,100 @@ export class PluginRegistry {
     // Return disposable for content changes
     return model.onDidChangeContent(validateContent);
   }
+
+  registerHoverProvider(model: editor.ITextModel): void {
+    this.monaco.languages.registerHoverProvider(EDITOR_LANGUAGE, {
+      provideHover: (model, position) => {
+        const lineContent = model.getLineContent(position.lineNumber);
+
+        for (const plugin of this.plugins.values()) {
+          const hover = plugin.provideHover({
+            lineContent,
+            position,
+            model,
+          });
+          if (hover) return hover;
+        }
+        return null;
+      },
+    });
+  }
+
+  registerDecorations(model: editor.ITextModel): void {
+    const decorations: editor.IModelDeltaDecoration[] = [];
+
+    // Update decorations on content change
+    const updateDecorations = () => {
+      const content = model.getValue();
+      const lines = content.split("\n");
+
+      decorations.length = 0;
+
+      lines.forEach((line, index) => {
+        // Decorate commands
+        Array.from(this.plugins.values()).forEach((plugin) => {
+          if (!plugin.matchesPattern(line)) return;
+
+          // Command decoration (!!scene or !text)
+          const cmdMatch = line.match(
+            plugin.config.pattern.type === "directive" ? /!!\w+/ : /!\w+/,
+          );
+          if (cmdMatch) {
+            decorations.push({
+              range: new this.monaco.Range(
+                index + 1,
+                cmdMatch.index! + 1,
+                index + 1,
+                cmdMatch.index! + cmdMatch[0].length + 1,
+              ),
+              options: {
+                inlineClassName: "hoverable-command",
+                // hoverMessage: { value: "**Click to see command details**" },
+              },
+            });
+          }
+
+          // Arguments decoration (--arg=value)
+          const argMatches = line.matchAll(/--(\w+)(?==)/g);
+          for (const match of argMatches) {
+            decorations.push({
+              range: new this.monaco.Range(
+                index + 1,
+                match.index! + 3, // Skip '--'
+                index + 1,
+                match.index! + match[0].length + 1,
+              ),
+              options: {
+                // inlineClassName: "hoverable-argument",
+                // hoverMessage: { value: "Hover to see argument details" },
+              },
+            });
+          }
+
+          // Values decoration
+          const valueMatches = line.matchAll(/--\w+=([^-\s"]+|"[^"]*")/g);
+          for (const match of valueMatches) {
+            const valueStart = match.index! + match[0].indexOf("=") + 1;
+            decorations.push({
+              range: new this.monaco.Range(
+                index + 1,
+                valueStart + 1,
+                index + 1,
+                valueStart + match[1].length + 1,
+              ),
+              options: {
+                // inlineClassName: "hoverable-value",
+                // hoverMessage: { value: "Hover to see value details" },
+              },
+            });
+          }
+        });
+      });
+
+      model.deltaDecorations([], decorations);
+    };
+
+    updateDecorations();
+    model.onDidChangeContent(updateDecorations);
+  }
 }
