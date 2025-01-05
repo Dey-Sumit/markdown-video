@@ -1,7 +1,14 @@
 import type { Monaco } from "@monaco-editor/react";
-import type { editor, languages, Position, IRange } from "monaco-editor";
+import type {
+  editor,
+  languages,
+  Position,
+  IRange,
+  MarkerSeverity,
+} from "monaco-editor";
 import type {
   AdapterConfig,
+  ArgCompletionInfo,
   BaseAdapter,
   CommandContext,
 } from "../types/adapter";
@@ -28,6 +35,83 @@ export abstract class AbstractAdapter implements BaseAdapter {
     }
   }
 
+  protected validateArgument(
+    name: string,
+    value: string | undefined,
+    position: Position,
+    line: string, // Add line parameter
+  ): editor.IMarkerData[] {
+    const arg = this.config.arguments[name];
+    if (!arg?.validations) return [];
+
+    const markers: editor.IMarkerData[] = [];
+
+    for (const rule of arg.validations) {
+      let isValid = true;
+
+      switch (rule.type) {
+        case "required":
+          isValid = value !== undefined;
+          break;
+        case "range":
+        case "enum":
+        case "custom":
+          isValid = value ? (rule.validate?.(value) ?? true) : true;
+          break;
+        case "pattern":
+          isValid = value ? new RegExp(rule.pattern!).test(value) : true;
+          break;
+      }
+
+      if (!isValid) {
+        markers.push({
+          severity: this.getSeverity(rule.severity),
+          message: rule.message,
+          ...this.getDiagnosticRange(position, name, value, line),
+        });
+      }
+    }
+
+    return markers;
+  }
+
+  private getSeverity(severity?: string): MarkerSeverity {
+    switch (severity) {
+      case "error":
+        return this.monaco.MarkerSeverity.Error;
+      case "warning":
+        return this.monaco.MarkerSeverity.Warning;
+      default:
+        return this.monaco.MarkerSeverity.Info;
+    }
+  }
+
+  private getDiagnosticRange(
+    position: Position,
+    name: string,
+    value: string | undefined,
+    line: string,
+  ): IRange {
+    if (value === undefined) {
+      const commandMatch = line.match(this.config.pattern.pattern);
+      return {
+        startLineNumber: position.lineNumber,
+        endLineNumber: position.lineNumber,
+        startColumn: (commandMatch?.index || 0) + 1,
+        endColumn: line.length + 1,
+      };
+    }
+
+    const argMatch = line.match(new RegExp(`--${name}=([^\\s]+)`));
+    if (!argMatch) return this.createRange(position);
+
+    return {
+      startLineNumber: position.lineNumber,
+      endLineNumber: position.lineNumber,
+      startColumn: argMatch.index! + argMatch[0].indexOf(value) + 1,
+      endColumn: argMatch.index! + argMatch[0].length + 1,
+    };
+  }
   protected getCompletionType(
     context: CommandContext,
   ): "command" | "value" | "argument" | null {
@@ -42,7 +126,7 @@ export abstract class AbstractAdapter implements BaseAdapter {
     return null;
   }
 
-  protected matchesPattern(lineContent: string): boolean {
+  matchesPattern(lineContent: string): boolean {
     return new RegExp(this.config.pattern.pattern).test(lineContent);
   }
 
@@ -77,12 +161,34 @@ export abstract class AbstractAdapter implements BaseAdapter {
     };
   }
 
-  protected parseArguments(line: string): Set<string> {
+  /*   protected parseArguments(line: string): Set<string> {
     const args = new Set<string>();
     const matches = line.matchAll(/--(\w+)=/g);
     for (const match of matches) {
       args.add(match[1]);
     }
+    return args;
+  } */
+
+  protected parseArguments(line: string): Map<string, string | undefined> {
+    const args = new Map<string, string | undefined>();
+    const matches = line.matchAll(/--(\w+)(?:=([^\s]+))?/g);
+
+    // Add all explicitly defined arguments
+    for (const match of matches) {
+      args.set(match[1], match[2]);
+    }
+
+    // Check required args that are missing
+    Object.entries(this.config.arguments).forEach(([name, arg]) => {
+      if (
+        arg.validations?.some((v) => v.type === "required") &&
+        !args.has(name)
+      ) {
+        args.set(name, undefined);
+      }
+    });
+
     return args;
   }
 
@@ -131,6 +237,11 @@ export abstract class AbstractAdapter implements BaseAdapter {
     ];
   }
 
+  private sortCompletions(a: ArgCompletionInfo, b: ArgCompletionInfo): number {
+    if (a.isRequired !== b.isRequired) return a.isRequired ? -1 : 1;
+    return a.key.localeCompare(b.key);
+  }
+
   protected getArgumentCompletions(
     context: CommandContext,
   ): languages.CompletionItem[] {
@@ -141,16 +252,27 @@ export abstract class AbstractAdapter implements BaseAdapter {
 
     const startColumn = position.column - (match[1]?.length || 0);
 
-    return Object.entries(this.config.arguments)
-      .filter(([key]) => !used.has(key))
+    // Include all args (used or not) and mark required
+    const args: ArgCompletionInfo[] = Object.entries(this.config.arguments)
       .map(([key, arg]) => ({
-        label: key,
+        key,
+        arg,
+        isRequired:
+          arg.validations?.some((v) => v.type === "required") ?? false,
+      }))
+      // Filter non-required used args
+      .filter(({ key, isRequired }) => !used.has(key) || isRequired);
+
+    return args
+      .sort((a, b) => this.sortCompletions(a, b))
+      .map(({ key, arg, isRequired }) => ({
+        label: `${key}${isRequired ? " (required)" : ""}`,
         kind: this.monaco.languages.CompletionItemKind.Property,
         insertText: `${key}=`,
         documentation: this.createCompletionDoc([
           `### ${arg.name}`,
           arg.description || "",
-          arg.required ? "**Required**" : "",
+          isRequired ? "**Required**" : "",
           this.getArgumentExamplesDoc(arg.examples),
         ]),
         range: this.createRange(position, startColumn, position.column),
@@ -208,8 +330,72 @@ export abstract class AbstractAdapter implements BaseAdapter {
     };
   }
 
-  abstract provideDiagnostics(context: CommandContext): editor.IMarkerData[];
+  /*  provideDiagnostics(context: CommandContext): editor.IMarkerData[] {
+    if (!this.matchesPattern(context.lineContent)) return [];
 
+    const markers: editor.IMarkerData[] = [];
+    const args = this.parseArguments(context.lineContent);
+
+    for (const [name, value] of args.entries()) {
+      markers.push(
+        ...this.validateArgument(
+          name,
+          value,
+          context.position,
+          context.lineContent,
+        ),
+      );
+    }
+
+    return markers;
+  } */
+
+  provideDiagnostics(context: CommandContext): editor.IMarkerData[] {
+    if (!this.matchesPattern(context.lineContent)) return [];
+
+    console.log("=== Diagnostic Details ===");
+    const args = this.parseArguments(context.lineContent);
+    console.log("Parsed arguments:", args);
+
+    const markers: editor.IMarkerData[] = [];
+
+    // Important: Also check for required args that aren't present
+    for (const [argName, argConfig] of Object.entries(this.config.arguments)) {
+      console.log(`Checking argument: ${argName}`, argConfig);
+      if (
+        argConfig.validations?.some((v) => v.type === "required") &&
+        !args.has(argName)
+      ) {
+        console.log(`Missing required argument: ${argName}`);
+        markers.push({
+          severity: this.monaco.MarkerSeverity.Error,
+          message: `Required argument '${argName}' is missing`,
+          ...this.getDiagnosticRange(
+            context.position,
+            argName,
+            undefined,
+            context.lineContent,
+          ),
+        });
+      }
+    }
+
+    // Check existing args
+    for (const [name, value] of args.entries()) {
+      console.log(`Validating argument: ${name} = ${value}`);
+      markers.push(
+        ...this.validateArgument(
+          name,
+          value,
+          context.position,
+          context.lineContent,
+        ),
+      );
+    }
+
+    console.log("Final markers:", markers);
+    return markers;
+  }
   provideHover?(context: CommandContext): languages.Hover | null {
     return null;
   }

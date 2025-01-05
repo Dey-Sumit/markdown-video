@@ -1,16 +1,11 @@
 // components/x-editor/plugins/scene/adapter.ts
 import type { Monaco } from "@monaco-editor/react";
-import type { editor } from "monaco-editor";
 import { AbstractAdapter } from "../../core/base/adapter";
-import type { CommandContext } from "../../core/types/adapter";
 import { sceneConfig } from "./config";
 
 export class SceneAdapter extends AbstractAdapter {
   constructor(monaco: Monaco) {
+    console.log("Scene config:", sceneConfig.arguments.duration.validations);
     super(monaco, sceneConfig);
-  }
-
-  provideDiagnostics(context: CommandContext): editor.IMarkerData[] {
-    return []; // Implement later
   }
 }
