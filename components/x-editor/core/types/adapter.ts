@@ -41,8 +41,8 @@ interface CommandContext {
 }
 
 interface CommandPattern {
-  type: "directive" | "component" | "codeComponent"; 
-  prefix: string | string[];
+  type: "directive" | "component" | "codeComponent";
+  pattern: string; // Regex pattern
   leadingSymbols?: string[];
 }
 

@@ -6,7 +6,7 @@ export const sceneConfig: AdapterConfig = {
   id: "scene",
   pattern: {
     type: "directive",
-    prefix: ["!!"],
+    pattern: "^\\s*##\\s*!!scene\\b",
     leadingSymbols: ["##"],
   },
   template: "!!scene --duration=${2:5} --title=${1:scene-1}",
