@@ -10,43 +10,30 @@ export class PluginRegistry {
   constructor(private readonly monaco: Monaco) {}
 
   register(plugin: BaseAdapter): void {
-    this.plugins.set(plugin.id, plugin);
+    this.plugins.set(plugin.config.id, plugin);
   }
-
   registerCompletions(model: editor.ITextModel): void {
-    console.log("Registering completions provider");
+    console.log("Registering plugins:", Array.from(this.plugins.keys()));
 
     this.monaco.languages.registerCompletionItemProvider(EDITOR_LANGUAGE, {
-      triggerCharacters: ["#", "-", "=", " "],
-
+      triggerCharacters: ["!", "-", "=", "#"],
       provideCompletionItems: (model, position) => {
         const lineContent = model.getLineContent(position.lineNumber);
-        console.log("Providing completions for:", {
-          lineContent,
+        console.log("Completion triggered:", {
+          line: lineContent,
           position,
-          triggerKind: "Add triggerKind from arguments here",
         });
 
-        const wordInfo = model.getWordUntilPosition(position);
-
-        const context = {
-          lineContent,
-          position,
-          model,
-          wordRange: {
-            startLineNumber: position.lineNumber,
-            endLineNumber: position.lineNumber,
-            startColumn: wordInfo.startColumn,
-            endColumn: wordInfo.endColumn,
-          },
-        };
-
         const suggestions = Array.from(this.plugins.values()).flatMap(
-          (plugin) => plugin.provideCompletions(context),
+          (plugin) =>
+            plugin.provideCompletions({
+              lineContent,
+              position,
+              model,
+            }),
         );
 
         console.log("Suggestions:", suggestions);
-
         return { suggestions };
       },
     });

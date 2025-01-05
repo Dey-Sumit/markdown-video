@@ -29,6 +29,7 @@ import { Button } from "../ui/button";
 import { formatDocument } from "./format-document";
 import { PluginRegistry } from "./core/registry";
 import { SceneAdapter } from "./plugins/scene/adapter";
+import { TextAdapter } from "./plugins/text/adapter";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 const files = ["Scenes", "Global"] as const;
@@ -130,14 +131,11 @@ function XEditor() {
     monaco.editor.setTheme("custom");
     monaco.languages.register({ id: EDITOR_LANGUAGE });
 
-    // Initialize plugin registry
     const registry = new PluginRegistry(monaco);
 
-    // Register scene plugin
-    const scenePlugin = new SceneAdapter(monaco);
-    registry.register(scenePlugin);
+    registry.register(new SceneAdapter(monaco));
+    registry.register(new TextAdapter(monaco));
 
-    // Register completions
     registry.registerCompletions(editor.getModel()!);
   };
 
