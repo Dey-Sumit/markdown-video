@@ -1,6 +1,6 @@
 // components/x-editor/plugins/scene/adapter.ts
 import type { Monaco } from "@monaco-editor/react";
-import type { editor, languages } from "monaco-editor";
+import type { editor, languages, Position } from "monaco-editor";
 import { AbstractAdapter } from "../../core/base/adapter";
 import type { CommandContext } from "../../core/types/adapter";
 import { sceneConfig } from "./config";
@@ -10,8 +10,12 @@ export class SceneAdapter extends AbstractAdapter {
     super(monaco, "scene", sceneConfig.pattern);
   }
 
-  private isValueContext(lineContent: string): boolean {
-    return /--[\w-]+=\w*$/.test(lineContent);
+  private isValueContext(lineContent: string, position: Position): boolean {
+    const textUntilCursor = lineContent.substring(0, position.column);
+
+    // Require whitespace before argument
+    const valueContextRegex = /(?:\s|^)--(\w+)=\s*$/;
+    return valueContextRegex.test(textUntilCursor);
   }
 
   /**
@@ -23,36 +27,19 @@ export class SceneAdapter extends AbstractAdapter {
     const { lineContent } = context;
     const trimmed = lineContent.trim();
 
-    console.log({
-      lineContent,
-      trimmed,
-      isSingleHash: trimmed === "#",
-      isDoubleHash: trimmed === "##",
-      length: trimmed.length,
-    });
-
     // Handle "#" trigger for new scene
     if (trimmed === "#" || trimmed === "##") {
-      console.log("Should trigger scene completion");
       return true;
     }
 
     // Handle scene argument completions
     if (this.matchesPattern(lineContent)) {
-      const hasPartialArg = /--(\w*)(?:$|\s)/.test(lineContent);
-      const hasPartialValue = /--[\w-]+=\w*$/.test(lineContent);
-
-      console.log("Partial check:", {
-        lineContent,
-        hasPartialArg,
-        hasPartialValue,
-        matchPosition: lineContent.match(/--(\w*)(?:$|\s)/),
-      });
+      const hasPartialArg = /(?:\s|^)--(\w*)(?:$|\s)/.test(lineContent);
+      const hasPartialValue = /(?:\s|^)--[\w-]+=\w*$/.test(lineContent);
 
       return hasPartialArg || hasPartialValue;
     }
 
-    console.log("No completion trigger found");
     return false;
   }
 
@@ -60,18 +47,19 @@ export class SceneAdapter extends AbstractAdapter {
     context: CommandContext,
   ): languages.CompletionItem[] {
     const { lineContent, position } = context;
+    const textUntilCursor = lineContent.substring(0, position.column);
 
-    // Find which argument we're completing
-    const match = lineContent.match(/--(\w+)=(\w*)$/);
+    // Updated regex to match the argument name before cursor
+    const match = textUntilCursor.match(/--(\w+)=\s*$/);
+
     if (!match) return [];
 
-    const [, argName, currentValue] = match;
+    const [, argName] = match;
+
     const arg = sceneConfig.arguments[argName];
     if (!arg || !arg.examples) return [];
 
-    // Calculate the proper range to replace the entire current value
-    const startColumn = position.column - (currentValue?.length || 0);
-
+    // Since we're at the end of the equals sign, start column is just current position
     return Object.entries(arg.examples).map(([value, description]) => ({
       label: value,
       kind: this.monaco.languages.CompletionItemKind.Value,
@@ -84,7 +72,7 @@ export class SceneAdapter extends AbstractAdapter {
       range: {
         startLineNumber: position.lineNumber,
         endLineNumber: position.lineNumber,
-        startColumn,
+        startColumn: position.column,
         endColumn: position.column,
       },
     }));
@@ -113,7 +101,7 @@ export class SceneAdapter extends AbstractAdapter {
       {
         label: "!!scene",
         kind: this.monaco.languages.CompletionItemKind.Snippet,
-        insertText: `${insertPrefix}!!scene --title=\${1:scene-1} --duration=\${2:5}`,
+        insertText: `${insertPrefix}!!scene --duration=\${2:5} --title=\${1:scene-1}`,
         insertTextRules:
           this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
         documentation: {
@@ -149,11 +137,6 @@ export class SceneAdapter extends AbstractAdapter {
 
     const beforeCursor = lineContent.substring(0, position.column);
     const partialArg = beforeCursor.match(/--(\w*)$/);
-    console.log("Getting argument completions:", {
-      beforeCursor,
-      partialArg,
-      position,
-    });
 
     if (!partialArg) return [];
     const currentArgs = this.parseArguments(lineContent);
@@ -211,9 +194,9 @@ export class SceneAdapter extends AbstractAdapter {
       return [];
     }
 
-    const { lineContent } = context;
+    const { lineContent, position } = context;
 
-    if (this.isValueContext(lineContent)) {
+    if (this.isValueContext(lineContent, position)) {
       return this.getValueCompletions(context);
     }
 
