@@ -6,12 +6,16 @@ interface BaseAdapter {
   matchesPattern(lineContent: string): boolean;
   provideCompletions(context: CommandContext): languages.CompletionItem[];
   provideDiagnostics(context: CommandContext): editor.IMarkerData[];
-  provideHover?(context: CommandContext): languages.Hover | null;
+  provideHover(context: CommandContext): languages.Hover | null;
 
   initialize?(): void;
   dispose?(): void;
 }
 
+export interface MonacoMarkdownString {
+  value: string;
+  isTrusted?: boolean;
+}
 interface ValidationRule {
   type: "required" | "pattern" | "range" | "enum" | "custom";
   message: string;

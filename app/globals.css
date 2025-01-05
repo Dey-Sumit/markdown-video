@@ -137,3 +137,18 @@
 
   /* background: radial-gradient(circle at bottom center, hsla(275, 100%, 25%, 1) 0%, transparent 100%) */
 }
+
+.hoverable-command {
+  border-bottom: 1px dotted #6b7280;
+}
+
+/* .hoverable-argument {
+  border-bottom: 1px dashed #9ca3af;
+  cursor: help;
+}
+
+.hoverable-value {
+  border-bottom: 1px dotted #d1d5db;
+  cursor: help;
+}
+ */

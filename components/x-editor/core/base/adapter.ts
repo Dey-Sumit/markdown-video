@@ -112,6 +112,7 @@ export abstract class AbstractAdapter implements BaseAdapter {
       endColumn: argMatch.index! + argMatch[0].length + 1,
     };
   }
+
   protected getCompletionType(
     context: CommandContext,
   ): "command" | "value" | "argument" | null {
@@ -145,6 +146,7 @@ export abstract class AbstractAdapter implements BaseAdapter {
       (symbol) => trimmed === symbol || trimmed === symbol.trim(),
     );
   }
+
   protected createRange(
     position: Position,
     startColumn?: number,
@@ -160,15 +162,6 @@ export abstract class AbstractAdapter implements BaseAdapter {
       ),
     };
   }
-
-  /*   protected parseArguments(line: string): Set<string> {
-    const args = new Set<string>();
-    const matches = line.matchAll(/--(\w+)=/g);
-    for (const match of matches) {
-      args.add(match[1]);
-    }
-    return args;
-  } */
 
   protected parseArguments(line: string): Map<string, string | undefined> {
     const args = new Map<string, string | undefined>();
@@ -330,26 +323,6 @@ export abstract class AbstractAdapter implements BaseAdapter {
     };
   }
 
-  /*  provideDiagnostics(context: CommandContext): editor.IMarkerData[] {
-    if (!this.matchesPattern(context.lineContent)) return [];
-
-    const markers: editor.IMarkerData[] = [];
-    const args = this.parseArguments(context.lineContent);
-
-    for (const [name, value] of args.entries()) {
-      markers.push(
-        ...this.validateArgument(
-          name,
-          value,
-          context.position,
-          context.lineContent,
-        ),
-      );
-    }
-
-    return markers;
-  } */
-
   provideDiagnostics(context: CommandContext): editor.IMarkerData[] {
     if (!this.matchesPattern(context.lineContent)) return [];
 
@@ -396,8 +369,227 @@ export abstract class AbstractAdapter implements BaseAdapter {
     console.log("Final markers:", markers);
     return markers;
   }
-  provideHover?(context: CommandContext): languages.Hover | null {
+
+  protected getHoverType(
+    word: string,
+    lineContent: string,
+    position: Position,
+  ): "command" | "argument" | "value" | null {
+    if (word === this.config.id) {
+      return "command";
+    }
+
+    // Check if it's an argument name
+    if (this.config.arguments[word]) {
+      return "argument";
+    }
+
+    // Check if it's a value
+    const valueMatch = lineContent.match(
+      new RegExp(`--\\w+=(${word}|"${word}")`),
+    );
+    if (valueMatch) {
+      return "value";
+    }
+
     return null;
+  }
+
+  private isCommandHover(lineContent: string, position: Position): boolean {
+    const commandMatch = lineContent.match(
+      new RegExp(this.config.pattern.pattern),
+    );
+    if (!commandMatch) return false;
+
+    const startCol = commandMatch.index! + 1;
+    const endCol = startCol + this.config.id.length;
+
+    return position.column >= startCol && position.column <= endCol;
+  }
+
+  private isArgumentHover(lineContent: string, position: Position): boolean {
+    const argRegex = /--(\w+)(?==)/g;
+    let match;
+
+    while ((match = argRegex.exec(lineContent)) !== null) {
+      const startCol = match.index! + 3; // Skip '--'
+      const endCol = startCol + match[1].length;
+
+      if (position.column >= startCol && position.column <= endCol) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private isValueHover(lineContent: string, position: Position): boolean {
+    const valueRegex = /--\w+=([^-\s"]+|"[^"]*")/g;
+    let match;
+
+    while ((match = valueRegex.exec(lineContent)) !== null) {
+      const valueStart = match.index! + match[0].indexOf("=") + 1;
+      const value = match[1];
+      const valueEnd = valueStart + value.length;
+
+      if (position.column >= valueStart && position.column <= valueEnd) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  protected getWordAtPosition(
+    lineContent: string,
+    position: Position,
+  ): string | null {
+    const commandRegex =
+      this.config.pattern.type === "directive"
+        ? /!!\w+/ // For !!scene
+        : /!\w+/; // For !text
+
+    const cmdMatch = lineContent.match(commandRegex);
+    if (cmdMatch) {
+      const startCol = cmdMatch.index! + 1;
+      const endCol = startCol + this.config.id.length;
+      if (position.column >= startCol && position.column <= endCol) {
+        return this.config.id;
+      }
+    }
+    // Check if we're on an argument name
+    const argMatch = /--(\w+)(?==)/g;
+    let match;
+    while ((match = argMatch.exec(lineContent)) !== null) {
+      const startCol = match.index + 3; // Skip '--'
+      const endCol = startCol + match[1].length;
+
+      if (position.column >= startCol && position.column <= endCol) {
+        return match[1]; // Return just the argument name
+      }
+    }
+
+    // Check if we're on a value
+    const valueRegex = /--\w+=([^-\s"]+|"[^"]*")/g;
+    while ((match = valueRegex.exec(lineContent)) !== null) {
+      const valueStart = match.index + match[0].indexOf("=") + 1;
+      const value = match[1].replace(/^"|"$/g, ""); // Remove quotes if present
+      const valueEnd = valueStart + match[1].length;
+
+      if (position.column >= valueStart && position.column <= valueEnd) {
+        return value;
+      }
+    }
+
+    return null;
+  }
+
+  protected getCommandHover(word: string): languages.Hover {
+    const contents = [
+      {
+        value: [
+          `### ${this.config.id}`,
+          "",
+          "Arguments:",
+          ...Object.entries(this.config.arguments).map(
+            ([name, arg]) =>
+              `- \`--${name}\`: ${arg.description}${arg.required ? " (required)" : ""}`,
+          ),
+        ].join("\n"),
+        isTrusted: true,
+      },
+    ];
+
+    return { contents };
+  }
+
+  protected getArgumentHover(argName: string): languages.Hover | null {
+    const arg = this.config.arguments[argName];
+    if (!arg) return null;
+
+    const contents = [
+      {
+        value: [
+          `### ${arg.name}`,
+          "",
+          arg.description || "No description available",
+          "",
+          arg.required ? "**Required**" : "Optional",
+          "",
+          arg.type === "number" &&
+          (arg.min !== undefined || arg.max !== undefined)
+            ? `Range: ${arg.min ?? "-∞"} to ${arg.max ?? "∞"}`
+            : "",
+          "",
+          this.getArgumentExamplesDoc(arg.examples),
+        ]
+          .filter(Boolean)
+          .join("\n"),
+        isTrusted: true,
+      },
+    ];
+
+    return { contents };
+  }
+
+  protected getValueHover(
+    value: string,
+    lineContent: string,
+  ): languages.Hover | null {
+    // Extract argument name from line
+    const argMatch = lineContent.match(/--(\w+)=[^-\s]*$/);
+    if (!argMatch) return null;
+
+    const argName = argMatch[1];
+    const arg = this.config.arguments[argName];
+    if (!arg) return null;
+
+    let content = "";
+
+    // If it's an enum type argument with predefined values
+    if (arg.values?.includes(value)) {
+      content = `Valid value for ${argName}`;
+    }
+
+    // If it has examples, show the example description
+    if (arg.examples?.[value]) {
+      content = arg.examples[value];
+    }
+
+    if (!content) return null;
+
+    return {
+      contents: [
+        {
+          value: content,
+          isTrusted: true,
+        },
+      ],
+    };
+  }
+
+  provideHover(context: CommandContext): languages.Hover | null {
+    const { lineContent, position } = context;
+
+    if (!this.matchesPattern(lineContent)) {
+      return null;
+    }
+
+    // Get word/argument under cursor
+    const word = this.getWordAtPosition(lineContent, position);
+    if (!word) return null;
+
+    // Determine what we're hovering over (command, argument, or value)
+    const hoverType = this.getHoverType(word, lineContent, position);
+
+    switch (hoverType) {
+      case "command":
+        return this.getCommandHover(word);
+      case "argument":
+        return this.getArgumentHover(word);
+      case "value":
+        return this.getValueHover(word, lineContent);
+      default:
+        return null;
+    }
   }
 
   initialize?(): void {}

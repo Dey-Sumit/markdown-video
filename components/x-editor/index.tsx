@@ -140,6 +140,8 @@ function XEditor() {
 
     registry.registerCompletions(editor.getModel()!);
     registry.registerDiagnostics(editor.getModel()!);
+    registry.registerHoverProvider(editor.getModel()!);
+    registry.registerDecorations(editor.getModel()!);
   };
 
   const __handleEditorMount: OnMount = (editor, monaco) => {

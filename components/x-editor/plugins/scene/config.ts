@@ -11,12 +11,6 @@ export const sceneConfig: AdapterConfig = {
   },
   template: "!!scene --duration=${2:5} --title=${1:scene-1}",
   arguments: {
-    title: {
-      name: "title",
-      type: "string",
-      description: "Scene identifier",
-      required: false,
-    },
     duration: {
       name: "duration",
       type: "number",
@@ -60,6 +54,12 @@ export const sceneConfig: AdapterConfig = {
           severity: "warning",
         },
       ],
+    },
+    title: {
+      name: "title",
+      type: "string",
+      description: "Scene identifier",
+      required: false,
     },
   },
 };
