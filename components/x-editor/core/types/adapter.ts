@@ -22,7 +22,7 @@ interface CommandContext {
 }
 
 interface CommandPattern {
-  prefix: string | string[];
+  prefix: string[];
   leadingSymbols?: string[];
   type: "scene" | "property" | "inline";
 }

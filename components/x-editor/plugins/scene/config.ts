@@ -6,7 +6,7 @@ export const sceneConfig: PropertyConfig = {
   name: "scene",
   pattern: {
     type: "scene",
-    prefix: "!!",
+    prefix: ["!!"],
     leadingSymbols: ["##"],
   },
   description: "Creates a new scene block",

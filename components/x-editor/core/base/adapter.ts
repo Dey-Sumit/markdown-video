@@ -41,30 +41,41 @@ export abstract class AbstractAdapter implements BaseAdapter {
   ) {}
 
   /**
-   * Checks if line matches adapter's command pattern
-   * Handles both single/multiple prefixes and leading symbols
+   * Checks if line matches configured pattern with leading symbols and prefixes
+   * Handles whitespace flexibility in pattern matching
    *
    * @example
-   * -> With prefix "!!" and leadingSymbol "##":
-   * matchesPattern("## !!scene") // true
-   * matchesPattern("!!scene") // false
-   * matchesPattern("## !scene") // false
+   * -> With config: { leadingSymbols: ["##"], prefix: "!!" }
+   * "##    !!"   ✓ (whitespace allowed)
+   * "  ##  !!"   ✓ (leading whitespace allowed)
+   * "!!##"       ✗ (wrong order)
+   * "##!!"       ✓ (no whitespace required)
+   *
+   * -> With config: { leadingSymbols: ["##"], prefix: ["!", "!!"] }
+   * "##    !"    ✓ (matches first prefix)
+   * "##    !!"   ✓ (matches second prefix)
+   * "#!"         ✗ (invalid leading symbol)
    */
-
   protected matchesPattern(lineContent: string): boolean {
-    const trimmed = lineContent.trimStart();
-    const hasLeadingSymbol =
-      !this.pattern.leadingSymbols?.length ||
-      this.pattern.leadingSymbols.some((symbol) => trimmed.startsWith(symbol));
-
+    const leadingSymbols = this.pattern.leadingSymbols ?? [];
     const prefixes = Array.isArray(this.pattern.prefix)
       ? this.pattern.prefix
       : [this.pattern.prefix];
 
-    return (
-      hasLeadingSymbol && prefixes.some((prefix) => trimmed.includes(prefix))
+    const pattern = new RegExp(
+      `^\\s*(${leadingSymbols.join("|")})\\s*(${prefixes.join("|")})`,
     );
+    return pattern.test(lineContent);
   }
+
+  /*   protected matchesPattern(lineContent: string): boolean {
+    const trimmed = lineContent.trimStart(); // Handles "##     !!"
+    const hasLeadingSymbol = this.pattern.leadingSymbols.some((symbol) =>
+      trimmed.startsWith(symbol),
+    );
+
+    return hasLeadingSymbol && trimmed.includes(this.pattern.prefix);
+  } */
 
   /**
    * Creates validated Monaco editor range
