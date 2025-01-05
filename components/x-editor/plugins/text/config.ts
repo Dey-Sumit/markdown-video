@@ -1,7 +1,4 @@
-import type { Monaco } from "@monaco-editor/react";
-import type { AdapterConfig, CommandContext } from "../../core/types/adapter";
-import { AbstractAdapter } from "../../core/base/adapter";
-import type { editor } from "monaco-editor";
+import type { AdapterConfig } from "../../core/types/adapter";
 
 // plugins/text/config.ts
 const textConfig: AdapterConfig = {

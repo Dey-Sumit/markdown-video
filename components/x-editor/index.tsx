@@ -30,6 +30,7 @@ import { formatDocument } from "./format-document";
 import { PluginRegistry } from "./core/registry";
 import { SceneAdapter } from "./plugins/scene/adapter";
 import { TextAdapter } from "./plugins/text/adapter";
+import { TransitionAdapter } from "./plugins/transition/adapter";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 const files = ["Scenes", "Global"] as const;
@@ -135,6 +136,7 @@ function XEditor() {
 
     registry.register(new SceneAdapter(monaco));
     registry.register(new TextAdapter(monaco));
+    registry.register(new TransitionAdapter(monaco));
 
     registry.registerCompletions(editor.getModel()!);
   };
