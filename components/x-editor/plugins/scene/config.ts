@@ -1,15 +1,15 @@
 // components/x-editor/plugins/scene/config.ts
 
-import type { PropertyConfig } from "../../core/types/property";
+import type { AdapterConfig } from "../../core/types/adapter";
 
-export const sceneConfig: PropertyConfig = {
-  name: "scene",
+export const sceneConfig: AdapterConfig = {
+  id: "scene",
   pattern: {
-    type: "scene",
+    type: "directive",
     prefix: ["!!"],
     leadingSymbols: ["##"],
   },
-  description: "Creates a new scene block",
+  template: "!!scene --duration=${2:5} --title=${1:scene-1}",
   arguments: {
     title: {
       name: "title",
@@ -32,14 +32,11 @@ export const sceneConfig: PropertyConfig = {
     background: {
       name: "background",
       type: "string",
-      description: "Background color or CSS color value",
-      required: false,
+      description: "Background color",
       examples: {
         transparent: "Default transparent background",
         black: "Solid black background",
         white: "Solid white background",
-        "#FF5733": "Custom hex color",
-        "rgb(255, 87, 51)": "Custom RGB color",
       },
     },
   },

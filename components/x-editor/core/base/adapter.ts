@@ -1,114 +1,100 @@
-// components/x-editor/core/base/adapter.ts
 import type { Monaco } from "@monaco-editor/react";
 import type { editor, languages, Position, IRange } from "monaco-editor";
 import type {
+  AdapterConfig,
   BaseAdapter,
   CommandContext,
-  CommandPattern,
 } from "../types/adapter";
 
-/**
- * Abstract base adapter for editor plugins providing core functionality for:
- * - Pattern matching for commands
- * - Argument parsing and validation
- * - Completion suggestions
- * - Documentation generation
- *
- * @example
- * class MyAdapter extends AbstractAdapter {
- *   constructor(monaco: Monaco) {
- *     super(monaco, "myPlugin", { prefix: "!", type: "inline" });
- *   }
- * }
- */
 export abstract class AbstractAdapter implements BaseAdapter {
-  /**
-   * Initializes adapter with Monaco instance and configuration
-   *
-   * @example
-   * constructor(monaco) {
-   *   super(monaco, "myPlugin", {
-   *     prefix: "!",
-   *     type: "inline",
-   *     leadingSymbols: ["//"]
-   *   });
-   * }
-   */
   constructor(
     protected readonly monaco: Monaco,
-    public readonly id: string,
-    public readonly pattern: CommandPattern,
+    public readonly config: AdapterConfig,
   ) {}
 
-  /**
-   * Checks if line matches configured pattern with leading symbols and prefixes
-   * Handles whitespace flexibility in pattern matching
-   *
-   * @example
-   * -> With config: { leadingSymbols: ["##"], prefix: "!!" }
-   * "##    !!"   ✓ (whitespace allowed)
-   * "  ##  !!"   ✓ (leading whitespace allowed)
-   * "!!##"       ✗ (wrong order)
-   * "##!!"       ✓ (no whitespace required)
-   *
-   * -> With config: { leadingSymbols: ["##"], prefix: ["!", "!!"] }
-   * "##    !"    ✓ (matches first prefix)
-   * "##    !!"   ✓ (matches second prefix)
-   * "#!"         ✗ (invalid leading symbol)
-   */
+  provideCompletions(context: CommandContext): languages.CompletionItem[] {
+    const type = this.getCompletionType(context);
+    if (!type) return [];
+
+    switch (type) {
+      case "directive":
+        return this.getDirectiveCompletion(context);
+      case "value":
+        return this.getValueCompletions(context);
+      case "argument":
+        return this.getArgumentCompletions(context);
+      default:
+        return [];
+    }
+  }
+
+  protected getCompletionType(
+    context: CommandContext,
+  ): "directive" | "value" | "argument" | null {
+    const { lineContent, position } = context;
+    const trimmed = lineContent.trim();
+
+    if (this.isDirectiveStart(trimmed)) return "directive";
+    if (!this.matchesPattern(lineContent)) return null;
+    if (this.isValueContext(lineContent, position)) return "value";
+    if (this.requiresWhitespace(lineContent, position)) return "argument";
+
+    return null;
+  }
+
   protected matchesPattern(lineContent: string): boolean {
-    const leadingSymbols = this.pattern.leadingSymbols ?? [];
-    const prefixes = Array.isArray(this.pattern.prefix)
-      ? this.pattern.prefix
-      : [this.pattern.prefix];
+    const prefixes = Array.isArray(this.config.pattern.prefix)
+      ? this.config.pattern.prefix
+      : [this.config.pattern.prefix];
+
+    if (this.config.pattern.type === "directive") {
+      const leadingSymbols = this.config.pattern.leadingSymbols ?? [];
+      const pattern = new RegExp(
+        `^\\s*(${leadingSymbols.join("|")})\\s*(${prefixes.join("|")})${this.config.id}\\b`,
+      );
+      return pattern.test(lineContent);
+    }
 
     const pattern = new RegExp(
-      `^\\s*(${leadingSymbols.join("|")})\\s*(${prefixes.join("|")})`,
+      `^\\s*(${prefixes.join("|")})${this.config.id}\\b`,
     );
     return pattern.test(lineContent);
   }
 
-  /*   protected matchesPattern(lineContent: string): boolean {
-    const trimmed = lineContent.trimStart(); // Handles "##     !!"
-    const hasLeadingSymbol = this.pattern.leadingSymbols.some((symbol) =>
-      trimmed.startsWith(symbol),
+  protected isDirectiveStart(trimmed: string): boolean {
+    console.log("isDirectiveStart:", {
+      trimmed,
+      prefixes: this.config.pattern.prefix,
+      type: this.config.pattern.type,
+    });
+
+    // For components, treat prefix as directive start
+    if (this.config.pattern.type === "component") {
+      return this.config.pattern.prefix.includes(trimmed);
+    }
+
+    const leadingSymbols = this.config.pattern.leadingSymbols ?? [];
+    return leadingSymbols.some(
+      (symbol) => trimmed === symbol || trimmed === symbol.trim(),
     );
+  }
 
-    return hasLeadingSymbol && trimmed.includes(this.pattern.prefix);
-  } */
-
-  /**
-   * Creates validated Monaco editor range
-   * Ensures start/end columns are valid and non-negative
-   *
-   * @example
-   * createRange(
-   *   {lineNumber: 1, column: 5}, // position
-   *   3,  // start
-   *   8   // end
-   * ) // Range{1,3,1,8}
-   */
   protected createRange(
     position: Position,
-    startColumn: number,
-    endColumn: number,
+    startColumn?: number,
+    endColumn?: number,
   ): IRange {
     return {
       startLineNumber: position.lineNumber,
       endLineNumber: position.lineNumber,
-      startColumn: Math.max(1, startColumn),
-      endColumn: Math.max(startColumn, endColumn),
+      startColumn: Math.max(1, startColumn ?? position.column),
+      endColumn: Math.max(
+        startColumn ?? position.column,
+        endColumn ?? position.column,
+      ),
     };
   }
 
-  /**
-   * Extracts argument names from command line
-   * Matches arguments in format --name=value
-   *
-   * @example
-   * parseArguments("--title=test --duration=5")
-   * -> Set{"title", "duration"}
-   */
   protected parseArguments(line: string): Set<string> {
     const args = new Set<string>();
     const matches = line.matchAll(/--(\w+)=/g);
@@ -118,68 +104,118 @@ export abstract class AbstractAdapter implements BaseAdapter {
     return args;
   }
 
-  /**
-   * Validates proper argument spacing
-   * Ensures whitespace between arguments and before values
-   *
-   * @example
-   * -> Valid:
-   * "## !!scene --title=test --duration=5"
-   * -> Invalid (no space):
-   * "## !!scene --title=test--duration=5"
-   */
   protected requiresWhitespace(
     lineContent: string,
     position: Position,
   ): boolean {
     const textUntilCursor = lineContent.substring(0, position.column);
 
-    // For value completion
     if (/--(\w+)=\s*$/.test(textUntilCursor)) {
       const lastArgMatch = textUntilCursor.match(/.*?--\w+=[^-]*$/);
       return lastArgMatch ? /\s--\w+=[^-]*$/.test(lastArgMatch[0]) : false;
     }
 
-    // For argument completion
     return /\s--\w*$/.test(textUntilCursor);
   }
 
-  /**
-   * Checks if cursor is in value completion context
-   * Validates whitespace and argument format
-   *
-   * @example
-   * -> Triggers completion:
-   * "## !!scene --title="
-   * "## !!scene --title= "
-   * -> No completion:
-   * "## !!scene --title=test--"
-   */
   protected isValueContext(lineContent: string, position: Position): boolean {
     const textUntilCursor = lineContent.substring(0, position.column);
     const matchesWhitespace = this.requiresWhitespace(lineContent, position);
     const matchesValue = /--(\w+)=\s*$/.test(textUntilCursor);
-
-    console.log("Value Context Check:", {
-      textUntilCursor,
-      matchesWhitespace,
-      matchesValue,
-    });
-
     return matchesWhitespace && matchesValue;
   }
 
-  /**
-   * Creates formatted documentation for completions
-   * Filters empty sections and joins with newlines
-   *
-   * @example
-   * createCompletionDoc([
-   *   "### Title",
-   *   "", // filtered
-   *   "Description"
-   * ]) // "### Title\nDescription"
-   */
+  protected getDirectiveCompletion(
+    context: CommandContext,
+  ): languages.CompletionItem[] {
+    const { position, wordRange } = context;
+    const trimmed = context.lineContent.trim();
+    const leadingSymbols = this.config.pattern.leadingSymbols ?? [];
+    const insertPrefix = leadingSymbols.some((s) => trimmed === s) ? " " : "";
+
+    return [
+      {
+        label: this.config.id,
+        kind: this.monaco.languages.CompletionItemKind.Snippet,
+        insertText: `${insertPrefix}${this.config.template}`,
+        insertTextRules:
+          this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+        documentation: this.createCompletionDoc([
+          `### ${this.config.id}`,
+          ...this.getArgumentDocs(),
+        ]),
+        range: wordRange || this.createRange(position),
+      },
+    ];
+  }
+
+  protected getArgumentCompletions(
+    context: CommandContext,
+  ): languages.CompletionItem[] {
+    const { lineContent, position } = context;
+    const used = this.parseArguments(lineContent);
+    const match = lineContent.substring(0, position.column).match(/--(\w*)$/);
+    if (!match) return [];
+
+    const startColumn = position.column - (match[1]?.length || 0);
+
+    return Object.entries(this.config.arguments)
+      .filter(([key]) => !used.has(key))
+      .map(([key, arg]) => ({
+        label: key,
+        kind: this.monaco.languages.CompletionItemKind.Property,
+        insertText: `${key}=`,
+        documentation: this.createCompletionDoc([
+          `### ${arg.name}`,
+          arg.description || "",
+          arg.required ? "**Required**" : "",
+          this.getArgumentExamplesDoc(arg.examples),
+        ]),
+        range: this.createRange(position, startColumn, position.column),
+        command: {
+          id: "editor.action.triggerSuggest",
+          title: "Trigger Suggestions",
+        },
+      }));
+  }
+
+  protected getValueCompletions(
+    context: CommandContext,
+  ): languages.CompletionItem[] {
+    const { lineContent, position } = context;
+    const match = lineContent
+      .substring(0, position.column)
+      .match(/--(\w+)=\s*$/);
+    if (!match) return [];
+
+    const arg = this.config.arguments[match[1]];
+    if (!arg?.examples) return [];
+
+    return Object.entries(arg.examples).map(([value, desc]) => ({
+      label: value,
+      kind: this.monaco.languages.CompletionItemKind.Value,
+      insertText: value,
+      documentation: this.createCompletionDoc([`${value}: ${desc}`]),
+      range: this.createRange(position, position.column, position.column),
+    }));
+  }
+
+  protected getArgumentDocs(): string[] {
+    return Object.entries(this.config.arguments).map(
+      ([key, arg]) => `- \`--${key}\`: ${arg.description || "No description"}`,
+    );
+  }
+
+  protected getArgumentExamplesDoc(examples?: Record<string, string>): string {
+    if (!examples) return "";
+    return (
+      "**Examples:**\n" +
+      Object.entries(examples)
+        .map(([value, desc]) => `- \`${value}\`: ${desc}`)
+        .join("\n")
+    );
+  }
+
   protected createCompletionDoc(sections: string[]): {
     value: string;
     isTrusted: boolean;
@@ -190,72 +226,13 @@ export abstract class AbstractAdapter implements BaseAdapter {
     };
   }
 
-  /**
-   * Required completion provider implementation
-   * Should handle different completion contexts:
-   * - Command completion (e.g. !!scene)
-   * - Argument completion (e.g. --title)
-   * - Value completion (e.g. --title=)
-   *
-   * @example
-   * provideCompletions({lineContent: "## !!", position}) {
-   *   if (isSceneStart) return sceneCompletions;
-   *   if (isValueContext) return valueCompletions;
-   *   return argCompletions;
-   * }
-   */
-  abstract provideCompletions(
-    context: CommandContext,
-  ): languages.CompletionItem[];
-
-  /**
-   * Required diagnostics provider implementation
-   * Should validate:
-   * - Command syntax
-   * - Required arguments
-   * - Argument values
-   * - Argument spacing
-   *
-   * @example
-   * provideDiagnostics({lineContent: "## !!scene"}) {
-   *   return [{
-   *     message: "Missing required argument: duration",
-   *     severity: MarkerSeverity.Error
-   *   }];
-   * }
-   */
   abstract provideDiagnostics(context: CommandContext): editor.IMarkerData[];
 
-  /**
-   * Optional hover provider implementation
-   * Provides documentation on hover over:
-   * - Commands
-   * - Arguments
-   * - Values
-   *
-   * @example
-   * provideHover({lineContent: "## !!scene"}) {
-   *   return {
-   *     contents: [{value: "Creates new scene block"}]
-   *   };
-   * }
-   */
   provideHover?(context: CommandContext): languages.Hover | null {
     return null;
   }
 
-  /** Called when adapter is initialized */
   initialize?(): void {}
 
-  /**
-   * Optional initialization hook
-   * Called when adapter is registered
-   */
-  initialize?(): void;
-
-  /**
-   * Optional cleanup hook
-   * Called when adapter is unregistered
-   */
   dispose?(): void {}
 }
