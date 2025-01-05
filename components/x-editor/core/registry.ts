@@ -17,7 +17,7 @@ export class PluginRegistry {
     console.log("Registering completions provider");
 
     this.monaco.languages.registerCompletionItemProvider(EDITOR_LANGUAGE, {
-      triggerCharacters: ["#", "-", "=", " "], // Confirm these are being used
+      triggerCharacters: ["#", "-", "=", " "],
 
       provideCompletionItems: (model, position) => {
         const lineContent = model.getLineContent(position.lineNumber);
