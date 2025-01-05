@@ -9,8 +9,4 @@ export class TextAdapter extends AbstractAdapter {
   constructor(monaco: Monaco) {
     super(monaco, textConfig);
   }
-
-  provideDiagnostics(context: CommandContext): editor.IMarkerData[] {
-    return [];
-  }
 }

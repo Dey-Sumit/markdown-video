@@ -139,6 +139,7 @@ function XEditor() {
     registry.register(new TransitionAdapter(monaco));
 
     registry.registerCompletions(editor.getModel()!);
+    registry.registerDiagnostics(editor.getModel()!);
   };
 
   const __handleEditorMount: OnMount = (editor, monaco) => {

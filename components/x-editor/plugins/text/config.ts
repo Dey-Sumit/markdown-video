@@ -1,6 +1,7 @@
+// plugins/text/config.ts
+
 import type { AdapterConfig } from "../../core/types/adapter";
 
-// plugins/text/config.ts
 const textConfig: AdapterConfig = {
   id: "text",
   pattern: {
@@ -14,6 +15,13 @@ const textConfig: AdapterConfig = {
       type: "string",
       description: "Text content",
       required: true,
+      validations: [
+        {
+          type: "required",
+          message: "Content is required",
+          severity: "error",
+        },
+      ],
     },
     size: {
       name: "size",

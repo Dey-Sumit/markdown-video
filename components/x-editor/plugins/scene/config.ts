@@ -28,6 +28,19 @@ export const sceneConfig: AdapterConfig = {
         "5": "Standard scene",
         "10": "Extended scene",
       },
+      validations: [
+        {
+          type: "required",
+          message: "Duration is required",
+          severity: "error",
+        },
+        {
+          type: "range",
+          message: "Duration must be between 0 and 60 seconds",
+          validate: (value) => Number(value) >= 0 && Number(value) <= 60,
+          severity: "error",
+        },
+      ],
     },
     background: {
       name: "background",
@@ -38,6 +51,15 @@ export const sceneConfig: AdapterConfig = {
         black: "Solid black background",
         white: "Solid white background",
       },
+      validations: [
+        {
+          type: "enum",
+          message: "Invalid background value",
+          validate: (value) =>
+            ["transparent", "black", "white"].includes(value),
+          severity: "warning",
+        },
+      ],
     },
   },
 };

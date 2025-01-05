@@ -3,13 +3,27 @@ import type { Position, IRange, editor, languages } from "monaco-editor";
 
 interface BaseAdapter {
   readonly config: AdapterConfig;
-
+  matchesPattern(lineContent: string): boolean;
   provideCompletions(context: CommandContext): languages.CompletionItem[];
   provideDiagnostics(context: CommandContext): editor.IMarkerData[];
   provideHover?(context: CommandContext): languages.Hover | null;
 
   initialize?(): void;
   dispose?(): void;
+}
+
+interface ValidationRule {
+  type: "required" | "pattern" | "range" | "enum" | "custom";
+  message: string;
+  pattern?: string;
+  validate?: (value: any) => boolean;
+  severity?: "error" | "warning" | "info";
+}
+
+export interface ArgCompletionInfo {
+  key: string;
+  arg: ArgumentConfig;
+  isRequired: boolean;
 }
 export interface ArgumentConfig {
   name: string;
@@ -25,6 +39,7 @@ export interface ArgumentConfig {
 
   // Default value
   default?: string | number | boolean;
+  validations?: ValidationRule[];
 }
 export interface AdapterConfig {
   id: string;
@@ -46,4 +61,4 @@ interface CommandPattern {
   leadingSymbols?: string[];
 }
 
-export type { BaseAdapter, CommandContext, CommandPattern };
+export type { BaseAdapter, CommandContext };
