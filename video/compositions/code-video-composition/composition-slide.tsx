@@ -18,6 +18,7 @@ import type { SceneMetaResult } from "@/types/props.types";
 import ComponentLayoutRenderer from "./components/compone-layout-renderer";
 import { sectionParser } from "@/parsers/SectionParser";
 import Section from "./components/composition-section";
+import { SceneParser } from "@/components/x-editor/plugins/scene/scene.parser";
 
 const { fontFamily } = loadFont();
 
@@ -79,10 +80,16 @@ function BaseSlide({
   newCode,
 }: BaseSlideProps) {
   const { fps } = useVideoConfig();
-  const media = scene.media ? propsParser.media(scene.media) : null;
+  // const media = scene.media ? propsParser.media(scene.media) : null;
+  console.log("BaseSlide -> scene", scene.title);
+
+  const parser = new SceneParser();
+  const sceneProps = parser.parse(scene.title || "");
+  console.log({ sceneProps });
+
   const sceneMeta = propsParser.sceneMeta(scene.title || "");
   // TODO : we can put this logic and all inside the ComponentLayoutRenderer
-  const contentLayout = propsParser.contentLayout(scene.contentLayout || "");
+  // const contentLayout = propsParser.contentLayout(scene.contentLayout || "");
   // const section = propsParser.contentLayout(scene.contentLayout || "");
   const sectionArgs = scene.section;
   const section = sectionParser.parse(`!section ${sectionArgs}`);
@@ -105,11 +112,11 @@ function BaseSlide({
         </div>
       )} */}
 
-      {scene.text && <CompositionTextProcessor value={scene.text} />}
+      {/*    {scene.text && <CompositionTextProcessor value={scene.text} />}
       {section.type === "section" && (
         <Section data={section.data} type={section.type} />
       )}
-
+ */}
       {/* {contentLayout?.name && (
         <div className="absolute inset-0">
           {ComponentLayoutRenderer(contentLayout)}
@@ -132,7 +139,7 @@ function BaseSlide({
         )}
       </div> */}
 
-      {media?.src && (
+      {/*       {media?.src && (
         // {media?.src && getMediaType(media.src) === "image" && (
         <CompositionImage
           src={media.src}
@@ -140,7 +147,7 @@ function BaseSlide({
           mediaAppearanceDelay={convertSecondsToFramerate(media.delay, fps)}
           withMotion={media.withMotion}
         />
-      )}
+      )} */}
     </div>
   );
 }

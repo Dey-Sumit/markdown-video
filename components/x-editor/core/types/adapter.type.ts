@@ -21,7 +21,7 @@ interface ValidationRule {
   message: string;
   pattern?: string;
   validate?: (value: any) => boolean;
-  severity?: "error" | "warning" | "info";
+  severity?: "error" | "warning";
 }
 
 export interface ArgCompletionInfo {

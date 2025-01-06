@@ -2,7 +2,7 @@
 
 import type { AdapterConfig } from "../../core/types/adapter.type";
 
-const textConfig: AdapterConfig = {
+export const textConfig: AdapterConfig = {
   id: "text",
   pattern: {
     type: "component",
@@ -15,6 +15,7 @@ const textConfig: AdapterConfig = {
       type: "string",
       description: "Text content",
       required: true,
+      default: "Default Text",
       validations: [
         {
           type: "required",
@@ -27,21 +28,39 @@ const textConfig: AdapterConfig = {
       name: "size",
       type: "number",
       description: "Font size in pixels",
+      default: 30,
       min: 12,
       max: 96,
-      examples: {
-        "16": "Paragraph text",
-        "24": "Subheading",
-        "48": "Heading",
-      },
+      validations: [
+        {
+          type: "range",
+          message: "Size must be between 12px and 96px",
+          validate: (value) => Number(value) >= 12 && Number(value) <= 96,
+          severity: "error",
+        },
+      ],
     },
     family: {
       name: "family",
       type: "string",
-      values: ["mono", "sans", "serif"],
       description: "Font family",
+      default: "sans",
+      validations: [
+        {
+          type: "enum",
+          message: "Invalid font family",
+          validate: (value) => ["mono", "sans", "serif"].includes(value),
+          severity: "warning",
+        },
+      ],
     },
   },
+};
+
+export const defaultTextArgValues = {
+  content: "Default Text",
+  size: 30,
+  family: "sans",
 };
 
 export default textConfig;

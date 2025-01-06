@@ -15,12 +15,12 @@ import {
   createTransitionConfig,
 } from "../composition.utils";
 
-import propsParser from "./utils/props-parser";
 import { createGradient } from "@/utils/utils";
 
 import { slide, type SlideDirection } from "@remotion/transitions/slide";
 import { staticFile } from "remotion";
 import { addSound } from "./utils/add-sound";
+import { SceneParser } from "@/components/x-editor/plugins/scene/scene.parser";
 
 const presentation = slide();
 const withSound = addSound(
@@ -33,6 +33,8 @@ const slideWithSound = addSound(
   slide(),
   staticFile("sfx/sweep-transition.wav"),
 );
+
+const parser = new SceneParser();
 
 const CodeVideoComposition = ({
   scenes,
@@ -65,32 +67,38 @@ const CodeVideoComposition = ({
         <TransitionSeries layout="none">
           {scenes.map((currentScene, index) => {
             const nextStep = scenes[index + 1];
-            const currentSceneMeta = propsParser.sceneMeta(
+
+            const sceneProps = parser.parse(
               currentScene.title || FALLBACK_PROPS_RAW_FORMAT.sceneMeta,
             );
+            console.log("CodeVideoComposition -> sceneProps", sceneProps);
+
+            // const currentSceneMeta = propsParser.sceneMeta(
+            //   currentScene.title || FALLBACK_PROPS_RAW_FORMAT.sceneMeta,
+            // );
 
             const currentSceneDurationInFrames = convertSecondsToFramerate(
-              currentSceneMeta.duration,
+              sceneProps.data.duration,
               fps,
             );
 
             let currentTransitionType: TransitionType;
             let currentTransitionDurationInSeconds: number;
 
-            try {
-              const result = propsParser.transition(currentScene.transition);
-              currentTransitionType = result.type;
-              currentTransitionDurationInSeconds = result.duration;
-            } catch (e) {
-              currentTransitionType = "none";
-              currentTransitionDurationInSeconds = 3;
-            }
+            // try {
+            //   const result = propsParser.transition(currentScene.transition);
+            //   currentTransitionType = result.type;
+            //   currentTransitionDurationInSeconds = result.duration;
+            // } catch (e) {
+            //   currentTransitionType = "none";
+            //   currentTransitionDurationInSeconds = 3;
+            // }
 
             let nextSceneTransitionType: TransitionType | undefined;
             let nextTransitionDurationInSeconds: number = 0.3;
             let transitionDirection: string = "from-bottom";
 
-            if (nextStep) {
+            /*     if (nextStep) {
               try {
                 const result = propsParser.transition(nextStep.transition);
                 nextSceneTransitionType = result.type;
@@ -99,7 +107,7 @@ const CodeVideoComposition = ({
               } catch (e) {
                 nextSceneTransitionType = "none";
               }
-            }
+            } */
 
             const __presentation = slide({
               direction: transitionDirection as SlideDirection,
@@ -113,7 +121,7 @@ const CodeVideoComposition = ({
             return (
               <React.Fragment key={index}>
                 {/* the first slide by default will have a transition type wipe from bottom */}
-                {index === 0 && (
+                {/* {index === 0 && (
                   //@ts-ignore
                   <TransitionSeries.Transition
                     {...createTransitionConfig({
@@ -123,7 +131,7 @@ const CodeVideoComposition = ({
                       type: currentTransitionType,
                     })}
                   />
-                )}
+                )} */}
 
                 <TransitionSeries.Sequence
                   key={index}
@@ -131,14 +139,14 @@ const CodeVideoComposition = ({
                 >
                   <CompositionSlide
                     scene={currentScene}
-                    oldCode={scenes[index - 1]?.code}
-                    newCode={currentScene.code}
+                    oldCode={scenes[index - 1]?.code[0]}
+                    newCode={currentScene.code[0]}
                     slideDurationInFrames={currentSceneDurationInFrames}
                     tokenTransitionDurationInFrames={convertSecondsToFramerate(
-                      currentTransitionDurationInSeconds,
+                      0.5,
                       fps,
                     )}
-                    disableTransition={currentTransitionType !== "magic"}
+                    // disableTransition={currentTransitionType !== "magic"}
                   />
                 </TransitionSeries.Sequence>
 
