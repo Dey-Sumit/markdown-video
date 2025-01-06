@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import sceneParser from "../scene.parser";
+import scenePropsParser from "../scene.parser";
 import { defaultSceneArgValues } from "../scene.config";
 
 describe("SceneParser", () => {
   describe("Basic Scene Parsing", () => {
     it("should parse basic scene with duration and title", () => {
       const input = "--duration=5 --title=intro";
-      const result = sceneParser.parse(input);
+      const result = scenePropsParser.parse(input);
       expect(result.data).toEqual({
         duration: 5,
         title: "intro",
@@ -16,7 +16,7 @@ describe("SceneParser", () => {
 
     it("should parse scene with all properties", () => {
       const input = "--duration=10 --title=main --background=black";
-      const result = sceneParser.parse(input);
+      const result = scenePropsParser.parse(input);
       expect(result.data).toEqual({
         duration: 10,
         title: "main",
@@ -28,7 +28,7 @@ describe("SceneParser", () => {
   describe("Defaults", () => {
     it("should use defaults for missing optional fields", () => {
       const input = "--duration=5";
-      const result = sceneParser.parse(input);
+      const result = scenePropsParser.parse(input);
       expect(result.data).toEqual({
         duration: 5,
         title: defaultSceneArgValues.title,

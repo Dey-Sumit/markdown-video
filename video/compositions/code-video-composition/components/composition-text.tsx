@@ -1,3 +1,4 @@
+import textParser from "@/components/x-editor/plugins/text/text.parser";
 import { useProjectStore } from "@/store/project-store";
 import React, { type CSSProperties } from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
@@ -442,20 +443,22 @@ export const slideFromBehind: AnimationFn = ({
   };
 };
 
-export type TextAnimationType =
-  | "fadeInSlideUp"
-  | "fadeInSlideDown"
-  | "fadeInOnly"
-  | "scaleIn"
-  | "bounceIn"
-  | "flipIn"
-  | "zoomOut"
-  | "wobble"
-  | "fadeInWithColor"
-  | "wave"
-  | "typewriter"
-  | "none"
-  | "slideFromBehind";
+export const AVAILABLE_TEXT_ANIMATIONS = [
+  "fadeInSlideUp",
+  "fadeInSlideDown",
+  "fadeInOnly",
+  "scaleIn",
+  "bounceIn",
+  "flipIn",
+  "zoomOut",
+  "wobble",
+  "wave",
+  // "typewriter",
+  "none",
+  "slideFromBehind",
+] as const;
+
+export type TextAnimationType = (typeof AVAILABLE_TEXT_ANIMATIONS)[number];
 
 const ANIMATION_MAP: Record<TextAnimationType, AnimationFn> = {
   fadeInSlideUp,
@@ -466,9 +469,8 @@ const ANIMATION_MAP: Record<TextAnimationType, AnimationFn> = {
   flipIn,
   zoomOut,
   wobble,
-  fadeInWithColor,
   wave,
-  typewriter,
+  // typewriter,
   slideFromBehind,
   none,
 };
@@ -520,7 +522,7 @@ const CompositionText = ({
   delay?: number; // Delay in frames before starting the animation
   applyTo?: "word" | "sentence";
   color?: string;
-  fontSize?: string;
+  fontSize?: number;
 }) => {
   const {
     currentProject: { styles },
@@ -549,7 +551,7 @@ const CompositionText = ({
       <Wrapper
         style={{
           color,
-          fontSize,
+          fontSize: `${fontSize}px`,
         }}
       >
         <h1
@@ -572,7 +574,7 @@ const CompositionText = ({
     <Wrapper
       style={{
         color,
-        fontSize,
+        fontSize: `${fontSize}px`,
         fontFamily: styles.backgroundContainer.fontFamily,
       }}
     >
@@ -641,8 +643,6 @@ const CompositionText = ({
   );
 };
 
-export default CompositionText;
-
 const Fancy = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
@@ -676,3 +676,25 @@ const Fancy = ({ children }: { children: React.ReactNode }) => {
     </>
   );
 };
+
+const CompositionTextRenderer = ({ value }: { value: string[] }) => {
+  const textProps = textParser.parse(value);
+  // TODO : need to add one more prop to the parser that isValid that matches the minimum criteria
+  return (
+    <>
+      {textProps.data.map((textProp) => {
+        return (
+          <CompositionText
+            text={textProp.content}
+            delay={textProp.delayInFrames}
+            fontSize={textProp.size}
+            color={textProp.color}
+            animationType={textProp.animation as TextAnimationType}
+          />
+        );
+      })}
+    </>
+  );
+};
+
+export default CompositionTextRenderer;

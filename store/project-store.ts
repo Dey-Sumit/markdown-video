@@ -16,23 +16,9 @@ import { DEFAULT_COMPOSITION_STYLES } from "@/lib/const";
 
 const AUTO_SAVE_DELAY = 20 * 1000; // 10 seconds
 
-export const DEFAULT_PROJECT_TEMPLATE = `## !!scene --title=Text --duration=4 --background=blue
-!text --content="Your Text With Animation" --animation=fadeInSlideUp --duration=3 --delay=0.5
-!transition --type=slide --duration=0.3 --direction=from-left
-
-## !!scene --title=Code --duration=4 --background=transparent
-!transition --type=slide --duration=0.8 --direction=from-bottom
-\`\`\`js !
-const fastestEditor = () => {
-    return "markdownvideo.com"
-}
-fastestEditor()
-\`\`\`
-
-## !!scene --title=Scene --duration=5
-!transition --type=fade --duration=0.3
-\`\`\`js !
-\`\`\``;
+export const DEFAULT_PROJECT_TEMPLATE = `## !scene --duration=5 --title=scene-1
+!text --content="Default Text" --size=120 --color=white
+!text --content="Default Text HELLO" --size=120 --color=red`;
 
 export const PLAYGROUND_PROJECT_TEMPLATE = `## !!scene --title=Text --duration=4 --background=blue
 !text --content="Your Text With Animation" --animation=fadeInSlideUp --duration=3 --delay=0.5
@@ -90,7 +76,7 @@ export const useProjectStore = create<ProjectStore>()(
         id: null,
         content: {
           global: "",
-          sceneLevel: "",
+          sceneLevel: DEFAULT_PROJECT_TEMPLATE,
         },
         styles: DEFAULT_COMPOSITION_STYLES,
         scenes: [],
