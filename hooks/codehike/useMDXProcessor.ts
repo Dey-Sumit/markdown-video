@@ -31,8 +31,6 @@ export const useMdxProcessor = () => {
   }, []);
 
   useEffect(() => {
-   
-
     if (!currentProject.content.global && !currentProject.content.sceneLevel)
       return;
 
@@ -56,19 +54,19 @@ export const useMdxProcessor = () => {
           await compileAndRun(combinedContent);
         if (compileError) throw new Error(compileError);
 
-        const { scene: scenes, global } = parseRoot(
+        const { scene: scenes } = parseRoot(
           compiledContent!,
           Block.extend({
             scene: z.array(SceneSchema),
-            global: z
+            /*   global: z
               .object({
-                title: z.string(),
-                scene: z.string(),
+                title: z.array(z.string()).optional(),
+                scene: z.array(z.string()).optional(),
               })
-              .optional(),
+              .optional(), */
           }),
         );
-        console.log({ scenes, global });
+        console.log({ scenes });
 
         if (!cancelled) {
           updateScenes(scenes);

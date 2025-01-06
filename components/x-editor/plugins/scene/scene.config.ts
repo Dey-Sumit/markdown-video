@@ -55,12 +55,20 @@ export const sceneConfig: AdapterConfig = {
           severity: "warning",
         },
       ],
+      default: "transparent",
     },
     title: {
       name: "title",
       type: "string",
       description: "Scene identifier",
       required: false,
+      default: "scene-title",
     },
   },
+};
+
+export const defaultSceneArgValues = {
+  duration: 5,
+  background: "transparent",
+  title: "scene-title",
 };
