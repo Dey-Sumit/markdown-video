@@ -1,6 +1,6 @@
 // components/x-editor/core/registry.ts
 import type { Monaco, OnMount } from "@monaco-editor/react";
-import type { BaseAdapter } from "./types/adapter";
+import type { BaseAdapter } from "./types/adapter.type";
 import type { editor, IDisposable } from "monaco-editor";
 import { EDITOR_LANGUAGE } from "../const";
 

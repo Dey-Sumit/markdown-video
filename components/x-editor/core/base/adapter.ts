@@ -11,7 +11,7 @@ import type {
   ArgCompletionInfo,
   BaseAdapter,
   CommandContext,
-} from "../types/adapter";
+} from "../types/adapter.type";
 
 export abstract class AbstractAdapter implements BaseAdapter {
   constructor(
