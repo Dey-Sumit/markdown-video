@@ -4,17 +4,6 @@ import { calculateCompositionDuration } from "../composition.utils";
 import { compositionMetaData } from "./config";
 import { SceneSchema, type CompositionStore } from "./types.composition";
 
-// const HARDCODED_STEPS: CompositionStore["scenes"] = [];
-// const HARDCODED_STYLES = {
-//   backgroundContainer: {
-//     background: "#000000",
-//   },
-//   sceneContainer: {
-//     inset: 10,
-//     padding: 10,
-//   },
-// };
-
 import SampleMarkdownContent from "../../../samples/layout-sample-v2.md";
 // import SampleMarkdownContent from "../../../samples/background-sample.md";
 import { Block, parseRoot } from "codehike/blocks";
@@ -64,7 +53,7 @@ export default function CodeTransitionCompositionLoader() {
         styles: HARDCODED_STYLES,
       }}
       calculateMetadata={({ props }) => {
-        const duration = calculateCompositionDuration(props.scenes) || 30;
+        const duration = calculateCompositionDuration(props.scenes) || 90;
 
         return {
           durationInFrames: duration,

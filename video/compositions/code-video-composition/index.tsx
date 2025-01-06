@@ -20,7 +20,7 @@ import { createGradient } from "@/utils/utils";
 import { slide, type SlideDirection } from "@remotion/transitions/slide";
 import { staticFile } from "remotion";
 import { addSound } from "./utils/add-sound";
-import { SceneParser } from "@/components/x-editor/plugins/scene/scene.parser";
+import scenePropsParser from "@/components/x-editor/plugins/scene/scene.parser";
 
 const presentation = slide();
 const withSound = addSound(
@@ -33,8 +33,6 @@ const slideWithSound = addSound(
   slide(),
   staticFile("sfx/sweep-transition.wav"),
 );
-
-const parser = new SceneParser();
 
 const CodeVideoComposition = ({
   scenes,
@@ -68,18 +66,13 @@ const CodeVideoComposition = ({
           {scenes.map((currentScene, index) => {
             const nextStep = scenes[index + 1];
 
-            const sceneProps = parser.parse(
-              currentScene.title || FALLBACK_PROPS_RAW_FORMAT.sceneMeta,
-            );
-            console.log("CodeVideoComposition -> sceneProps", sceneProps);
+            const { data: currentSceneProps } = scenePropsParser.parse(
+              currentScene.title || "",
+            ); // TODO : we need to pass a fallback value here. important for duration and transition duration dynamic
 
-            // const currentSceneMeta = propsParser.sceneMeta(
-            //   currentScene.title || FALLBACK_PROPS_RAW_FORMAT.sceneMeta,
-            // );
-
-            const currentSceneDurationInFrames = convertSecondsToFramerate(
-              sceneProps.data.duration,
-              fps,
+            console.log(
+              "CodeVideoComposition -> sceneProps",
+              currentSceneProps,
             );
 
             let currentTransitionType: TransitionType;
@@ -109,14 +102,14 @@ const CodeVideoComposition = ({
               }
             } */
 
-            const __presentation = slide({
+            /*    const __presentation = slide({
               direction: transitionDirection as SlideDirection,
             });
 
             const presentationWithSound = addSound(
               __presentation,
               staticFile("sfx/sweep-transition.wav"),
-            );
+            ); */
 
             return (
               <React.Fragment key={index}>
@@ -135,17 +128,18 @@ const CodeVideoComposition = ({
 
                 <TransitionSeries.Sequence
                   key={index}
-                  durationInFrames={currentSceneDurationInFrames}
+                  durationInFrames={currentSceneProps.durationInFrames}
                 >
                   <CompositionSlide
                     scene={currentScene}
-                    oldCode={scenes[index - 1]?.code[0]}
-                    newCode={currentScene.code[0]}
-                    slideDurationInFrames={currentSceneDurationInFrames}
+                    oldCode={scenes[index - 1]?.code[0]} // todo:  for Code we will always have only one code block for now, else magic transition will not work
+                    newCode={currentScene.code[0]} // todo:  for Code we will always have only one code block for now, else magic transition will not work
+                    slideDurationInFrames={currentSceneProps.durationInFrames}
                     tokenTransitionDurationInFrames={convertSecondsToFramerate(
-                      0.5,
+                      0.5, // currentTransitionDurationInSeconds
                       fps,
                     )}
+                    sceneProps={currentSceneProps}
                     // disableTransition={currentTransitionType !== "magic"}
                   />
                 </TransitionSeries.Sequence>
@@ -186,7 +180,7 @@ const CodeVideoComposition = ({
           })}
         </TransitionSeries>
       </div>
-      <Audio src={staticFile("audio/rock-happy-1.mp3")} />
+      {/* <Audio src={staticFile("audio/rock-happy-1.mp3")} /> */}
     </AbsoluteFill>
   );
 };

@@ -1,6 +1,6 @@
 import { Pre, type HighlightedCode } from "codehike/code";
 
-import { cn } from "@/lib/utils";
+import { cn, getDerivedBackground } from "@/lib/utils";
 import { loadFont } from "@remotion/google-fonts/FiraCode";
 import {
   tokenTransitions,
@@ -14,32 +14,34 @@ import CompositionImage from "./components/composition-image";
 import { convertSecondsToFramerate } from "../composition.utils";
 import { useVideoConfig } from "remotion";
 import CompositionText from "./components/composition-text";
-import type { SceneMetaResult } from "@/types/props.types";
+
 import ComponentLayoutRenderer from "./components/compone-layout-renderer";
 import { sectionParser } from "@/parsers/SectionParser";
 import Section from "./components/composition-section";
-import { SceneParser } from "@/components/x-editor/plugins/scene/scene.parser";
+import type { SceneOutputProps } from "@/components/x-editor/plugins/scene/scene.types";
+import CompositionTextRenderer from "./components/composition-text";
 
 const { fontFamily } = loadFont();
 
 type BaseSlideProps = {
-  code: HighlightedCode;
+  code?: HighlightedCode;
   codeRef: React.RefObject<any> | null;
   scene: Scene;
   slideDurationInFrames: number;
-  newCode?: HighlightedCode;
+  sceneProps: SceneOutputProps;
 };
 
 type CompositionSlideProps = {
   oldCode?: HighlightedCode;
-  newCode?: HighlightedCode;
+  newCode: HighlightedCode;
   tokenTransitionDurationInFrames: number;
   disableTransition?: boolean;
   slideDurationInFrames: number;
   scene: Scene;
+  sceneProps: SceneOutputProps;
 };
 
-type CodeTransitionProps = {
+type CodeTransitionWrapperProps = {
   children: (props: {
     code: HighlightedCode;
     ref: React.RefObject<any>;
@@ -56,7 +58,7 @@ function CodeTransitionWrapper({
   newCode,
   tokenTransitionDurationInFrames,
   disableTransition,
-}: CodeTransitionProps) {
+}: CodeTransitionWrapperProps) {
   const { code, ref } = useTokenTransitions(
     disableTransition ? newCode : oldCode,
     newCode,
@@ -65,29 +67,16 @@ function CodeTransitionWrapper({
   return children({ code, ref });
 }
 
-const getBackground = (sceneMeta: SceneMetaResult): string => {
-  const bg = sceneMeta.background;
-  if (!bg) return "";
-
-  return /^'?https?:/.test(bg) ? `url(${bg})` : bg;
-};
-
 function BaseSlide({
   code,
   codeRef,
   scene,
   slideDurationInFrames,
-  newCode,
+  sceneProps,
 }: BaseSlideProps) {
   const { fps } = useVideoConfig();
   // const media = scene.media ? propsParser.media(scene.media) : null;
-  console.log("BaseSlide -> scene", scene.title);
 
-  const parser = new SceneParser();
-  const sceneProps = parser.parse(scene.title || "");
-  console.log({ sceneProps });
-
-  const sceneMeta = propsParser.sceneMeta(scene.title || "");
   // TODO : we can put this logic and all inside the ComponentLayoutRenderer
   // const contentLayout = propsParser.contentLayout(scene.contentLayout || "");
   // const section = propsParser.contentLayout(scene.contentLayout || "");
@@ -99,10 +88,11 @@ function BaseSlide({
       id="composition-slide"
       className={cn("flex h-full w-full flex-col p-6")}
       style={{
-        fontFamily,
-        background: getBackground(sceneMeta),
+        fontFamily, // TODO : font family here not working
+        background: getDerivedBackground(sceneProps.background),
       }}
     >
+      <CompositionTextRenderer value={scene.text} />
       {/* {newCode && (
         <div
           className="h-10 text-center text-2xl text-white"
@@ -122,8 +112,9 @@ function BaseSlide({
           {ComponentLayoutRenderer(contentLayout)}
         </div>
       )} */}
-      {/* <div className="flex w-full flex-1 flex-col bg-transparent">
-        {newCode && (
+
+      {code && (
+        <div className="flex w-full flex-1 flex-col bg-transparent">
           <Pre
             ref={codeRef}
             code={code}
@@ -136,8 +127,8 @@ function BaseSlide({
               fontVariantLigatures: "contextual",
             }}
           />
-        )}
-      </div> */}
+        </div>
+      )}
 
       {/*       {media?.src && (
         // {media?.src && getMediaType(media.src) === "image" && (
@@ -163,20 +154,3 @@ export function CompositionSlide(props: CompositionSlideProps) {
     </CodeTransitionWrapper>
   );
 }
-
-const CompositionTextProcessor = ({ value }: { value: string }) => {
-  const { fps } = useVideoConfig();
-  const textProps = propsParser.text(value);
-
-  if (!textProps.content) return null;
-  return (
-    <CompositionText
-      text={textProps.content}
-      delay={convertSecondsToFramerate(textProps.delay || 0, fps)}
-      // fontSize={textProps.fontSize}
-      // fontWeight={textProps.fontWeight}
-      color={textProps.color}
-      animationType={textProps.animation}
-    />
-  );
-};

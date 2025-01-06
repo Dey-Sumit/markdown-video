@@ -10,14 +10,25 @@ import {
 class BaseParser<T extends Record<string, any>> {
   private seenKeys: Set<string>;
 
+  protected readonly FPS = 30; // Add FPS constant
+
   constructor(
     protected config: AdapterConfig,
     private defaultValues: T,
   ) {
     this.seenKeys = new Set();
   }
+
   parse(input: string | string[]): ParseResult<T | T[]> {
     return Array.isArray(input) ? this.parseMany(input) : this.parseOne(input);
+  }
+
+  public calculateFrames(duration: number): number {
+    return Math.round(duration * this.FPS);
+  }
+
+  public generateId() {
+    return this.config.id.toLowerCase().replace(/\s+/g, "-");
   }
 
   private parseMany(inputs: string[]): ParseResult<T[]> {
