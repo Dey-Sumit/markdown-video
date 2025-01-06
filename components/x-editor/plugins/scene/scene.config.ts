@@ -1,6 +1,6 @@
 // components/x-editor/plugins/scene/config.ts
 
-import type { AdapterConfig } from "../../core/types/adapter";
+import type { AdapterConfig } from "../../core/types/adapter.type";
 
 export const sceneConfig: AdapterConfig = {
   id: "scene",
@@ -16,6 +16,7 @@ export const sceneConfig: AdapterConfig = {
       type: "number",
       description: "Scene duration in seconds",
       required: true,
+      default: 5,
       min: 0,
       examples: {
         "3": "Short scene",

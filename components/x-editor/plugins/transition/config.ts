@@ -1,4 +1,4 @@
-import type { AdapterConfig } from "../../core/types/adapter";
+import type { AdapterConfig } from "../../core/types/adapter.type";
 
 // plugins/transition/config.ts
 const transitionConfig: AdapterConfig = {

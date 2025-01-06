@@ -1,6 +1,6 @@
 // plugins/text/config.ts
 
-import type { AdapterConfig } from "../../core/types/adapter";
+import type { AdapterConfig } from "../../core/types/adapter.type";
 
 const textConfig: AdapterConfig = {
   id: "text",

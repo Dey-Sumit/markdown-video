@@ -28,7 +28,7 @@ import { EDITOR_LANGUAGE } from "./const";
 import { Button } from "../ui/button";
 import { formatDocument } from "./format-document";
 import { PluginRegistry } from "./core/registry";
-import { SceneAdapter } from "./plugins/scene/adapter";
+import { SceneAdapter } from "./plugins/scene/scene.adapter";
 import { TextAdapter } from "./plugins/text/adapter";
 import { TransitionAdapter } from "./plugins/transition/adapter";
 // import { configureCompletions } from "./utils/configure-autocompletion";
