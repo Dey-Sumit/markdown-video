@@ -17,16 +17,18 @@ export const TransitionType = z.enum(VALID_TRANSITIONS);
 export type TransitionType = z.infer<typeof TransitionType>;
 
 const BaseSchema = z.object({
-  code: HighlightedCodeBlock.optional(),
-  font: z.string().optional().default(""),
-  transition: z.string().optional().default("--name=magic --duration=0.3"),
-  codeBlockUtils: z.string().optional().default(""),
-  media: z.string().optional().default(""),
-  text: z.string().optional().default(""),
-  contentLayout: z.string().optional().default(""),
-  section: z.string().optional().default(""),
+  code: z.array(HighlightedCodeBlock).optional().default([]),
+  font: z.array(z.string()).optional().default([]),
+  transition: z
+    .array(z.string())
+    .optional()
+    .default(["--name=magic --duration=0.3"]),
+  codeBlockUtils: z.array(z.string()).optional().default([]),
+  media: z.array(z.string()).optional().default([]),
+  text: z.array(z.string()).optional().default([]),
+  contentLayout: z.array(z.string()).optional().default([]),
+  section: z.array(z.string()).optional().default([]),
 });
-
 export const SceneSchema = Block.extend(BaseSchema.shape);
 
 export type Scene = z.infer<typeof SceneSchema>;

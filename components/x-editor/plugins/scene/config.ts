@@ -6,10 +6,10 @@ export const sceneConfig: AdapterConfig = {
   id: "scene",
   pattern: {
     type: "directive",
-    pattern: "^\\s*##\\s*!!scene\\b",
+    pattern: "^\\s*##\\s*!scene\\b",
     leadingSymbols: ["##"],
   },
-  template: "!!scene --duration=${2:5} --title=${1:scene-1}",
+  template: "!scene --duration=${2:5} --title=${1:scene-1}",
   arguments: {
     duration: {
       name: "duration",
