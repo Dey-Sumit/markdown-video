@@ -326,20 +326,16 @@ export abstract class AbstractAdapter implements BaseAdapter {
   provideDiagnostics(context: CommandContext): editor.IMarkerData[] {
     if (!this.matchesPattern(context.lineContent)) return [];
 
-    console.log("=== Diagnostic Details ===");
     const args = this.parseArguments(context.lineContent);
-    console.log("Parsed arguments:", args);
 
     const markers: editor.IMarkerData[] = [];
 
     // Important: Also check for required args that aren't present
     for (const [argName, argConfig] of Object.entries(this.config.arguments)) {
-      console.log(`Checking argument: ${argName}`, argConfig);
       if (
         argConfig.validations?.some((v) => v.type === "required") &&
         !args.has(argName)
       ) {
-        console.log(`Missing required argument: ${argName}`);
         markers.push({
           severity: this.monaco.MarkerSeverity.Error,
           message: `Required argument '${argName}' is missing`,
@@ -355,7 +351,6 @@ export abstract class AbstractAdapter implements BaseAdapter {
 
     // Check existing args
     for (const [name, value] of args.entries()) {
-      console.log(`Validating argument: ${name} = ${value}`);
       markers.push(
         ...this.validateArgument(
           name,
@@ -366,7 +361,6 @@ export abstract class AbstractAdapter implements BaseAdapter {
       );
     }
 
-    console.log("Final markers:", markers);
     return markers;
   }
 
