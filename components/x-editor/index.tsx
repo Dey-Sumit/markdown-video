@@ -30,7 +30,7 @@ import { formatDocument } from "./format-document";
 import { PluginRegistry } from "./core/registry";
 import { SceneAdapter } from "./plugins/scene/scene.adapter";
 import { TextAdapter } from "./plugins/text/adapter";
-import { TransitionAdapter } from "./plugins/transition/adapter";
+import { TransitionAdapter } from "./plugins/transition/transition.adapter";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 const files = ["Scenes", "Global"] as const;

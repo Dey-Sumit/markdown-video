@@ -19,10 +19,7 @@ export type TransitionType = z.infer<typeof TransitionType>;
 const BaseSchema = z.object({
   code: z.array(HighlightedCodeBlock).optional().default([]),
   font: z.array(z.string()).optional().default([]),
-  transition: z
-    .array(z.string())
-    .optional()
-    .default(["--name=magic --duration=0.3"]),
+  transition: z.array(z.string()).optional(),
   codeBlockUtils: z.array(z.string()).optional().default([]),
   media: z.array(z.string()).optional().default([]),
   text: z.array(z.string()).optional().default([]),

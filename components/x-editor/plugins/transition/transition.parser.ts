@@ -1,6 +1,6 @@
 // transition.parser.ts
 import BaseParser from "../../core/base/parser";
-import { transitionConfig, defaultTransitionValues } from "./config";
+import { transitionConfig, defaultTransitionValues } from "./transition.config";
 
 interface TransitionInputProps {
   type: string;
@@ -8,7 +8,7 @@ interface TransitionInputProps {
   direction: string;
 }
 
-interface TransitionOutputProps extends TransitionInputProps {
+export interface TransitionOutputProps extends TransitionInputProps {
   durationInFrames: number;
 }
 
@@ -20,18 +20,17 @@ export class TransitionPropsParser {
   }
 
   parse(input: string | string[]): {
-    data: TransitionOutputProps[];
+    data: TransitionOutputProps;
   } {
-    const baseResult = this.baseParser.parse(input);
+    // If array, take only first item
+    const singleInput = Array.isArray(input) ? input[0] : input;
 
-    // Convert single input to array if needed
-    const inputArray = Array.isArray(baseResult.data)
-      ? (baseResult.data as TransitionInputProps[])
-      : [baseResult.data as TransitionInputProps];
+    const baseResult = this.baseParser.parse(singleInput);
+    console.log({ baseResult, singleInput, input });
 
-    // Transform each item
+    // Transform the single result
     return {
-      data: inputArray.map(this.transformProps.bind(this)),
+      data: this.transformProps(baseResult.data as TransitionInputProps),
     };
   }
 
@@ -43,4 +42,5 @@ export class TransitionPropsParser {
   }
 }
 
-export default new TransitionPropsParser();
+const transitionPropsParser = new TransitionPropsParser();
+export default transitionPropsParser;

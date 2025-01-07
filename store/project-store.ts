@@ -16,9 +16,14 @@ import { DEFAULT_COMPOSITION_STYLES } from "@/lib/const";
 
 const AUTO_SAVE_DELAY = 20 * 1000; // 10 seconds
 
-export const DEFAULT_PROJECT_TEMPLATE = `## !scene --duration=5 --title=scene-1
-!text --content="Default Text" --size=120 --color=white
-!text --content="Default Text HELLO" --size=120 --color=red`;
+export const DEFAULT_PROJECT_TEMPLATE = `## !scene --duration=5 --title=scene-1 --background=red
+!text --content="Scene 1 Text" --size=120 --color=white
+
+!transition --type=slide --duration=0.3
+
+## !scene --duration=5 --title=scene-1 --background=blue
+!text --content="Scene 2 Text" --size=120 --color=white
+`;
 
 export const PLAYGROUND_PROJECT_TEMPLATE = `## !!scene --title=Text --duration=4 --background=blue
 !text --content="Your Text With Animation" --animation=fadeInSlideUp --duration=3 --delay=0.5

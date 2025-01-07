@@ -1,6 +1,6 @@
 import textParser from "@/components/x-editor/plugins/text/text.parser";
 import { useProjectStore } from "@/store/project-store";
-import React, { type CSSProperties } from "react";
+import React, { useId, type CSSProperties } from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
 type AnimationFn = (params: {

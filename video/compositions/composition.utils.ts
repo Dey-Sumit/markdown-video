@@ -9,24 +9,25 @@ import propsParser from "./code-video-composition/utils/props-parser";
 
 import { staticFile } from "remotion";
 import { addSound } from "./code-video-composition/utils/add-sound";
+import sceneParser from "@/components/x-editor/plugins/scene/scene.parser";
+import transitionPropsParser from "@/components/x-editor/plugins/transition/transition.parser";
+
 export const calculateCompositionDuration = (
-  steps: Scene[],
+  scenes: Scene[],
   fps: number = 30,
 ): number => {
-  return steps.reduce((acc, step) => {
-    const { duration } = propsParser.sceneMeta(step.title!, {
-      withFallback: true,
-    });
-    const transition = propsParser.transition(step.transition!, {
-      withFallback: true,
-    });
-    const durationInFrames = convertSecondsToFramerate(duration, fps);
+  return scenes.reduce((acc, step) => {
+    const { data: sceneProps } = sceneParser.parse(step.title || "");
+    const { data: transitionProps } = transitionPropsParser.parse(
+      step.transition || "",
+    );
+
     const transitionDurationInFrames =
-      transition.type && transition.type !== "magic"
-        ? convertSecondsToFramerate(transition.duration, fps)
+      transitionProps.type && transitionProps.type !== "magic"
+        ? convertSecondsToFramerate(transitionProps.duration, fps)
         : 0;
 
-    return acc + durationInFrames - transitionDurationInFrames;
+    return acc + sceneProps.durationInFrames - transitionDurationInFrames;
   }, 0);
 };
 
@@ -35,6 +36,7 @@ export const convertSecondsToFramerate = (seconds: number, framerate: number) =>
 
 const withSound = (presentation: any) =>
   addSound(presentation, staticFile("sfx/sweep-transition.wav"));
+
 export const createTransitionConfig = ({
   type,
   durationInSeconds,
@@ -54,14 +56,6 @@ export const createTransitionConfig = ({
       direction: WipeDirection;
     }
   | {
-      type: "none";
-      direction: string;
-    }
-  | {
-      type: "magic";
-      direction: string;
-    }
-  | {
       type: "flip";
       direction: FlipDirection;
     }
@@ -74,13 +68,11 @@ export const createTransitionConfig = ({
 } => {
   switch (type) {
     case "slide": {
-      console.log("slide", direction);
-
       return {
         timing: linearTiming({
           durationInFrames: convertSecondsToFramerate(durationInSeconds, fps),
         }),
-        presentation: slide({ direction })
+        presentation: slide({ direction }),
       };
     }
     case "fade":
@@ -95,18 +87,16 @@ export const createTransitionConfig = ({
         timing: linearTiming({
           durationInFrames: convertSecondsToFramerate(durationInSeconds, fps),
         }),
-        // presentation: wipe({ direction }),
-        presentation: wipe({ direction })
+        presentation: wipe({ direction }),
       };
     case "flip":
       return {
         timing: linearTiming({
           durationInFrames: convertSecondsToFramerate(durationInSeconds, fps),
         }),
-        presentation: flip({ direction })
+        presentation: flip({ direction }),
       };
-    //! does not matter
-    case "none":
+
     default:
       return {
         timing: linearTiming({

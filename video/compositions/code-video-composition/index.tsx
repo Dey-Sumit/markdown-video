@@ -21,6 +21,9 @@ import { slide, type SlideDirection } from "@remotion/transitions/slide";
 import { staticFile } from "remotion";
 import { addSound } from "./utils/add-sound";
 import scenePropsParser from "@/components/x-editor/plugins/scene/scene.parser";
+import transitionPropsParser, {
+  type TransitionOutputProps,
+} from "@/components/x-editor/plugins/transition/transition.parser";
 
 const presentation = slide();
 const withSound = addSound(
@@ -70,26 +73,19 @@ const CodeVideoComposition = ({
               currentScene.title || "",
             ); // TODO : we need to pass a fallback value here. important for duration and transition duration dynamic
 
-            console.log(
-              "CodeVideoComposition -> sceneProps",
-              currentSceneProps,
+            const { data: currentTransition } = transitionPropsParser.parse(
+              currentScene.transition || "", // TODO : we need to pass a fallback value here. important for duration and transition duration dynamic
             );
 
-            let currentTransitionType: TransitionType;
-            let currentTransitionDurationInSeconds: number;
+            const { data: nextTransition } = transitionPropsParser.parse(
+              nextStep?.transition || "", // TODO : we need to pass a fallback value here. important for duration and transition duration dynamic
+            );
 
-            // try {
-            //   const result = propsParser.transition(currentScene.transition);
-            //   currentTransitionType = result.type;
-            //   currentTransitionDurationInSeconds = result.duration;
-            // } catch (e) {
-            //   currentTransitionType = "none";
-            //   currentTransitionDurationInSeconds = 3;
-            // }
+            console.log({ currentTransition, nextTransition });
 
-            let nextSceneTransitionType: TransitionType | undefined;
-            let nextTransitionDurationInSeconds: number = 0.3;
-            let transitionDirection: string = "from-bottom";
+            // let nextSceneTransitionType: TransitionType | undefined;
+            // let nextTransitionDurationInSeconds: number = 0.3;
+            // let transitionDirection: string = "from-bottom";
 
             /*     if (nextStep) {
               try {
@@ -135,46 +131,29 @@ const CodeVideoComposition = ({
                     oldCode={scenes[index - 1]?.code[0]} // todo:  for Code we will always have only one code block for now, else magic transition will not work
                     newCode={currentScene.code[0]} // todo:  for Code we will always have only one code block for now, else magic transition will not work
                     slideDurationInFrames={currentSceneProps.durationInFrames}
-                    tokenTransitionDurationInFrames={convertSecondsToFramerate(
-                      0.5, // currentTransitionDurationInSeconds
-                      fps,
-                    )}
+                    tokenTransitionDurationInFrames={
+                      currentTransition.durationInFrames
+                    }
                     sceneProps={currentSceneProps}
-                    // disableTransition={currentTransitionType !== "magic"}
+                    disableTokenTransition={currentTransition.type !== "magic"}
                   />
                 </TransitionSeries.Sequence>
 
-                {nextSceneTransitionType &&
-                  nextSceneTransitionType !== "magic" &&
-                  nextSceneTransitionType !== "none" && (
+                {nextTransition.type &&
+                  nextTransition.type !== "none" &&
+                  nextTransition.type !== "magic" && (
+                    //@ts-ignore : ts is bullshit
                     <TransitionSeries.Transition
-                      presentation={withSoundDynamic(
-                        slide({
-                          direction: transitionDirection as SlideDirection,
-                        }),
-                      )}
-                      // presentation={presentationWithSound}
-                      timing={linearTiming({
-                        durationInFrames: convertSecondsToFramerate(
-                          nextTransitionDurationInSeconds,
-                          fps,
-                        ),
+                      //@ts-ignore : ts is bullshit again
+                      {...createTransitionConfig({
+                        direction: nextTransition.direction,
+                        durationInSeconds: nextTransition.duration,
+                        fps,
+                        // @ts-ignore : ts is bullshit once again
+                        type: nextTransition.type,
                       })}
                     />
                   )}
-                {/* {nextSceneTransitionType &&
-                  nextSceneTransitionType !== "magic" &&
-                  nextSceneTransitionType !== "none" && (
-                    <TransitionSeries.Transition
-                      presentation={withSound(slide())}
-                      timing={linearTiming({
-                        durationInFrames: convertSecondsToFramerate(
-                          nextTransitionDurationInSeconds,
-                          fps,
-                        ),
-                      })}
-                    />
-                  )} */}
               </React.Fragment>
             );
           })}

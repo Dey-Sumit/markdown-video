@@ -35,7 +35,7 @@ type CompositionSlideProps = {
   oldCode?: HighlightedCode;
   newCode: HighlightedCode;
   tokenTransitionDurationInFrames: number;
-  disableTransition?: boolean;
+  disableTokenTransition?: boolean;
   slideDurationInFrames: number;
   scene: Scene;
   sceneProps: SceneOutputProps;
@@ -49,7 +49,7 @@ type CodeTransitionWrapperProps = {
   oldCode?: HighlightedCode;
   newCode: HighlightedCode;
   tokenTransitionDurationInFrames: number;
-  disableTransition?: boolean;
+  disableTokenTransition?: boolean;
 };
 
 function CodeTransitionWrapper({
@@ -57,10 +57,10 @@ function CodeTransitionWrapper({
   oldCode,
   newCode,
   tokenTransitionDurationInFrames,
-  disableTransition,
+  disableTokenTransition,
 }: CodeTransitionWrapperProps) {
   const { code, ref } = useTokenTransitions(
-    disableTransition ? newCode : oldCode,
+    disableTokenTransition ? newCode : oldCode,
     newCode,
     tokenTransitionDurationInFrames,
   );
