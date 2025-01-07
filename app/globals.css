@@ -146,6 +146,24 @@
   border-bottom: 1px dotted #6b7280;
 }
 
+/* In your styles */
+.scene-block {
+  background-color: red;  
+  /* TODO : not working */
+}
+
+.command-text { color: #2563eb !important }     /* blue */
+.command-transition { color: #059669  !important }  /* green */
+.command-image { color: #d97706  !important }    /* amber */
+.command-arg { font-style: italic }
+
+/* .scene-block-odd {
+  background-color: rgba(255, 0, 0, 0.4);
+}
+
+.scene-block-even {
+  background-color: rgba(100, 100, 100, 0.02);
+} */
 /* .hoverable-argument {
   border-bottom: 1px dashed #9ca3af;
   cursor: help;

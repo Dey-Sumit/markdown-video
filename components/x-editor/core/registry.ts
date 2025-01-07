@@ -83,28 +83,59 @@ export class PluginRegistry {
       },
     });
   }
-
   registerDecorations(model: editor.ITextModel): void {
-    const decorations: editor.IModelDeltaDecoration[] = [];
+    let prevDecorationIds: string[] = []; // Track previous decoration IDs
 
-    // Update decorations on content change
     const updateDecorations = () => {
       const content = model.getValue();
       const lines = content.split("\n");
-
-      decorations.length = 0;
+      const newDecorations: editor.IModelDeltaDecoration[] = [];
+      let inScene = false;
+      let sceneStartLine = 0;
 
       lines.forEach((line, index) => {
-        // Decorate commands
+        if (line.trim().startsWith("## !scene")) {
+          if (inScene) {
+            let lastContentLine = index - 1;
+            while (
+              lastContentLine > sceneStartLine &&
+              !lines[lastContentLine].trim()
+            ) {
+              lastContentLine--;
+            }
+
+            newDecorations.push({
+              range: new this.monaco.Range(
+                sceneStartLine,
+                1,
+                lastContentLine + 1,
+                1,
+              ),
+              options: {
+                isWholeLine: true,
+                className: "scene-block",
+                stickiness:
+                  this.monaco.editor.TrackedRangeStickiness
+                    .AlwaysGrowsWhenTypingAtEdges,
+              },
+            });
+          }
+          sceneStartLine = index + 1;
+          inScene = true;
+        }
+      });
+
+      // Second loop: Command and quoted string decorations
+      lines.forEach((line, index) => {
         Array.from(this.plugins.values()).forEach((plugin) => {
           if (!plugin.matchesPattern(line)) return;
 
-          // Command decoration (!!scene or !text)
+          // Command decoration (only the command portion)
           const cmdMatch = line.match(
             plugin.config.pattern.type === "directive" ? /!!\w+/ : /!\w+/,
           );
           if (cmdMatch) {
-            decorations.push({
+            newDecorations.push({
               range: new this.monaco.Range(
                 index + 1,
                 cmdMatch.index! + 1,
@@ -112,50 +143,35 @@ export class PluginRegistry {
                 cmdMatch.index! + cmdMatch[0].length + 1,
               ),
               options: {
-                inlineClassName: "hoverable-command",
-                // hoverMessage: { value: "**Click to see command details**" },
+                inlineClassName: `command-${plugin.config.id}`, // command-text, command-transition, etc.
               },
             });
           }
 
-          // Arguments decoration (--arg=value)
-          const argMatches = line.matchAll(/--(\w+)(?==)/g);
+          // Args in italic
+          const argMatches = line.matchAll(/--\w+=([^-\s"]+|"[^"]*")/g);
           for (const match of argMatches) {
-            decorations.push({
+            const [fullMatch] = match;
+            newDecorations.push({
               range: new this.monaco.Range(
                 index + 1,
-                match.index! + 3, // Skip '--'
+                match.index! + 1,
                 index + 1,
-                match.index! + match[0].length + 1,
+                match.index! + fullMatch.length + 1,
               ),
               options: {
-                // inlineClassName: "hoverable-argument",
-                // hoverMessage: { value: "Hover to see argument details" },
-              },
-            });
-          }
-
-          // Values decoration
-          const valueMatches = line.matchAll(/--\w+=([^-\s"]+|"[^"]*")/g);
-          for (const match of valueMatches) {
-            const valueStart = match.index! + match[0].indexOf("=") + 1;
-            decorations.push({
-              range: new this.monaco.Range(
-                index + 1,
-                valueStart + 1,
-                index + 1,
-                valueStart + match[1].length + 1,
-              ),
-              options: {
-                // inlineClassName: "hoverable-value",
-                // hoverMessage: { value: "Hover to see value details" },
+                inlineClassName: "command-arg",
               },
             });
           }
         });
       });
 
-      model.deltaDecorations([], decorations);
+      // Clear old decorations and set new ones
+      prevDecorationIds = model.deltaDecorations(
+        prevDecorationIds,
+        newDecorations,
+      );
     };
 
     updateDecorations();
