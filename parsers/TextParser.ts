@@ -13,13 +13,6 @@ interface TextData {
   color?: string;
 }
 
-class TextParserError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "TextParserError";
-  }
-}
-
 class TextParser {
   private defaultConfig: TextData = {
     content: "",

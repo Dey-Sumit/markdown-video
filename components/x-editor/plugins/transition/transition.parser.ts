@@ -24,9 +24,9 @@ export class TransitionPropsParser {
   } {
     // If array, take only first item
     const singleInput = Array.isArray(input) ? input[0] : input;
+    console.log("parse", { singleInput });
 
     const baseResult = this.baseParser.parse(singleInput);
-    console.log({ baseResult, singleInput, input });
 
     // Transform the single result
     return {
