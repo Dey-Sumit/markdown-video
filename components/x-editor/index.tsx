@@ -29,8 +29,9 @@ import { Button } from "../ui/button";
 import { formatDocument } from "./format-document";
 import { PluginRegistry } from "./core/registry";
 import { SceneAdapter } from "./plugins/scene/scene.adapter";
-import { TextAdapter } from "./plugins/text/adapter";
+import { TextAdapter } from "./plugins/text/text.adapter";
 import { TransitionAdapter } from "./plugins/transition/transition.adapter";
+import { CodeAdapter } from "./plugins/code/code.adapter";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 const files = ["Scenes", "Global"] as const;
@@ -137,11 +138,13 @@ function XEditor() {
     registry.register(new SceneAdapter(monaco));
     registry.register(new TextAdapter(monaco));
     registry.register(new TransitionAdapter(monaco));
+    registry.register(new CodeAdapter(monaco));
 
     registry.registerCompletions(editor.getModel()!);
     registry.registerDiagnostics(editor.getModel()!);
     registry.registerHoverProvider(editor.getModel()!);
     registry.registerDecorations(editor.getModel()!);
+    registry.registerFoldingRanges(monaco);
   };
 
   const __handleEditorMount: OnMount = (editor, monaco) => {

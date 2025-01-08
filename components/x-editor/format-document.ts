@@ -15,25 +15,38 @@ export function formatDocument(content: string): string {
   let lines = content.trim().split("\n");
   const formattedLines: string[] = [];
   let isInScene = false;
+  let isInCodeBlock = false;
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
+    const rawLine = lines[i]; // Keep original line with indentation
+    const trimmedLine = rawLine.trim();
 
+    // Handle code blocks
+    if (trimmedLine.startsWith("```")) {
+      isInCodeBlock = !isInCodeBlock;
+      formattedLines.push(rawLine);
+      continue;
+    }
+
+    if (isInCodeBlock) {
+      formattedLines.push(rawLine); // Use raw line to preserve indentation
+      continue;
+    }
     // Skip empty lines between components
-    if (!line && isInScene) continue;
+    if (!trimmedLine && isInScene) continue;
 
-    if (isSceneHeader(line)) {
+    if (isSceneHeader(trimmedLine)) {
       // Add blank line before scene (except for first scene)
       if (formattedLines.length > 0) {
         formattedLines.push("");
       }
 
       // Format and add scene line
-      formattedLines.push(formatSceneLine(line));
+      formattedLines.push(formatSceneLine(trimmedLine));
       isInScene = true;
-    } else if (isComponent(line) && isInScene) {
+    } else if (isComponent(trimmedLine) && isInScene) {
       // Add component with tab indentation
-      formattedLines.push(`   ${formatComponentLine(line)}`);
+      formattedLines.push(`   ${formatComponentLine(trimmedLine)}`);
     }
   }
 
@@ -94,5 +107,5 @@ function isSceneHeader(line: string): boolean {
  * Checks if a line is a component.
  */
 function isComponent(line: string): boolean {
-  return /^!\w+\b/.test(line);
+  return /^!\w+\b/.test(line) && !line.startsWith("`");
 }

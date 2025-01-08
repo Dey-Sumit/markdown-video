@@ -12,6 +12,7 @@ import type {
   BaseAdapter,
   CommandContext,
 } from "../types/adapter.type";
+import { capitalizeFirstLetter } from "@/lib/utils";
 
 export abstract class AbstractAdapter implements BaseAdapter {
   constructor(
@@ -389,56 +390,13 @@ export abstract class AbstractAdapter implements BaseAdapter {
     return null;
   }
 
-  private isCommandHover(lineContent: string, position: Position): boolean {
-    const commandMatch = lineContent.match(
-      new RegExp(this.config.pattern.pattern),
-    );
-    if (!commandMatch) return false;
-
-    const startCol = commandMatch.index! + 1;
-    const endCol = startCol + this.config.id.length;
-
-    return position.column >= startCol && position.column <= endCol;
-  }
-
-  private isArgumentHover(lineContent: string, position: Position): boolean {
-    const argRegex = /--(\w+)(?==)/g;
-    let match;
-
-    while ((match = argRegex.exec(lineContent)) !== null) {
-      const startCol = match.index! + 3; // Skip '--'
-      const endCol = startCol + match[1].length;
-
-      if (position.column >= startCol && position.column <= endCol) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private isValueHover(lineContent: string, position: Position): boolean {
-    const valueRegex = /--\w+=([^-\s"]+|"[^"]*")/g;
-    let match;
-
-    while ((match = valueRegex.exec(lineContent)) !== null) {
-      const valueStart = match.index! + match[0].indexOf("=") + 1;
-      const value = match[1];
-      const valueEnd = valueStart + value.length;
-
-      if (position.column >= valueStart && position.column <= valueEnd) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   protected getWordAtPosition(
     lineContent: string,
     position: Position,
   ): string | null {
     const commandRegex =
       this.config.pattern.type === "directive"
-        ? /!!\w+/ // For !!scene
+        ? /!\w+/ // For !!scene
         : /!\w+/; // For !text
 
     const cmdMatch = lineContent.match(commandRegex);
@@ -480,7 +438,7 @@ export abstract class AbstractAdapter implements BaseAdapter {
     const contents = [
       {
         value: [
-          `### ${this.config.id}`,
+          `## ${capitalizeFirstLetter(this.config.id)}`,
           "",
           this.config.description || "No description available",
           "",

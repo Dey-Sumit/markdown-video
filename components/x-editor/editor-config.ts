@@ -28,7 +28,7 @@ export const monacoCustomOptions: editor.IStandaloneEditorConstructionOptions =
     bracketPairColorization: {
       enabled: true,
     },
-    lineNumbers: "off",
+    lineNumbers: "on",
     suggest: {
       showWords: false,
       snippetsPreventQuickSuggestions: false,

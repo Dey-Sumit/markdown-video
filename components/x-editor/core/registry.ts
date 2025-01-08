@@ -1,8 +1,13 @@
 // components/x-editor/core/registry.ts
 import type { Monaco, OnMount } from "@monaco-editor/react";
 import type { BaseAdapter } from "./types/adapter.type";
-import type { editor, IDisposable } from "monaco-editor";
+import type { editor, IDisposable, languages } from "monaco-editor";
 import { EDITOR_LANGUAGE } from "../const";
+interface FoldingRange {
+  start: number;
+  end: number;
+  kind?: languages.FoldingRangeKind;
+}
 
 export class PluginRegistry {
   private plugins: Map<string, BaseAdapter> = new Map();
@@ -17,7 +22,7 @@ export class PluginRegistry {
     console.log("Registering plugins:", Array.from(this.plugins.keys()));
 
     this.monaco.languages.registerCompletionItemProvider(EDITOR_LANGUAGE, {
-      triggerCharacters: ["!", "-", "=", "#"],
+      triggerCharacters: ["!", "-", "=", "#", "`"],
       provideCompletionItems: (model, position) => {
         const lineContent = model.getLineContent(position.lineNumber);
 
@@ -83,6 +88,7 @@ export class PluginRegistry {
       },
     });
   }
+
   registerDecorations(model: editor.ITextModel): void {
     let prevDecorationIds: string[] = []; // Track previous decoration IDs
 
@@ -167,6 +173,20 @@ export class PluginRegistry {
         });
       });
 
+      // Handle the last scene block if exists
+      if (inScene) {
+        newDecorations.push({
+          range: new this.monaco.Range(sceneStartLine, 1, lines.length, 1),
+          options: {
+            isWholeLine: true,
+            className: "scene-block",
+            stickiness:
+              this.monaco.editor.TrackedRangeStickiness
+                .AlwaysGrowsWhenTypingAtEdges,
+          },
+        });
+      }
+
       // Clear old decorations and set new ones
       prevDecorationIds = model.deltaDecorations(
         prevDecorationIds,
@@ -176,5 +196,65 @@ export class PluginRegistry {
 
     updateDecorations();
     model.onDidChangeContent(updateDecorations);
+  }
+
+  registerFoldingRanges(monaco: Monaco): void {
+    monaco.languages.registerFoldingRangeProvider(EDITOR_LANGUAGE, {
+      provideFoldingRanges: (model) => {
+        const ranges: FoldingRange[] = [];
+        const lineCount = model.getLineCount();
+        let sceneStart = -1;
+        let codeBlockStart = -1;
+
+        const isEmptyLine = (ln: number) =>
+          model.getLineContent(ln).trim() === "";
+        const findNextNonEmpty = (from: number): number => {
+          let ln = from;
+          while (ln <= lineCount && isEmptyLine(ln)) ln++;
+          return ln;
+        };
+        const findPrevNonEmpty = (from: number): number => {
+          let ln = from;
+          while (ln > 0 && isEmptyLine(ln)) ln--;
+          return ln;
+        };
+
+        for (let ln = 1; ln <= lineCount; ln++) {
+          const line = model.getLineContent(ln);
+
+          if (line.match(/^##\s*!scene\s+.+/)) {
+            if (sceneStart !== -1) {
+              ranges.push({
+                start: sceneStart,
+                end: findPrevNonEmpty(ln - 1),
+                kind: monaco.languages.FoldingRangeKind.Region,
+              });
+            }
+            sceneStart = ln;
+          }
+
+          if (line.match(/^```\w+/)) {
+            codeBlockStart = ln;
+          } else if (line.match(/^```$/) && codeBlockStart !== -1) {
+            ranges.push({
+              start: codeBlockStart,
+              end: ln,
+              kind: monaco.languages.FoldingRangeKind.Comment,
+            });
+            codeBlockStart = -1;
+          }
+        }
+
+        if (sceneStart !== -1) {
+          ranges.push({
+            start: sceneStart,
+            end: findPrevNonEmpty(lineCount),
+            kind: monaco.languages.FoldingRangeKind.Region,
+          });
+        }
+
+        return ranges;
+      },
+    });
   }
 }
