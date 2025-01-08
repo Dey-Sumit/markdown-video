@@ -12,8 +12,8 @@ export const sceneConfig: AdapterConfig = {
   id: "scene",
   pattern: {
     type: "directive",
-    pattern: "^\\s*##\\s*!scene\\b",
-    leadingSymbols: ["##"],
+    pattern: "^\\s*#\\s*!scene\\b",
+    leadingSymbols: ["#"],
   },
   description:
     "Scene is a basic building block of a video composition. It defines the duration, background color, and title of a scene.",
