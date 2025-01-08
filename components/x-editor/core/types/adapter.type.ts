@@ -50,6 +50,7 @@ export interface AdapterConfig {
   pattern: CommandPattern;
   template: string;
   arguments: Record<string, ArgumentConfig>;
+  description?: string;
 }
 interface CommandContext {
   lineContent: string;

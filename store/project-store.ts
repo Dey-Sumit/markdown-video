@@ -23,6 +23,7 @@ export const DEFAULT_PROJECT_TEMPLATE = `## !scene --duration=5 --title=scene-1 
 
 ## !scene --duration=5 --title=scene-1 --background=blue
 !text --content="Scene 2 Text" --size=120 --color=white
+!transition --type=wipe --duration=0.3
 `;
 
 export const PLAYGROUND_PROJECT_TEMPLATE = `## !!scene --title=Text --duration=4 --background=blue

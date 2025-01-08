@@ -482,6 +482,8 @@ export abstract class AbstractAdapter implements BaseAdapter {
         value: [
           `### ${this.config.id}`,
           "",
+          this.config.description || "No description available",
+          "",
           "Arguments:",
           ...Object.entries(this.config.arguments).map(
             ([name, arg]) =>
