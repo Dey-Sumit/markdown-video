@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import textParser from "../text.parser";
 
-import { defaultTextArgValues } from "../config";
+import { defaultTextArgValues } from "../text.config";
 import { ParserIssueCode } from "../../../core/types/parser.type";
 
 describe("TextParser", () => {
