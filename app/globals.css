@@ -148,10 +148,9 @@
 
 /* In your styles */
 .scene-block {
-  /* background-color: red;   */
-  /* TODO : not working */
-}
 
+  background-color: rgba(100, 100, 255, 0.12) !important;
+}
 .command-text { color: #a5f3fc !important }     /* blue */
 .command-transition { color: #fde68a  !important }  /* green */
 .command-image { color: #d97706  !important }    /* amber */
@@ -191,7 +190,7 @@
 
 .monaco-hover .hover-row {
   /* Each row in the hover */
-  padding: 8px 12px !important;
+  padding: 0px 12px 8px 12px !important;
 }
 
 .monaco-hover code {

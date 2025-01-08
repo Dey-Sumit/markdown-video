@@ -6,24 +6,23 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { devtools } from "zustand/middleware";
-import { db, type ProjectStyles } from "../lib/dexie-db";
-import { toast } from "sonner";
-import { editor } from "monaco-editor";
-import { validateMarkdown } from "@/components/x-editor/utils";
+import { type ProjectStyles } from "../lib/dexie-db";
 import type { Scene } from "@/video/compositions/code-video-composition/types.composition";
 import { calculateCompositionDuration } from "@/video/compositions/composition.utils";
 import { DEFAULT_COMPOSITION_STYLES } from "@/lib/const";
 
 const AUTO_SAVE_DELAY = 20 * 1000; // 10 seconds
 
-export const DEFAULT_PROJECT_TEMPLATE = `## !scene --duration=5 --title=scene-1 --background=red
-!text --content="Scene 1 Text" --size=120 --color=white
+export const DEFAULT_PROJECT_TEMPLATE = `## !scene --duration=5 --title=scene --background=indigo
+   !text --content="Scene 1 Text" --size=120 --color=white
 
-!transition --type=slide --duration=0.3
+## !scene --duration=5 --title=scene --background=gray
+   !text --content="Scene 2 Text" --size=120 --color=white
+   !transition --type=wipe --duration=0.3
 
-## !scene --duration=5 --title=scene-1 --background=blue
-!text --content="Scene 2 Text" --size=120 --color=white
-!transition --type=wipe --duration=0.3
+## !scene --duration=5 --title=scene --background=blue
+   !text --content="Scene 2 Text" --size=120 --color=white
+   !transition --type=wipe --duration=0.3
 `;
 
 export const PLAYGROUND_PROJECT_TEMPLATE = `## !!scene --title=Text --duration=4 --background=blue
@@ -175,8 +174,6 @@ export const useProjectStore = create<ProjectStore>()(
        * @param styles - New styles configuration
        */
       updateStyles: (styles: ProjectStyles) => {
-        console.log("updateStyles", styles);
-
         set((state) => {
           state.currentProject.styles = styles;
         });

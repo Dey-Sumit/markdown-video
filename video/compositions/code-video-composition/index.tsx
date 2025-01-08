@@ -80,7 +80,6 @@ const CodeVideoComposition = ({
             const { data: nextTransition } = transitionPropsParser.parse(
               nextStep?.transition || "", // TODO : we need to pass a fallback value here. important for duration and transition duration dynamic
             );
-            console.log({ nextTransition });
 
             // let nextSceneTransitionType: TransitionType | undefined;
             // let nextTransitionDurationInSeconds: number = 0.3;
