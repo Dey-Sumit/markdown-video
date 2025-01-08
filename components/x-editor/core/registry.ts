@@ -149,7 +149,7 @@ export class PluginRegistry {
           }
 
           // Args in italic
-          const argMatches = line.matchAll(/--\w+=([^-\s"]+|"[^"]*")/g);
+          const argMatches = line.matchAll(/--(\w+)(?==)/g);
           for (const match of argMatches) {
             const [fullMatch] = match;
             newDecorations.push({
