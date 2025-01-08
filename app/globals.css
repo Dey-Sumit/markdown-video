@@ -152,10 +152,12 @@
   /* TODO : not working */
 }
 
-.command-text { color: #2563eb !important }     /* blue */
-.command-transition { color: #059669  !important }  /* green */
+.command-text { color: #a5f3fc !important }     /* blue */
+.command-transition { color: #fde68a  !important }  /* green */
 .command-image { color: #d97706  !important }    /* amber */
-.command-arg { font-style: italic }
+.command-arg { 
+  font-style: italic;
+ } 
 
 /* .scene-block-odd {
   background-color: rgba(255, 0, 0, 0.4);

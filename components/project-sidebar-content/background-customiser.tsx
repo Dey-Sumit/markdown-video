@@ -19,28 +19,35 @@ interface BackgroundSettings {
 }
 
 const gradientPresets = [
-  { from: "#FF6F61", to: "#6B5B95" }, // Warm coral to deep violet
-  { from: "#88B04B", to: "#F7CAC9" }, // Olive green to soft pink
-  { from: "#92A8D1", to: "#034F84" }, // Cool blue to deep navy
-  { from: "#F7786B", to: "#DEDDDD" }, // Vibrant red to light gray
-  { from: "#955251", to: "#D65076" }, // Earthy brown to magenta
-  { from: "#45B8AC", to: "#EFC050" }, // Teal green to mustard yellow
-  { from: "#5B9BD5", to: "#ED7D31" }, // Bright blue to orange
-  { from: "#B565A7", to: "#FFD662" }, // Royal purple to sunflower yellow
-  { from: "#6C4F3D", to: "#C48F65" }, // Chocolate brown to sandy beige
-  { from: "#DD4124", to: "#009473" }, // Fiery red to emerald green
-  { from: "#55A8D4", to: "#A0DAA9" }, // Sky blue to mint green
-  { from: "#FDDB27", to: "#F77F00" }, // Golden yellow to bright orange
-  { from: "#D72638", to: "#3B3355" }, // Crimson red to dark plum
-  { from: "#11999E", to: "#30E3CA" }, // Deep teal to aquamarine
-  { from: "#EE7752", to: "#E73C7E" }, // Sunset orange to magenta
-  { from: "#23A6D5", to: "#23D5AB" }, // Bright blue to sea green
-  { from: "#C6FFDD", to: "#FBD786" }, // Mint to soft yellow
-  { from: "#FDBB2D", to: "#22C1C3" }, // Honey gold to turquoise
-  { from: "#F953C6", to: "#B91D73" }, // Vibrant pink to dark rose
-  { from: "#36D1DC", to: "#5B86E5" }, // Cool aqua to deep blue
+  { from: "#232526", to: "#414345" }, // Night Fade
+  { from: "#ec008c", to: "#fc6767" }, // DIMIGO
+  { from: "#cc2b5e", to: "#753a88" }, // Purple Love
+  { from: "#e65c00", to: "#F9D423" }, // Blooker20
+  { from: "#ff6e7f", to: "#bfe9ff" }, // Noon to Dusk
+  { from: "#e52d27", to: "#b31217" }, // YouTube
+  { from: "#603813", to: "#b29f94" }, // Cool Brown
+  { from: "#02AAB0", to: "#00CDAC" }, // Green Beach
+  { from: "#DA22FF", to: "#9733EE" }, // Intuitive Purple
+  { from: "#348F50", to: "#56B4D3" }, // Emerald Water
+  { from: "#FF512F", to: "#DD2476" }, // Bloody Mary
+  { from: "#AA076B", to: "#61045F" }, // Aubergine
+  { from: "#1A2980", to: "#26D0CE" }, // Aqua Marine
+  { from: "#FF512F", to: "#F09819" }, // Sunrise
+  { from: "#1D2B64", to: "#F8CDDA" }, // Purple Paradise
+  { from: "#1FA2FF", to: "#12D8FA" }, // Stripe
+  { from: "#4CB8C4", to: "#3CD3AD" }, // Sea Weed
+  { from: "#DD5E89", to: "#F7BB97" }, // Pinky
+  { from: "#EB3349", to: "#F45C43" }, // Cherry
+  { from: "#1D976C", to: "#93F9B9" }, // Mojito
+  { from: "#FFB008", to: "#FFC837" }, // Juicy Orange
+  { from: "#16222A", to: "#3A6073" }, // Mirage
+  { from: "#1F1C2C", to: "#928DAB" }, // Steel Gray
+  { from: "#614385", to: "#516395" }, // Kashmir
+  { from: "#4776E6", to: "#8E54E9" }, // Electric Violet
+  { from: "#085078", to: "#85D8CE" }, // Venice Blue
+  { from: "#2BC0E4", to: "#EAECC6" }, // Bora Bora
+  { from: "#134E5E", to: "#71B280" }, // Moss
 ];
-
 export default function BackgroundCustomize() {
   const {
     currentProject: { styles },
