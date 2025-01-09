@@ -9,6 +9,7 @@ interface BaseAdapter {
   provideHover(context: CommandContext): languages.Hover | null;
 
   initialize?(): void;
+  initialize?(): void; // Notice no parameters
   dispose?(): void;
 }
 

@@ -13,8 +13,8 @@ import propsParser from "../utils/props-parser";
 import { parseColorToRGBA } from "@/utils/utils";
 import { convertSecondsToFramerate } from "../../composition.utils";
 
-export const mark: AnnotationHandler = {
-  name: "mark",
+export const highlight: AnnotationHandler = {
+  name: "highlight",
 
   transform: (annotation: InlineAnnotation) => {
     return annotation;
@@ -22,7 +22,7 @@ export const mark: AnnotationHandler = {
 
   AnnotatedLine: ({ annotation, ...props }) => {
     const { fps } = useVideoConfig();
-    const { color, delay } = propsParser.mark(annotation.query, {
+    const { color, delay } = propsParser.highlight(annotation.query, {
       withFallback: true,
     });
     const { r: red, g: green, b: blue } = parseColorToRGBA(color);
@@ -65,13 +65,13 @@ export const mark: AnnotationHandler = {
           borderLeft: `4px solid ${borderColor}`,
         }}
       >
-        <InnerLine merge={props} className="mark" />
+        <InnerLine merge={props} className="highlight" />
       </div>
     );
   },
 
   Inline: ({ children, annotation }) => {
-    const { color, delay, duration } = propsParser.mark(annotation.query, {
+    const { color, delay, duration } = propsParser.highlight(annotation.query, {
       withFallback: true,
     });
     const { r: red, g: green, b: blue } = parseColorToRGBA(color);
@@ -117,7 +117,6 @@ export const mark: AnnotationHandler = {
           border: `2px solid ${borderColor}`,
         }}
       >
-        {/* this */}
         {children}
       </div>
     );

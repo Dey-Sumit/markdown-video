@@ -32,6 +32,7 @@ import { SceneAdapter } from "./plugins/scene/scene.adapter";
 import { TextAdapter } from "./plugins/text/text.adapter";
 import { TransitionAdapter } from "./plugins/transition/transition.adapter";
 import { CodeAdapter } from "./plugins/code/code.adapter";
+import { HighlightAdapter } from "./plugins/highlight/highlight.adapter";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 const files = ["Scenes", "Global"] as const;
@@ -140,11 +141,16 @@ function XEditor() {
     registry.register(new TransitionAdapter(monaco));
     registry.register(new CodeAdapter(monaco));
 
+    const highlightAdapter = new HighlightAdapter(monaco);
+    registry.register(highlightAdapter);
+
     registry.registerCompletions(editor.getModel()!);
     registry.registerDiagnostics(editor.getModel()!);
     registry.registerHoverProvider(editor.getModel()!);
     registry.registerDecorations(editor.getModel()!);
     registry.registerFoldingRanges(monaco);
+    
+    highlightAdapter.setupEditor(editor);
   };
 
   const __handleEditorMount: OnMount = (editor, monaco) => {
