@@ -9,7 +9,6 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import propsParser from "../utils/props-parser";
 import { parseColorToRGBA } from "@/utils/utils";
 import { convertSecondsToFramerate } from "../../composition.utils";
 import highlightParser from "@/components/x-editor/plugins/highlight/highlight.parser";

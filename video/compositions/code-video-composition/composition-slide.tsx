@@ -7,13 +7,10 @@ import {
   useTokenTransitions,
 } from "./annotations/token-transitions";
 import { type Scene } from "./types.composition";
-import propsParser from "./utils/props-parser";
 import { highlight } from "./annotations/highlight";
 import { getMediaType } from "@/utils/utils";
 import CompositionImage from "./components/composition-image";
-import { convertSecondsToFramerate } from "../composition.utils";
 import { useVideoConfig } from "remotion";
-import CompositionText from "./components/composition-text";
 
 import ComponentLayoutRenderer from "./components/compone-layout-renderer";
 import { sectionParser } from "@/parsers/SectionParser";

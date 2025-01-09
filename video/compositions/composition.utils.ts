@@ -5,7 +5,6 @@ import { type FlipDirection, flip } from "@remotion/transitions/flip";
 import type { Scene } from "./code-video-composition/types.composition";
 import { linearTiming } from "@remotion/transitions";
 import { none } from "@remotion/transitions/none";
-import propsParser from "./code-video-composition/utils/props-parser";
 
 import { staticFile } from "remotion";
 import { addSound } from "./code-video-composition/utils/add-sound";
