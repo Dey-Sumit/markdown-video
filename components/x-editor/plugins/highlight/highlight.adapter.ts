@@ -122,17 +122,18 @@ export class HighlightAdapter extends AbstractAdapter {
     );
     const comment = this.getCommentFormat(language);
 
-    // Determine highlight type based on selection
-    const highlightType = this.determineHighlightType(selection);
+    // Get the line content for analyzing selection
+    const lineContent = model.getLineContent(selection.startLineNumber);
+    const indent = lineContent.match(/^\s*/)?.[0] || "";
+
+    // Determine highlight type based on selection and line content
+    const highlightType = this.determineHighlightType(selection, lineContent);
     const highlightCommand = this.createHighlightCommand(
       selection,
       comment,
       highlightType,
+      lineContent,
     );
-
-    // Get the indentation of the current line
-    const lineContent = model.getLineContent(selection.startLineNumber);
-    const indent = lineContent.match(/^\s*/)?.[0] || "";
 
     // Insert the highlight command
     this.editor.executeEdits("highlight", [
@@ -150,29 +151,58 @@ export class HighlightAdapter extends AbstractAdapter {
 
   private determineHighlightType(
     selection: IRange,
+    lineContent: string,
   ): "single" | "multi" | "partial" {
+    // First check if multiple lines are selected
     if (selection.startLineNumber !== selection.endLineNumber) {
       return "multi";
     }
-    if (selection.endColumn - selection.startColumn > 1) {
-      return "partial";
+
+    // For single line selections:
+    const indentMatch = lineContent.match(/^\s*/);
+    const indentLength = indentMatch ? indentMatch[0].length : 0;
+
+    // Check if selection covers entire line content (excluding whitespace)
+    const isEntireLine =
+      selection.startColumn <= indentLength + 1 &&
+      selection.endColumn >= lineContent.length + 1;
+
+    // If it's a single line and covers the entire line (or almost entire line)
+    // OR if the selection is very small (like just clicking on the line)
+    if (isEntireLine || selection.endColumn - selection.startColumn <= 1) {
+      return "single";
     }
-    return "single";
+
+    // Otherwise it's a partial line selection
+    return "partial";
   }
 
   private createHighlightCommand(
     selection: IRange,
     comment: CommentFormat,
     type: "single" | "multi" | "partial",
+    lineContent: string,
   ): string {
     const baseCommand = `${comment.start} !highlight`;
     const args = ` --color=red --duration=1${comment.end ? " " + comment.end : ""}`;
 
+    // Get line's whitespace
+    const indentMatch = lineContent.match(/^\s*/);
+    const indentLength = indentMatch ? indentMatch[0].length : 0;
+
     switch (type) {
-      case "multi":
-        return `${baseCommand}(${selection.startLineNumber}:${selection.endLineNumber})${args}`;
-      case "partial":
-        return `${baseCommand}[${selection.startColumn}:${selection.endColumn}]${args}`;
+      case "multi": {
+        // Calculate number of lines selected
+        const numLines =
+          selection.endLineNumber - selection.startLineNumber + 1;
+        return `${baseCommand}(1:${numLines})${args}`;
+      }
+      case "partial": {
+        // Adjust column positions by subtracting indentation
+        const startCol = selection.startColumn - indentLength;
+        const endCol = selection.endColumn - indentLength - 1;
+        return `${baseCommand}[${startCol}:${endCol}]${args}`;
+      }
       default:
         return `${baseCommand}${args}`;
     }
