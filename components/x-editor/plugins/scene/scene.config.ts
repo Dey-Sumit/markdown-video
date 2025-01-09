@@ -17,7 +17,7 @@ export const sceneConfig: AdapterConfig = {
   },
   description:
     "Scene is a basic building block of a video composition. It defines the duration, background color, and title of a scene.",
-  template: "!scene --duration=${2:5} --title=${1:scene-1}",
+  template: "!scene --duration=${1:5}",
   arguments: {
     duration: {
       name: "duration",

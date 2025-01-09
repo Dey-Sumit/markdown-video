@@ -20,6 +20,8 @@ export abstract class AbstractAdapter implements BaseAdapter {
     public readonly config: AdapterConfig,
   ) {}
 
+  
+
   provideCompletions(context: CommandContext): languages.CompletionItem[] {
     const type = this.getCompletionType(context);
     if (!type) return [];

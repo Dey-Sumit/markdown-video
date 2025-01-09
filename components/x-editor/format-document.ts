@@ -46,7 +46,7 @@ export function formatDocument(content: string): string {
       isInScene = true;
     } else if (isComponent(trimmedLine) && isInScene) {
       // Add component with tab indentation
-      formattedLines.push(`   ${formatComponentLine(trimmedLine)}`);
+      formattedLines.push(`  ${formatComponentLine(trimmedLine)}`);
     }
   }
 
@@ -61,7 +61,7 @@ export function formatDocument(content: string): string {
  */
 function formatSceneLine(line: string): string {
   // Extract the basic scene command
-  const [sceneCmd] = line.match(/^##\s*!scene\b/) || [""];
+  const [sceneCmd] = line.match(/^#\s*!scene\b/) || [""];
   if (!sceneCmd) return line;
 
   // Extract and preserve all valid arguments with their values
@@ -73,7 +73,7 @@ function formatSceneLine(line: string): string {
   }
 
   // Reconstruct with proper spacing
-  return `## !scene ${args.join(" ")}`;
+  return `# !scene ${args.join(" ")}`;
 }
 
 /**
@@ -100,7 +100,7 @@ function formatComponentLine(line: string): string {
  * Checks if a line is a scene header.
  */
 function isSceneHeader(line: string): boolean {
-  return /^##\s*!scene\b/.test(line);
+  return /^#\s*!scene\b/.test(line);
 }
 
 /**

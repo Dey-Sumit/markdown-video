@@ -8,7 +8,7 @@ import {
 } from "./annotations/token-transitions";
 import { type Scene } from "./types.composition";
 import propsParser from "./utils/props-parser";
-import { mark } from "./annotations/mark";
+import { mark } from "./annotations/highlight";
 import { getMediaType } from "@/utils/utils";
 import CompositionImage from "./components/composition-image";
 import { convertSecondsToFramerate } from "../composition.utils";

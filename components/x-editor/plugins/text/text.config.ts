@@ -21,8 +21,7 @@ export const textConfig: AdapterConfig = {
     pattern: "^\\s*!text\\b",
   },
   description: "Add text in the scene. Multiple text components can be added.",
-  template:
-    'text --content="${1:Default Text}" --size=${2:120} --color=${3:white}',
+  template: 'text --content="${1:Default Text}" --color=${2:white}',
   arguments: {
     content: {
       name: "content",

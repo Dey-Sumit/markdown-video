@@ -13,35 +13,24 @@ import { DEFAULT_COMPOSITION_STYLES } from "@/lib/const";
 
 const AUTO_SAVE_DELAY = 20 * 1000; // 10 seconds
 
-export const DEFAULT_PROJECT_TEMPLATE = `## !scene --duration=5 --title=scene --background=indigo
-   !text --content="Scene 1 Text" --size=120 --color=white
+export const DEFAULT_PROJECT_TEMPLATE = `# !scene --duration=5 --title=scene --background=indigo
+  !text --content="Scene 1 Text" --size=120 --color=white
 
-## !scene --duration=5 --title=scene --background=gray
-   !text --content="Scene 2 Text" --size=120 --color=white
-   !transition --type=wipe --duration=0.3
+# !scene --duration=5 --title=scene --background=gray
+  !text --content="Scene 2 Text" --size=120 --color=white
+  !transition --type=wipe --duration=0.3
 
-## !scene --duration=5 --title=scene --background=blue
-   !text --content="Scene 2 Text" --size=120 --color=white
-   !transition --type=wipe --duration=0.3
 `;
 
-export const PLAYGROUND_PROJECT_TEMPLATE = `## !!scene --title=Text --duration=4 --background=blue
-!text --content="Your Text With Animation" --animation=fadeInSlideUp --duration=3 --delay=0.5
-!transition --type=slide --duration=0.3 --direction=from-left
+export const PLAYGROUND_PROJECT_TEMPLATE = `
+# !scene --duration=5 --title=scene --background=indigo
+  !text --content="Scene 1 Text" --size=120 --color=white
 
-## !!scene --title=Code --duration=4 --background=transparent
-!transition --type=slide --duration=0.8 --direction=from-bottom
-\`\`\`js !
-const fastestEditor = () => {
-    return "markdownvideo.com"
-}
-fastestEditor()
-\`\`\`
+# !scene --duration=5 --title=scene --background=gray
+  !text --content="Scene 2 Text" --size=120 --color=white
+  !transition --type=wipe --duration=0.3
 
-## !!scene --title=Scene --duration=5
-!transition --type=fade --duration=0.3
-\`\`\`js !
-\`\`\``;
+`;
 
 interface ProjectState {
   currentProject: {
