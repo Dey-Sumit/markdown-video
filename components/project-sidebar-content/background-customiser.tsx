@@ -50,7 +50,9 @@ const gradientPresets = [
 ];
 export default function BackgroundCustomize() {
   const {
-    currentProject: { styles },
+    currentProject: {
+      config: { styles },
+    },
     updateStyles,
   } = useProjectStore();
 

@@ -42,7 +42,7 @@ export function CreateProjectDialog() {
     const category = formData.get("category") as string;
 
     try {
-      const db = (await import("../lib/dexie-db")).db;
+      const db = (await import("../lib/dexie-db")).dexieDB;
 
       const projectId = await db.createProject(title, description, category);
       router.push(`/projects/${projectId}`);

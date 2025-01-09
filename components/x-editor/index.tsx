@@ -7,18 +7,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { monacoCustomOptions } from "./editor-config";
 import { useEditorShortcuts } from "./hooks/use-editor-shortcuts";
 import { monacoCustomTheme } from "./theme";
-import { configureFoldingProvider } from "./utils/configure-folding-provider";
-import { configureHoverProvider } from "./utils/configure-hover-provider";
+
 // import { provideCodeActions } from "./utils/quick-fixes";
 import {
   configureJSX,
   configureKeyboardShortcuts,
   configureLinting,
 } from "./utils";
-import { configureCompletions } from "./utils/completion-provider.new";
-import { configureTokenizer } from "./utils/syntax-highlight/configure-tokens";
-import { configureDiagnostics } from "./utils/configure-diagnostics.new";
-import { configureContextMenu } from "./utils/context-menu/configure-context-menu.new";
+
 import { configureSnippets } from "./utils/snippets";
 import CommandMenu, { type Position } from "./command-menu";
 import { provideCodeActions } from "./utils/code-action/code-action.new";
@@ -47,7 +43,10 @@ function XEditor() {
   const [mounted, setMounted] = useState(false);
 
   const { currentProject, updateContent, loadProject } = useProjectStore();
-  const { content, styles } = currentProject;
+
+  const {
+    config: { content, styles },
+  } = currentProject;
 
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
@@ -185,8 +184,6 @@ function XEditor() {
       }
     });
 
-    configureCompletions(monaco);
-
     // Set up decoration listener
     const contentChangeDisposable = editor.onDidChangeModelContent(() => {
       updateDecorations();
@@ -194,24 +191,6 @@ function XEditor() {
 
     // Initial decoration update
     updateDecorations();
-
-    const model = editor.getModel();
-    let disposable: IDisposable;
-    if (model) disposable = configureDiagnostics(monaco, model);
-    monaco.languages.registerCodeActionProvider(EDITOR_LANGUAGE, {
-      provideCodeActions: provideCodeActions,
-    });
-    configureContextMenu(monaco, editor);
-    configureFoldingProvider(monaco);
-    // configureKeyboardShortcuts(editor, monaco);
-    configureHoverProvider(monaco);
-
-    // Cleanup when editor is disposed
-    // TODO : I don't this should work. xD
-    return () => {
-      contentChangeDisposable.dispose();
-      disposable.dispose();
-    };
   };
 
   const _handleEditorMount: OnMount = (editor, monaco) => {
@@ -246,8 +225,7 @@ function XEditor() {
         });
       }
     });
-    // configureSnippets(monaco);
-    configureCompletions(monaco);
+
     // Set up decoration listener
     const contentChangeDisposable = editor.onDidChangeModelContent(() => {
       updateDecorations();
@@ -255,23 +233,6 @@ function XEditor() {
 
     // Initial decoration update
     updateDecorations();
-
-    // Add diagnostics
-    // Get the editor's model
-    const model = editor.getModel();
-    let disposable: IDisposable;
-    if (model) disposable = configureDiagnostics(monaco, model);
-    monaco.languages.registerCodeActionProvider(EDITOR_LANGUAGE, {
-      provideCodeActions: provideCodeActions,
-    });
-    configureContextMenu(monaco, editor);
-
-    // Cleanup when editor is disposed
-    // TODO : I don't this should work. xD
-    return () => {
-      contentChangeDisposable.dispose();
-      disposable.dispose();
-    };
 
     // configureLinting(editor, monaco);
     // monaco.languages.register({ id: EDITOR_LANGUAGE });
@@ -290,10 +251,6 @@ function XEditor() {
 
     const content = model.getValue();
     const formatted = formatDocument(content);
-    // console.log({
-    //   content,
-    //   formatted,
-    // });
 
     model.pushEditOperations(
       [],

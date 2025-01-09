@@ -1,4 +1,4 @@
-import { db } from "@/lib/dexie-db";
+import { dexieDB } from "@/lib/dexie-db";
 import { useProjectStore } from "@/store/project-store";
 import type { Monaco } from "@monaco-editor/react";
 import { type editor, type IDisposable } from "monaco-editor";
@@ -23,7 +23,7 @@ export const useEditorShortcuts = ({
     if (!id) return;
 
     try {
-      await db.updateProject(id, {
+      await dexieDB.updateProject(id, {
         content,
         styles,
         lastModified: new Date(),

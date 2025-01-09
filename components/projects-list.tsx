@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CreateProjectDialog } from "./create-project-dialog";
-import { db, type Project } from "@/lib/dexie-db";
+import { dexieDB, type ProjectDB } from "@/lib/dexie-db";
 
 import {
   AlertDialog,
@@ -23,11 +23,11 @@ const getRandomEmoji = () => {
 };
 
 const ProjectsList = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<ProjectDB[]>([]);
 
   useEffect(() => {
     const loadProjects = async () => {
-      const allProjects = await db.getAllProjects();
+      const allProjects = await dexieDB.getAllProjects();
 
       setProjects(allProjects);
     };
@@ -48,7 +48,7 @@ const ProjectsList = () => {
               <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <div className="grow">
                   <h5 className="font-semibold text-gray-800 dark:text-neutral-200">
-                    {project.title}
+                    {project.meta.title}
                   </h5>
                 </div>
 
@@ -72,7 +72,7 @@ const ProjectsList = () => {
 
                 <div className="grow">
                   <p className="text-sm text-gray-800 dark:text-neutral-200">
-                    {project.category}
+                    {project.meta.category}
                   </p>
                   <p className="inline-flex items-center gap-x-1 text-xs text-muted-foreground">
                     <svg
@@ -123,7 +123,7 @@ const ProjectsList = () => {
                       <AlertDialogAction
                         className="bg-red-600 hover:bg-red-700"
                         onClick={async () => {
-                          await db.deleteProject(project.id);
+                          await dexieDB.deleteProject(project.id);
                           setProjects((prevProjects) =>
                             prevProjects.filter((p) => p.id !== project.id),
                           );

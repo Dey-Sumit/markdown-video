@@ -525,7 +525,9 @@ const CompositionText = ({
   fontSize?: number;
 }) => {
   const {
-    currentProject: { styles },
+    currentProject: {
+      config: { styles },
+    },
     updateStyles,
   } = useProjectStore();
 
@@ -679,6 +681,7 @@ const Fancy = ({ children }: { children: React.ReactNode }) => {
 
 const CompositionTextRenderer = ({ value }: { value: string[] }) => {
   const textProps = textParser.parse(value);
+
   // TODO : need to add one more prop to the parser that isValid that matches the minimum criteria
   return (
     <>

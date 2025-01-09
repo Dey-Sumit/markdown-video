@@ -125,7 +125,10 @@ export const SidebarBlock = ({
 );
 const RenderSectionSidebarContent = () => {
   const {
-    currentProject: { scenes, styles },
+    currentProject: {
+      scenes,
+      config: { styles },
+    },
   } = useProjectStore();
   const { renderMedia, state, undo } = useRendering(
     "code-transition-composition",
