@@ -12,6 +12,7 @@ import {
 import propsParser from "../utils/props-parser";
 import { parseColorToRGBA } from "@/utils/utils";
 import { convertSecondsToFramerate } from "../../composition.utils";
+import highlightParser from "@/components/x-editor/plugins/highlight/highlight.parser";
 
 export const highlight: AnnotationHandler = {
   name: "highlight",
@@ -22,15 +23,16 @@ export const highlight: AnnotationHandler = {
 
   AnnotatedLine: ({ annotation, ...props }) => {
     const { fps } = useVideoConfig();
-    const { color, delay } = propsParser.highlight(annotation.query, {
-      withFallback: true,
-    });
+    const {
+      data: { color, delayInFrames, durationInFrames },
+    } = highlightParser.parse(annotation.query);
+
     const { r: red, g: green, b: blue } = parseColorToRGBA(color);
+
     const MARK_TRANSITION_DURATION_IN_FRAMES = convertSecondsToFramerate(
       0.9,
       fps,
     );
-    const delayInFrames = convertSecondsToFramerate(delay, fps);
 
     const frame = useCurrentFrame();
     const progress = interpolate(
@@ -71,9 +73,9 @@ export const highlight: AnnotationHandler = {
   },
 
   Inline: ({ children, annotation }) => {
-    const { color, delay, duration } = propsParser.highlight(annotation.query, {
-      withFallback: true,
-    });
+    const {
+      data: { color, delayInFrames, durationInFrames },
+    } = highlightParser.parse(annotation.query);
     const { r: red, g: green, b: blue } = parseColorToRGBA(color);
     const { fps } = useVideoConfig();
 
@@ -81,7 +83,6 @@ export const highlight: AnnotationHandler = {
       0.9,
       fps,
     );
-    const delayInFrames = convertSecondsToFramerate(delay, fps);
 
     const frame = useCurrentFrame();
 

@@ -8,7 +8,7 @@ import {
 } from "./annotations/token-transitions";
 import { type Scene } from "./types.composition";
 import propsParser from "./utils/props-parser";
-import { mark } from "./annotations/highlight";
+import { highlight } from "./annotations/highlight";
 import { getMediaType } from "@/utils/utils";
 import CompositionImage from "./components/composition-image";
 import { convertSecondsToFramerate } from "../composition.utils";
@@ -118,7 +118,7 @@ function BaseSlide({
           <Pre
             ref={codeRef}
             code={code}
-            handlers={[tokenTransitions, mark]}
+            handlers={[tokenTransitions, highlight]}
             className="text-4xl leading-[3.5rem]"
             style={{
               fontFamily,

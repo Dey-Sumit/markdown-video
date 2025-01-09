@@ -149,7 +149,7 @@ function XEditor() {
     registry.registerHoverProvider(editor.getModel()!);
     registry.registerDecorations(editor.getModel()!);
     registry.registerFoldingRanges(monaco);
-    
+
     highlightAdapter.setupEditor(editor);
   };
 
@@ -314,7 +314,7 @@ function XEditor() {
 
   return (
     <>
-      <div className="flex h-full flex-col gap-2">
+      <div className="flex h-full flex-col">
         <div className="flex justify-between gap-2 border-b">
           <div>
             {files.map((fileName, index) => (
