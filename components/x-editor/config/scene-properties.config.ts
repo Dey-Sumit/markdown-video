@@ -33,6 +33,7 @@ export const EDITOR_PROPERTIES: Record<string, SceneProperty> = {
       },
       items: {
         name: "items",
+        //@ts-ignore
         type: "array",
         required: true,
         description: "Array of items in the grid",

@@ -12,9 +12,12 @@ import { useProjectStore } from "@/store/project-store";
 const XPlayer = () => {
   const playerRef = useRef<PlayerRef>(null);
   const {
-    currentProject: { duration, scenes, styles },
+    currentProject: {
+      duration,
+      scenes,
+      config: { styles },
+    },
   } = useProjectStore();
-
 
   const { width, height, fps } = compositionMetaData;
   const [reloadKey, setReloadKey] = useState(1);

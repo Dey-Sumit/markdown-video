@@ -31,7 +31,10 @@ export const useMdxProcessor = () => {
   }, []);
 
   useEffect(() => {
-    if (!currentProject.content.global && !currentProject.content.sceneLevel)
+    if (
+      !currentProject.config.content.global &&
+      !currentProject.config.content.sceneLevel
+    )
       return;
 
     let cancelled = false;
@@ -46,8 +49,8 @@ export const useMdxProcessor = () => {
         // }
 
         const combinedContent = mergeContent(
-          currentProject.content.global,
-          currentProject.content.sceneLevel,
+          currentProject.config.content.global,
+          currentProject.config.content.sceneLevel,
         );
 
         const { content: compiledContent, error: compileError } =
@@ -84,8 +87,8 @@ export const useMdxProcessor = () => {
       // model.dispose();
     };
   }, [
-    currentProject.content.global,
-    currentProject.content.sceneLevel,
+    currentProject.config.content.global,
+    currentProject.config.content.sceneLevel,
     updateScenes,
   ]);
 };

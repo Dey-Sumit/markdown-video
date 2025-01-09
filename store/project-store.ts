@@ -9,7 +9,8 @@ import type { ProjectMeta, ProjectStyles } from "@/types/project.types";
 import { DEFAULT_COMPOSITION_STYLES } from "@/lib/const";
 import { DEFAULT_PROJECT_TEMPLATE } from "./project.const";
 
-const AUTO_SAVE_DELAY = 2000; // 2 seconds
+const AUTO_SAVE_DELAY = 10 * 1000; // 10 seconds
+const FALLBACK_DURATION_IN_FRAMES = 30 * 10; // 10 seconds
 
 interface ProjectState {
   currentProject: {
@@ -69,7 +70,7 @@ export const useProjectStore = create<ProjectStore>()(
           styles: DEFAULT_COMPOSITION_STYLES,
         },
         scenes: [],
-        duration: 0,
+        duration: FALLBACK_DURATION_IN_FRAMES,
         createdAt: new Date(),
         lastModified: new Date(),
       },
@@ -260,7 +261,7 @@ export const useProjectStore = create<ProjectStore>()(
               styles: DEFAULT_COMPOSITION_STYLES,
             },
             scenes: [],
-            duration: 0,
+            duration: FALLBACK_DURATION_IN_FRAMES,
             createdAt: new Date(),
             lastModified: new Date(),
           };
@@ -275,3 +276,13 @@ export const useProjectStore = create<ProjectStore>()(
     },
   ),
 );
+
+export const mergeContent = (global: string, sceneLevel: string): string => {
+  const trimmedGlobal = global.trim();
+  const trimmedSceneLevel = sceneLevel.trim();
+
+  if (!trimmedGlobal) return trimmedSceneLevel;
+  if (!trimmedSceneLevel) return trimmedGlobal;
+
+  return `${trimmedGlobal}\n\n${trimmedSceneLevel}`;
+};
