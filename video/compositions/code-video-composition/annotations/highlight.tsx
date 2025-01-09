@@ -106,6 +106,7 @@ export const highlight: AnnotationHandler = {
       [0, 1],
       ["rgba(0, 0, 0, 0)", `rgba(${red}, ${green}, ${blue}, 1)`],
     );
+    
     return (
       <div
         style={{

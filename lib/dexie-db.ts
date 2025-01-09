@@ -1,80 +1,51 @@
-import { nanoid } from "nanoid";
-
-/**
- * @fileoverview Core database setup and type definitions for the Markdown-to-Video editor
- * using Dexie as the IndexedDB wrapper.
- */
-
 import Dexie, { type Table } from "dexie";
-import { DEFAULT_PROJECT_TEMPLATE } from "@/store/project-store";
+import { nanoid } from "nanoid";
 import { DEFAULT_COMPOSITION_STYLES } from "./const";
+import type { ProjectStyles } from "@/types/project.types";
+import { DEFAULT_PROJECT_TEMPLATE } from "@/store/project.const";
 
-/**
- * Background configuration for the project
- */
-export interface Background {
-  color: string;
-  gradient: {
-    angle: number;
-    colors: string[];
+// Project configuration interface (content + styles)
+export interface ProjectConfiguration {
+  content: {
+    global: string;
+    sceneLevel: string;
   };
-  image: string;
-  activeType: "color" | "gradient" | "image";
-}
-
-/**
- * Container styling configuration
- */
-export interface Container {
-  inset: number;
-  padding: number;
-  borderRadius: number;
-}
-
-/**
- * Project-wide styling configuration
- */
-export interface ProjectStyles {
-  backgroundContainer: {
-    background: Background;
-    fontFamily: string;
-  };
-  sceneContainer: Container;
-}
-
-/**
- * Core project data structure
- */
-
-export interface Project {
-  id: string; // Changed from number to string for UUID
-  title: string; // Changed from name
-  category: string; // Added
-  duration: number; // Added
-  description: string;
-  content: string;
   styles: ProjectStyles;
+}
+
+// Project metadata interface
+export interface ProjectMeta {
+  title: string;
+  description: string;
+  category: string;
+}
+
+// Database-specific project interface (without scenes)
+export interface ProjectDB {
+  id: string;
+  meta: ProjectMeta;
+  config: ProjectConfiguration;
+  duration: number;
   createdAt: Date;
   lastModified: Date;
 }
 
-/**
- * Database class extending Dexie with typed tables
- */
 export class EditorDatabase extends Dexie {
-  projects!: Table<Project>;
+  projects!: Table<ProjectDB>;
 
   constructor() {
     super("MarkdownVideoEditor");
+
     this.version(1).stores({
-      projects: "id",
+      projects: "id, &meta.title, duration, createdAt, lastModified",
     });
   }
 
   /**
-   * Creates a new project with default values
-   * @param name - Project name
-   * @param description - Project description
+   * Creates a new project
+   * @param title Project title
+   * @param description Project description
+   * @param category Project category
    * @returns Promise resolving to the new project's ID
    */
   async createProject(
@@ -83,16 +54,25 @@ export class EditorDatabase extends Dexie {
     category: string,
   ): Promise<string> {
     const id = nanoid(6);
-    const project: Project = {
+    const now = new Date();
+
+    const project: ProjectDB = {
       id,
-      title,
-      description,
-      category,
+      meta: {
+        title,
+        description,
+        category,
+      },
+      config: {
+        content: {
+          global: "",
+          sceneLevel: DEFAULT_PROJECT_TEMPLATE,
+        },
+        styles: DEFAULT_COMPOSITION_STYLES,
+      },
       duration: 0,
-      content: DEFAULT_PROJECT_TEMPLATE,
-      styles: DEFAULT_COMPOSITION_STYLES,
-      createdAt: new Date(),
-      lastModified: new Date(),
+      createdAt: now,
+      lastModified: now,
     };
 
     await this.projects.add(project);
@@ -100,37 +80,150 @@ export class EditorDatabase extends Dexie {
   }
 
   /**
-   * Retrieves all projects from the database
-   * @returns Promise resolving to an array of projects
+   * Retrieves all projects
+   * @returns Promise resolving to array of projects
    */
-  async getAllProjects(): Promise<Project[]> {
+  async getAllProjects(): Promise<ProjectDB[]> {
     return await this.projects.toArray();
   }
 
   /**
-   * Updates an existing project
-   * @param id - Project ID
-   * @param data - Partial project data to update
-   * @returns Promise resolving when update is complete
+   * Gets a single project by ID
+   * @param id Project ID
+   * @returns Promise resolving to project or undefined
+   */
+  async getProject(id: string): Promise<ProjectDB | undefined> {
+    return await this.projects.get(id);
+  }
+
+  /**
+   * Updates entire project data
+   * @param id Project ID
+   * @param data Partial project data to update
    */
   async updateProject(
-    id: string, // Changed from number to string
-    data: Partial<Omit<Project, "id" | "createdAt">>,
+    id: string,
+    data: Partial<Omit<ProjectDB, "id" | "createdAt">>,
   ): Promise<void> {
     await this.projects.update(id, {
       ...data,
       lastModified: new Date(),
     });
   }
+
+  /**
+   * Updates project metadata
+   * @param id Project ID
+   * @param meta Partial metadata to update
+   */
+  async updateProjectMeta(
+    id: string,
+    meta: Partial<ProjectMeta>,
+  ): Promise<void> {
+    const project = await this.projects.get(id);
+    if (!project) throw new Error("Project not found");
+
+    await this.projects.update(id, {
+      meta: { ...project.meta, ...meta },
+      lastModified: new Date(),
+    });
+  }
+
+  /**
+   * Updates project configuration (content or styles)
+   * @param id Project ID
+   * @param type Configuration type to update
+   * @param data New configuration data
+   */
+  async updateProjectConfig(
+    id: string,
+    type: keyof ProjectConfiguration,
+    data: any,
+  ): Promise<void> {
+    const project = await this.projects.get(id);
+    if (!project) throw new Error("Project not found");
+
+    await this.projects.update(id, {
+      config: {
+        ...project.config,
+        [type]: data,
+      },
+      lastModified: new Date(),
+    });
+  }
+
+  /**
+   * Updates project content (global or sceneLevel)
+   * @param id Project ID
+   * @param type Content type to update
+   * @param content New content
+   */
+  async updateContent(
+    id: string,
+    type: "global" | "sceneLevel",
+    content: string,
+  ): Promise<void> {
+    const project = await this.projects.get(id);
+    if (!project) throw new Error("Project not found");
+
+    await this.projects.update(id, {
+      config: {
+        ...project.config,
+        content: {
+          ...project.config.content,
+          [type]: content,
+        },
+      },
+      lastModified: new Date(),
+    });
+  }
+
+  /**
+   * Updates project duration
+   * @param id Project ID
+   * @param duration New duration
+   */
+  async updateDuration(id: string, duration: number): Promise<void> {
+    await this.projects.update(id, {
+      duration,
+      lastModified: new Date(),
+    });
+  }
+
   /**
    * Deletes a project
-   * @param id - Project ID
-   * @returns Promise resolving when deletion is complete
+   * @param id Project ID
    */
   async deleteProject(id: string): Promise<void> {
     await this.projects.delete(id);
   }
+
+  /**
+   * Gets projects by category
+   * @param category Category to filter by
+   * @returns Promise resolving to filtered projects
+   */
+  async getProjectsByCategory(category: string): Promise<ProjectDB[]> {
+    return await this.projects
+      .filter((project) => project.meta.category === category)
+      .toArray();
+  }
+
+  /**
+   * Searches projects by title
+   * @param query Search query
+   * @returns Promise resolving to matching projects
+   */
+  async searchProjects(query: string): Promise<ProjectDB[]> {
+    return await this.projects
+      .filter(
+        (project) =>
+          project.meta.title.toLowerCase().includes(query.toLowerCase()) ||
+          project.meta.description.toLowerCase().includes(query.toLowerCase()),
+      )
+      .toArray();
+  }
 }
 
-// Export a singleton instance
-export const db = new EditorDatabase();
+// Export database instance
+export const dexieDB = new EditorDatabase();
