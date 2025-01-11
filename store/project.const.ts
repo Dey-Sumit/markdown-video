@@ -1,4 +1,4 @@
-export const DEFAULT_PROJECT_TEMPLATE = `# !scene --duration=5 --title=scene --background=indigo
+export const DEFAULT_PROJECT_TEMPLATE_WITH_CODE = `# !scene --duration=5 --title=scene --background=indigo
   !text --content="Scene 1 Text" --size=120 --color=white
 # !scene --duration=5 --title=scene --background=black
   !transition --type=slide --duration=0.75 --direction=from-bottom
@@ -18,6 +18,18 @@ export const DEFAULT_PROJECT_TEMPLATE = `# !scene --duration=5 --title=scene --b
     late if (){ // wtf is late if anyway?
     }
     
+  }
+  \`\`\`
+`;
+export const DEFAULT_PROJECT_TEMPLATE = `# !scene --duration=5 --title=scene --background=indigo
+  !text --content="Scene 1 Text" --size=120 --color=white
+# !scene --duration=5 --title=scene --background=black
+  !transition --type=slide --duration=0.75 --direction=from-bottom
+  \`\`\`js ! --theme=midnight --font-size=14
+  // !highlight[7:13] --color=red --duration=1
+  const example = () => {
+   
+     
   }
   \`\`\`
 `;
