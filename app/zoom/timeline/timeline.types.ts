@@ -1,5 +1,10 @@
 import { z } from "zod";
-import type { ZoomPoint } from "../types.zoom";
+
+type ZoomPointFullSequenceItem = {
+  targetX: number;
+  targetY: number;
+  zoomLevel: number;
+};
 
 const TransitionSchema = z.object({
   id: z.string().regex(/^t-/),
@@ -16,87 +21,90 @@ const TransitionSchema = z.object({
 
 export type TransitionItemType = z.infer<typeof TransitionSchema>;
 
-export type FullSequenceContentType = {
+type BaseSequenceContent = {
   id: string;
   layerId: string;
-  editableProps: {
-    styles: {
-      container: Record<string, any>;
-      element: Record<string, any>;
-      overlay?: Record<string, any>;
-    };
-    positionAndDimensions?: {
-      top: number;
-      left: number;
-      width: number;
-      height: number;
-    };
+};
+
+type StandardEditableProps = {
+  styles: {
+    container: Record<string, any>;
+    element: Record<string, any>;
+    overlay?: Record<string, any>;
   };
-  // TODO : later we need to make this only for standalone sequence items. Preset will not have this.
-  animations?: Array<{
-    type: string; // Type of animation (e.g., "scale", "fade-in", etc.)
-    from: number; // Starting value of the animation (e.g., scale from 0.9)
-    to: number; // Ending value of the animation (e.g., scale to 1)
-    duration: number; // Duration in frames for the animation
-    startAt: number; // Start the animation at a specific frame
-  }>;
+  positionAndDimensions?: {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  };
+};
+type AnimationType = Array<{
+  type: string;
+  from: number;
+  to: number;
+  duration: number;
+  startAt: number;
+}>;
+
+export type FullSequenceContentType = BaseSequenceContent & {
+  animations?: AnimationType;
 } & (
-  | {
-      type: "text";
-      editableProps: {
-        text: string;
-      };
-    }
-  | {
-      type: "image";
-      editableProps: {
-        imageUrl: string;
-      };
-    }
-  | {
-      type: "video";
-      editableProps: {
-        videoUrl: string;
-        videoStartsFromInFrames: number;
-        videoEndsAtInFrames: number;
-      };
-      totalVideoDurationInFrames: number;
-    }
-  | {
-      type: "audio";
-      editableProps: {
-        audioUrl: string;
-        audioStartsFromInFrames: number;
-        audioEndsAtInFrames: number;
-      };
-    }
-  | {
-      type: "div";
-    }
-  | {
-      type: "caption";
-      sequenceItems: Record<string, FullSequenceContentType>;
-    }
-  | {
-      type: "caption-page";
-      editableProps: {
-        text: string;
-        startMs: number;
-        tokens: Array<{
+    | {
+        type: "text";
+        editableProps: StandardEditableProps & {
           text: string;
-          fromMs: number;
-          toMs: number;
-        }>;
-      };
-    }
-  | {
-      type: "zoom";
-      editableProps: {
-        zoomPoints: ZoomPoint[];
-        // Inherits the common editableProps like styles and positionAndDimensions
-      };
-    }
-);
+        };
+      }
+    | {
+        type: "image";
+        editableProps: StandardEditableProps & {
+          imageUrl: string;
+        };
+      }
+    | {
+        type: "video";
+        editableProps: StandardEditableProps & {
+          videoUrl: string;
+          videoStartsFromInFrames: number;
+          videoEndsAtInFrames: number;
+        };
+        totalVideoDurationInFrames: number;
+      }
+    | {
+        type: "audio";
+        editableProps: StandardEditableProps & {
+          audioUrl: string;
+          audioStartsFromInFrames: number;
+          audioEndsAtInFrames: number;
+        };
+      }
+    | {
+        type: "div";
+        editableProps: StandardEditableProps;
+      }
+    | {
+        type: "caption";
+        editableProps: StandardEditableProps;
+        sequenceItems: Record<string, FullSequenceContentType>;
+      }
+    | {
+        type: "caption-page";
+        editableProps: StandardEditableProps & {
+          text: string;
+          startMs: number;
+          tokens: Array<{
+            text: string;
+            fromMs: number;
+            toMs: number;
+          }>;
+        };
+      }
+    | {
+        type: "zoom";
+        editableProps: ZoomPointFullSequenceItem;
+      }
+  );
 
 export type CaptionSequenceItemType = Extract<
   FullSequenceContentType,
@@ -409,9 +417,7 @@ export type StoreActions = {
   updatePositionAndDimensions: (
     layerId: LayerId,
     itemId: string,
-    updates: Partial<
-      FullSequenceContentType["editableProps"]["positionAndDimensions"]
-    >,
+    updates: Partial<StandardEditableProps["positionAndDimensions"]>,
   ) => void;
 
   linkCaptionToMedia: (

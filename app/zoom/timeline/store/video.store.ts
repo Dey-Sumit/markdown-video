@@ -116,6 +116,13 @@ const useVideoStore = create<
               type: "audio",
               editableProps: contentProps.editableProps,
             };
+          } else if (contentProps.type === "zoom") {
+            state.props.sequenceItems[newSeqLiteItem.id] = {
+              id: newSeqLiteItem.id,
+              layerId,
+              type: "zoom",
+              editableProps: contentProps.editableProps,
+            };
           }
 
           console.log(
@@ -1104,7 +1111,7 @@ const useVideoStore = create<
           const item = state.props.sequenceItems[
             itemId
           ] as FullSequenceContentType;
-          if (!item) {
+          if (!item || item.type === "zoom") {
             console.warn(`Item ${itemId} not found in layer ${layerId}`);
             return;
           }

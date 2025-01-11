@@ -3,6 +3,10 @@ import { Player, type PlayerRef } from "@remotion/player";
 import { useZoomProjectStore } from "../store/zoom.store";
 import { VideoCompositionSchema } from "../types.zoom";
 import ZoomIntoPositionComposition from "../zoom-composition-better";
+import NestedSequenceComposition from "../zoom-composition-better/composition.zoom";
+import { NestedCompositionPropsSchema } from "../timeline/timeline.types";
+import useVideoStore from "../timeline/store/video.store";
+import NestedSequenceCompositionLite from "../zoom-composition-better/composition.zoom-lite";
 
 // Example metadata for the composition
 const compositionMetaData = {
@@ -23,20 +27,21 @@ const errorFallback = (error: any) => (
 const CompositionPreview: React.FC<{ playerRef: RefObject<PlayerRef> }> = ({
   playerRef,
 }) => {
-  const { zoomPoints, videos, background } = useZoomProjectStore();
+  const { props } = useVideoStore();
 
-  // Loading fallback while fetching the props
+  /*  const { zoomPoints, videos, background } = useZoomProjectStore();
+
   if (!zoomPoints || !videos || !background) {
     return (
       <div className="flex h-full w-full items-center justify-center bg-gray-900 text-white">
         Loading project...
       </div>
     );
-  }
+  } */
 
   return (
     <div className="flex h-full w-full items-center justify-center bg-black">
-      <Player
+      {/*  <Player
         component={ZoomIntoPositionComposition} // Your nested composition
         durationInFrames={compositionMetaData.duration}
         fps={compositionMetaData.fps}
@@ -62,6 +67,29 @@ const CompositionPreview: React.FC<{ playerRef: RefObject<PlayerRef> }> = ({
           mode: "register-media-session",
         }}
         className="overflow-hidden rounded-md shadow-lg"
+      /> */}
+      <Player
+        component={NestedSequenceCompositionLite}
+        durationInFrames={compositionMetaData.duration}
+        fps={compositionMetaData.fps}
+        compositionHeight={compositionMetaData.height}
+        compositionWidth={compositionMetaData.width}
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+        controls={false}
+        autoPlay={false}
+        loop
+        initiallyMuted
+        errorFallback={(error) => errorFallback(error)}
+        ref={playerRef}
+        schema={NestedCompositionPropsSchema}
+        inputProps={props}
+        browserMediaControlsBehavior={{
+          mode: "register-media-session",
+        }}
+        className="rounded-md border shadow-lg"
       />
     </div>
   );

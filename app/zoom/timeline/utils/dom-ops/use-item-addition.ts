@@ -207,65 +207,77 @@ export const useNewItemValidation = () => {
               sequenceType: "standalone",
               startFrame,
             },
-            contentType === "text"
+            contentType === "zoom"
               ? {
-                  type: "text",
+                  type: "zoom",
                   editableProps: {
-                    styles: {
-                      container: {
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "rgba(0,0,0,0.2)",
-                      },
-                      element: {},
-                    },
-                    text: "<h1>Your text</h1>",
-                    positionAndDimensions: {
-                      top: 0,
-                      left: 0,
-                      width: 720,
-                      height: 1080,
-                    },
+                    targetX: 560,
+                    targetY: 540,
+                    zoomLevel: 1.5,
                   },
                   id: newItemId,
                   layerId,
+                  animations: [],
                 }
-              : {
-                  type: "image",
-                  editableProps: {
-                    styles: {
-                      container: {
-                        justifyContent: "center",
-                        alignItems: "center",
+              : contentType === "text"
+                ? {
+                    type: "text",
+                    editableProps: {
+                      styles: {
+                        container: {
+                          justifyContent: "center",
+                          alignItems: "center",
+                          backgroundColor: "rgba(0,0,0,0.2)",
+                        },
+                        element: {},
                       },
-                      element: {
-                        width: "100%",
-                        height: "100%",
+                      text: "<h1>Your text</h1>",
+                      positionAndDimensions: {
+                        top: 0,
+                        left: 0,
+                        width: 720,
+                        height: 1080,
                       },
                     },
-                    positionAndDimensions: {
-                      top: 0,
-                      left: 0,
-                      width: 720,
-                      height: 1080,
+                    id: newItemId,
+                    layerId,
+                  }
+                : {
+                    type: "image",
+                    editableProps: {
+                      styles: {
+                        container: {
+                          justifyContent: "center",
+                          alignItems: "center",
+                        },
+                        element: {
+                          width: "100%",
+                          height: "100%",
+                        },
+                      },
+                      positionAndDimensions: {
+                        top: 0,
+                        left: 0,
+                        width: 720,
+                        height: 1080,
+                      },
+                      imageUrl:
+                        "https://no-protection-bucket.s3.us-east-1.amazonaws.com/images/ronaldo.jpg?response-content-disposition=inline&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEND%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJGMEQCIFezEXhmmFr9voTydL8A9MVwqLpugKGKH867wpDZatMOAiBkYg%2BnueOJJ7b3tOOZ6pRGpIuCa2PUB6fqV2QpWopoFirLAwhoEAAaDDA1ODI2NDI1MjM3MSIMgygHa3XRYFG1cR11KqgDsbad7dw9zhiux6sfDdu7xJLM0ZB1paCXajrPCLTnDfe4cAIAyQT7CaijOn7fViPDjq0bg15%2BBwl0rNtnjC9o236TpnY8bq0xFIPcPwSxwFO5MqalTDzHZyfvF4FJdtOsM8QDDf1ixQGNnbfVwaKFVqhgsIq38NxMRj6cVDYgJnIaX5VsxWiKJWFYCIEvwdI6NDEwtnqYZa%2B4Utf3HtRCG5%2F%2B9kU%2FCJMuB51W3lk0NQXvFWmAlxuMU30%2FCzv4FKdb6jtPeEImz4ckWbTg8I8mBzAB1kiszWiyT8oGY1ytTEX%2BmH1%2BWtLXgCz%2BO%2BjA6dJ4IyzL1diChDL4EZFgr9Fdex3hrli%2FW6gszJ%2BTUJ4n3qTxPsO2XfIi5tU%2F4e0P6Z2EYNc7LmFkzAy0RCAsRn3Czas%2BKT%2BxP27na1w9UornYNXRP2wt2RA%2BRH%2B1RdT2nwambuH2gUTIsUu%2BDOAB12Gh2KnrrAKeGRe97L%2BQauHBKcW08uBDrxv3VKuDoKWILwbSOh7XrS9yDDiq1gVe%2F3YYU0DpQlidkq2H%2F2DbW3D3frfM3xWZwnfiZzCrkO%2B5BjrlAnX%2BSV3zNLrLXpkt%2BRrVKHPnENKtkp3DMJB1XNPXlg5rxfxuOFTymsH%2BfKsEJPDqod787CwoHbVpo9XMjVRFvEr4h73VfyQ0lbDvlI%2BOdl%2B4lQLl4YB2xsNhh4cfkTy9vyMiqgrs780qlxd6zBEmh9aKyoTWslqiFpqPmuN5e6DLnkJamHDibflPRv11hUZfB5kDgUV5ad9OeSLtyLzP0hsblZYVMAaU902hJNx%2FWYXZZ3lFg9gfULv0bFAdKJS1ujEL6yZ2xvO7QnDtmkNQW6JwEv8Com5xEHCC9Cbvw1p7XK9FnuYKHHc2g3bDGN3%2FY1N8F2JHH1GzhxDmdY61n5wuC08wMVFAH41m5XRw6fh6Tlc1k%2FWosTCqPMkwUdP1K%2B1CbBvrLc8wshxexn6Quyr1PXOG2gAi6FV4%2FmyoIvov9%2BgFARd9IZ0b%2ByCgfEbQjALS%2Fxx%2FFFN5w01Pc%2BA5VarepP34Hw%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAQ3EGR57JV56LSLU7%2F20241118%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241118T231215Z&X-Amz-Expires=43200&X-Amz-SignedHeaders=host&X-Amz-Signature=4052a09f820f81faa3a659ef00fac62cc4771839f8771f7057aba1c518fa5228",
+                      // "https ://images.pexels.com/photos/20787/pexels-photo.jpg",
                     },
-                    imageUrl:
-                      "https://no-protection-bucket.s3.us-east-1.amazonaws.com/images/ronaldo.jpg?response-content-disposition=inline&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEND%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJGMEQCIFezEXhmmFr9voTydL8A9MVwqLpugKGKH867wpDZatMOAiBkYg%2BnueOJJ7b3tOOZ6pRGpIuCa2PUB6fqV2QpWopoFirLAwhoEAAaDDA1ODI2NDI1MjM3MSIMgygHa3XRYFG1cR11KqgDsbad7dw9zhiux6sfDdu7xJLM0ZB1paCXajrPCLTnDfe4cAIAyQT7CaijOn7fViPDjq0bg15%2BBwl0rNtnjC9o236TpnY8bq0xFIPcPwSxwFO5MqalTDzHZyfvF4FJdtOsM8QDDf1ixQGNnbfVwaKFVqhgsIq38NxMRj6cVDYgJnIaX5VsxWiKJWFYCIEvwdI6NDEwtnqYZa%2B4Utf3HtRCG5%2F%2B9kU%2FCJMuB51W3lk0NQXvFWmAlxuMU30%2FCzv4FKdb6jtPeEImz4ckWbTg8I8mBzAB1kiszWiyT8oGY1ytTEX%2BmH1%2BWtLXgCz%2BO%2BjA6dJ4IyzL1diChDL4EZFgr9Fdex3hrli%2FW6gszJ%2BTUJ4n3qTxPsO2XfIi5tU%2F4e0P6Z2EYNc7LmFkzAy0RCAsRn3Czas%2BKT%2BxP27na1w9UornYNXRP2wt2RA%2BRH%2B1RdT2nwambuH2gUTIsUu%2BDOAB12Gh2KnrrAKeGRe97L%2BQauHBKcW08uBDrxv3VKuDoKWILwbSOh7XrS9yDDiq1gVe%2F3YYU0DpQlidkq2H%2F2DbW3D3frfM3xWZwnfiZzCrkO%2B5BjrlAnX%2BSV3zNLrLXpkt%2BRrVKHPnENKtkp3DMJB1XNPXlg5rxfxuOFTymsH%2BfKsEJPDqod787CwoHbVpo9XMjVRFvEr4h73VfyQ0lbDvlI%2BOdl%2B4lQLl4YB2xsNhh4cfkTy9vyMiqgrs780qlxd6zBEmh9aKyoTWslqiFpqPmuN5e6DLnkJamHDibflPRv11hUZfB5kDgUV5ad9OeSLtyLzP0hsblZYVMAaU902hJNx%2FWYXZZ3lFg9gfULv0bFAdKJS1ujEL6yZ2xvO7QnDtmkNQW6JwEv8Com5xEHCC9Cbvw1p7XK9FnuYKHHc2g3bDGN3%2FY1N8F2JHH1GzhxDmdY61n5wuC08wMVFAH41m5XRw6fh6Tlc1k%2FWosTCqPMkwUdP1K%2B1CbBvrLc8wshxexn6Quyr1PXOG2gAi6FV4%2FmyoIvov9%2BgFARd9IZ0b%2ByCgfEbQjALS%2Fxx%2FFFN5w01Pc%2BA5VarepP34Hw%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAQ3EGR57JV56LSLU7%2F20241118%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241118T231215Z&X-Amz-Expires=43200&X-Amz-SignedHeaders=host&X-Amz-Signature=4052a09f820f81faa3a659ef00fac62cc4771839f8771f7057aba1c518fa5228",
-                    // "https ://images.pexels.com/photos/20787/pexels-photo.jpg",
-                  },
-                  animations: [
-                    {
-                      type: "scale",
-                      from: 1,
-                      to: 0.7,
-                      duration: 240,
-                      startAt: 120, // Starts immediately at frame 0
-                    },
-                  ],
+                    animations: [
+                      {
+                        type: "scale",
+                        from: 1,
+                        to: 0.7,
+                        duration: 240,
+                        startAt: 120, // Starts immediately at frame 0
+                      },
+                    ],
 
-                  id: newItemId,
-                  layerId,
-                },
+                    id: newItemId,
+                    layerId,
+                  },
           );
         } else {
           // TODO : THIS IS ASYNC, we need it only for the total duration, so we should not wait for this
