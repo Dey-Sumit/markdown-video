@@ -182,7 +182,7 @@
   border-radius: 6px !important;
   border: 1px solid #454545 !important;
   background: linear-gradient(
-    to right,
+    to right bottom,
     #232526,#414345
   ) !important;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;

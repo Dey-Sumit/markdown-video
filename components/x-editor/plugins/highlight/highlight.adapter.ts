@@ -1,13 +1,53 @@
 // plugins/highlight/adapter.ts
 import type { Monaco } from "@monaco-editor/react";
-import type { editor, IRange } from "monaco-editor";
+import type { editor, IRange, MarkerSeverity } from "monaco-editor";
 import { AbstractAdapter } from "../../core/base/adapter";
 import highlightConfig from "./highlight.config";
+import {
+  validateHighlight,
+  type HighlightValidationIssue,
+} from "./highlight.utils";
+import type { CommandContext } from "../../core/types/adapter.type";
 
 interface CommentFormat {
   start: string;
   end?: string;
 }
+
+/**
+ * Parses highlight range from command string
+ * @param command The highlight command string
+ * @returns Parsed range or null if invalid format
+ */
+interface ParsedRange {
+  type: "block" | "inline";
+  start: number;
+  end: number;
+}
+
+const parseHighlightRange = (command: string): ParsedRange | null => {
+  // Match block range format (1:5)
+  const blockMatch = command.match(/\((\d+):(\d+)\)/);
+  if (blockMatch) {
+    return {
+      type: "block",
+      start: parseInt(blockMatch[1], 10),
+      end: parseInt(blockMatch[2], 10),
+    };
+  }
+
+  // Match inline range format [3:10]
+  const inlineMatch = command.match(/\[(\d+):(\d+)\]/);
+  if (inlineMatch) {
+    return {
+      type: "inline",
+      start: parseInt(inlineMatch[1], 10),
+      end: parseInt(inlineMatch[2], 10),
+    };
+  }
+
+  return null;
+};
 
 export class HighlightAdapter extends AbstractAdapter {
   private languageComments: Record<string, CommentFormat> = {
@@ -18,6 +58,65 @@ export class HighlightAdapter extends AbstractAdapter {
     css: { start: "/*", end: "*/" },
     sql: { start: "--" },
   };
+
+  /**
+   * Converts validation issue severity to Monaco marker severity
+   */
+  private getMarkerSeverity(
+    severity: HighlightValidationIssue["severity"],
+  ): MarkerSeverity {
+    switch (severity) {
+      case "error":
+        return this.monaco.MarkerSeverity.Error;
+      case "warning":
+        return this.monaco.MarkerSeverity.Warning;
+      default:
+        return this.monaco.MarkerSeverity.Info;
+    }
+  }
+
+  /**
+   * Creates a diagnostic range for the highlight command
+   */
+  private getDiagnosticRange(
+    context: CommandContext,
+    range: ParsedRange | null,
+    type: "command" | "range",
+  ): IRange {
+    const { lineContent, position } = context;
+
+    // For range-specific issues, highlight the range part
+    if (type === "range" && range) {
+      const rangeMatch = lineContent.match(/[[(]\d+:\d+[\])]/);
+      if (rangeMatch) {
+        return {
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn: rangeMatch.index! + 1,
+          endColumn: rangeMatch.index! + rangeMatch[0].length + 1,
+        };
+      }
+    }
+
+    // For command issues or fallback, highlight the whole command
+    const commandMatch = lineContent.match(/!highlight[^-]*/);
+    if (commandMatch) {
+      return {
+        startLineNumber: position.lineNumber,
+        endLineNumber: position.lineNumber,
+        startColumn: commandMatch.index! + 1,
+        endColumn: commandMatch.index! + commandMatch[0].length + 1,
+      };
+    }
+
+    // Fallback to current position
+    return {
+      startLineNumber: position.lineNumber,
+      endLineNumber: position.lineNumber,
+      startColumn: position.column,
+      endColumn: position.column + 1,
+    };
+  }
 
   private editor?: editor.IStandaloneCodeEditor;
 
@@ -206,6 +305,65 @@ export class HighlightAdapter extends AbstractAdapter {
       default:
         return `${baseCommand}${args}`;
     }
+  }
+
+  /**
+   * Provides diagnostics for highlight commands
+   */
+  provideDiagnostics(context: CommandContext): editor.IMarkerData[] {
+    const { lineContent, model, position } = context;
+
+    // Only process highlight commands
+    if (!this.matchesPattern(lineContent)) {
+      return [];
+    }
+
+    // Parse the range from command
+    const range = parseHighlightRange(lineContent);
+
+    // Get total lines in model for validation context
+    const totalLines = model.getLineCount();
+
+    // Create validation context
+    const validationContext = {
+      totalLines,
+      lineContent: range?.type === "inline" ? lineContent : undefined,
+    };
+
+    // Create test annotation based on range
+    const testAnnotation =
+      range?.type === "block"
+        ? {
+            name: "highlight",
+            query: lineContent,
+            fromLineNumber: range.start,
+            toLineNumber: range.end,
+          }
+        : {
+            name: "highlight",
+            query: lineContent,
+            lineNumber: position.lineNumber,
+            fromColumn: range?.start ?? 1,
+            toColumn: range?.end ?? 1,
+          };
+
+    // Validate the highlight
+    const { issues } = validateHighlight(testAnnotation);
+
+    // Convert validation issues to marker data
+    return issues.map((issue) => ({
+      severity: this.getMarkerSeverity(issue.severity),
+      message: issue.message,
+      ...this.getDiagnosticRange(
+        context,
+        range,
+        ["LINE_RANGE", "LINE_BOUNDS", "COLUMN_RANGE", "COLUMN_BOUNDS"].includes(
+          issue.type,
+        )
+          ? "range"
+          : "command",
+      ),
+    }));
   }
 
   matchesPattern(lineContent: string): boolean {

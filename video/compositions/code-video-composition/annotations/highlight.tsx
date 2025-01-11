@@ -1,5 +1,6 @@
 import {
   type AnnotationHandler,
+  type CodeAnnotation,
   type InlineAnnotation,
   InnerLine,
 } from "codehike/code";
@@ -12,12 +13,24 @@ import {
 import { parseColorToRGBA } from "@/utils/utils";
 import { convertSecondsToFramerate } from "../../composition.utils";
 import highlightParser from "@/components/x-editor/plugins/highlight/highlight.parser";
+import { validateHighlight } from "@/components/x-editor/plugins/highlight/highlight.utils";
 
 export const highlight: AnnotationHandler = {
   name: "highlight",
+  
 
-  transform: (annotation: InlineAnnotation) => {
-    return annotation;
+  transform: (annotation: CodeAnnotation) => {
+    // Validate the annotation
+    const { annotation: validatedAnnotation, issues } =
+      validateHighlight(annotation);
+
+    // You can log or handle validation issues
+    if (issues.length > 0) {
+      console.warn("Highlight validation issues:", issues);
+    }
+
+    // Return the validated annotation (will have fallback values if needed)
+    return validatedAnnotation;
   },
 
   AnnotatedLine: ({ annotation, ...props }) => {
@@ -106,7 +119,7 @@ export const highlight: AnnotationHandler = {
       [0, 1],
       ["rgba(0, 0, 0, 0)", `rgba(${red}, ${green}, ${blue}, 1)`],
     );
-    
+
     return (
       <div
         style={{
