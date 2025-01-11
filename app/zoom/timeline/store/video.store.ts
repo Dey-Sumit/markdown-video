@@ -54,6 +54,7 @@ const useVideoStore = create<
             console.warn(`Layer ${layerId} not found`);
             return;
           }
+          console.log("newSeqLiteItem", newSeqLiteItem);
 
           // Use the binary search utility function
           const insertIndex = binarySearch(

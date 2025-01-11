@@ -8,6 +8,7 @@ import {
   AudioLines,
   Image,
   Video,
+  ZoomInIcon,
 } from "lucide-react";
 import type {
   ContentType,
@@ -38,6 +39,7 @@ export const ITEM_TYPE_TO_STYLES_MAP: Record<ContentType | "preset", string> = {
     " bg-green-600/50 border-green-600 before:bg-green-600 after:bg-green-600",
   div: "",
   dummy: "",
+  zoom: "bg-yellow-600/50 border-yellow-600 before:bg-yellow-600 after:bg-yellow-600",
 };
 
 const {
@@ -231,7 +233,6 @@ const SequenceItem = ({
                   </button>
                 )}
               <div
-                //   className="flex h-full w-full cursor-grab items-center justify-center"
                 className={cn(
                   "relative box-border flex h-full w-full items-center justify-center rounded-[2px] border-2 shadow-inner hover:opacity-90 focus:bg-yellow-800",
                   ITEM_TYPE_TO_STYLES_MAP[item.contentType],
@@ -245,6 +246,7 @@ const SequenceItem = ({
                 {item.contentType === "image" && <Image size={14} />}
                 {item.contentType === "text" && <ALargeSmall size={14} />}
                 {item.contentType === "audio" && <AudioLines size={14} />}
+                {item.contentType === "zoom" && <ZoomInIcon size={14} />}
               </div>
             </div>
           )}

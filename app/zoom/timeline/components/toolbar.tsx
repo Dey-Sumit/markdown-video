@@ -10,6 +10,7 @@ import {
   Undo,
   Video,
   ZoomIn,
+  ZoomInIcon,
   ZoomOut,
   type LucideProps,
 } from "lucide-react";
@@ -60,7 +61,7 @@ const Toolbar = ({ children }: { children: React.ReactNode }) => {
   // const { currentFrame } = useTimeline();
 
   const toolbarCategories: ToolbarCategory[] = [
-    {
+    /* {
       name: "Selection",
       items: [
         {
@@ -69,7 +70,7 @@ const Toolbar = ({ children }: { children: React.ReactNode }) => {
           onClick: () => console.log("Select clicked"),
         },
       ],
-    },
+    }, */
     {
       name: "Insert",
       items: [
@@ -97,9 +98,15 @@ const Toolbar = ({ children }: { children: React.ReactNode }) => {
           onClick: () => setSelectedContentType("audio"),
           iconClassName: "text-orange-500",
         },
+        {
+          Icon: ZoomInIcon,
+          label: "Zoom",
+          onClick: () => setSelectedContentType("zoom"),
+          iconClassName: "text-yellow-500",
+        },
       ],
     },
-    {
+    /*  {
       name: "Edit",
       items: [
         {
@@ -118,8 +125,8 @@ const Toolbar = ({ children }: { children: React.ReactNode }) => {
           onClick: () => console.log("Paste clicked"),
         },
       ],
-    },
-    {
+    }, */
+    /*  {
       name: "History",
       items: [
         {
@@ -133,7 +140,7 @@ const Toolbar = ({ children }: { children: React.ReactNode }) => {
           onClick: () => console.log("Redo clicked"),
         },
       ],
-    },
+    }, */
     {
       name: "View",
       items: [

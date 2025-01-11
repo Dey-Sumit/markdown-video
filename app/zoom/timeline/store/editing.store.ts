@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import type { ContentType, LayerId } from "~/types/timeline.types";
+import type { LayerId, ContentType } from "../timeline.types";
 
 interface EditingState {
   activeSeqItem: {
@@ -39,7 +39,7 @@ export const useEditingStore = create<
   devtools(
     immer((set) => ({
       activeSeqItem: null,
-      selectedContentType: "image",
+      selectedContentType: "zoom",
       draggingItemIdInPlayer: null,
       setActiveSeqItem: (layerId, itemId, itemType, parentItem) => {
         set((state) => {

@@ -75,6 +75,7 @@
     "codehike": "^1.0.4",
     "color-parse": "^2.0.2",
     "dexie": "^4.0.10",
+    "dompurify": "^3.2.3",
     "dotenv": "^16.4.7",
     "framer-motion": "^11.15.0",
     "geist": "^1.2.1",

@@ -1,11 +1,10 @@
 "use client";
 
-import { MoveLeft, GripVertical } from "lucide-react";
+import { GripVertical } from "lucide-react";
 import { useRef } from "react";
 import { LAYOUT } from "../../layout.const";
 import type { LayerType } from "../timeline.types";
 import { useTimeline } from "../video-timeline-context";
-import LayerNamesStack from "./layer-names-stack copy";
 import Layer, { HoverLayer } from "./layer";
 import { PlayHead2 } from "./playhead";
 import useVideoStore from "../store/video.store";
@@ -60,7 +59,7 @@ const VideoTimeline = ({ children }: { children: React.ReactNode }) => {
         {/* ------------------------- Layers section starts ------------------------  */}
 
         {/* ------------------------------ Left Section -----------------------------  */}
-        <div className="sticky left-0 z-50">
+        {/*  <div className="sticky left-0 z-50">
           <div
             className="sticky left-0 top-0 z-30 border-b border-r border-t bg-black"
             style={{
@@ -68,8 +67,9 @@ const VideoTimeline = ({ children }: { children: React.ReactNode }) => {
               width: LAYER_NAME_STACK_WIDTH,
             }}
           >
-            {view === "entire-timeline" ? null : (
-              // <LayerToolbar />
+            {view === "entire-timeline" ? (
+              <LayerToolbar />
+            ) : (
               <button
                 onClick={() => {
                   setView("entire-timeline");
@@ -97,16 +97,11 @@ const VideoTimeline = ({ children }: { children: React.ReactNode }) => {
               />
             )}
           </div>
-        </div>
+        </div> */}
         {/* <div className="w-0 bg-transparent"></div> */}
 
         {/* ------------------------------ Right Section -----------------------------  */}
-        <div
-          //  layout="preserve-aspect"
-          //   animate={{ width: "100%" }}
-          className="w-max flex-1 border-r"
-          ref={containerRef}
-        >
+        <div className="w-max flex-1 border-x" ref={containerRef}>
           <div
             className="sticky top-0 z-10 flex-1 border-b"
             style={{
@@ -153,7 +148,6 @@ const VideoTimeline = ({ children }: { children: React.ReactNode }) => {
             trackLayerCount={visibleLayerOrder.length}
           />
         </div>
-        {/* <div className="w-0"></div> */}
       </div>
     </section>
   );

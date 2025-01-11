@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { ZoomPoint } from "../types.zoom";
 
 const TransitionSchema = z.object({
   id: z.string().regex(/^t-/),
@@ -88,6 +89,13 @@ export type FullSequenceContentType = {
         }>;
       };
     }
+  | {
+      type: "zoom";
+      editableProps: {
+        zoomPoints: ZoomPoint[];
+        // Inherits the common editableProps like styles and positionAndDimensions
+      };
+    }
 );
 
 export type CaptionSequenceItemType = Extract<
@@ -140,6 +148,16 @@ export type AudioEditablePropsType = Extract<
   { type: "audio" }
 >["editableProps"];
 
+export type ZoomSequenceItemType = Extract<
+  FullSequenceContentType,
+  { type: "zoom" }
+>;
+
+export type ZoomEditablePropsType = Extract<
+  FullSequenceContentType,
+  { type: "zoom" }
+>["editableProps"];
+
 export type ContentType =
   | "dummy"
   | "text"
@@ -148,7 +166,8 @@ export type ContentType =
   | "audio"
   | "div"
   | "caption"
-  | "caption-page";
+  | "caption-page"
+  | "zoom";
 
 type StandaloneVideoAudioType = {
   sequenceType: "standalone";
@@ -206,6 +225,7 @@ export type LiteSequencePresetItemType = Extract<
   LiteSequenceItemType,
   { sequenceType: "preset" }
 >;
+
 export type LiteSequenceCaptionItemType = Extract<
   LiteSequenceItemType,
   { sequenceType: "caption" }
@@ -290,6 +310,7 @@ export const NestedCompositionPropsSchema = z.object({
 export type LayerId = string;
 
 export type PresetName = "BRUT_END_SCREEN_PRESET" | "BRUT_FOREGROUND";
+
 export type PresetDetail = Omit<
   LiteSequencePresetItemType,
   "id" | "startFrame" | "offset" | "transition" | "sequenceType"
@@ -427,20 +448,3 @@ export type StoreActions = {
 export type NestedCompositionPropsType = NestedCompositionProjectType["props"];
 
 export type StoreType = NestedCompositionProjectType & StoreActions;
-
-/* export type NestedCompositionPropsType = Omit<
-  NestedCompositionProjectType["props"],
-  "layers"
-> & {
-  layers: {
-    [layerId: string]: Omit<
-      NestedCompositionProjectType["props"]["layers"][string],
-      "id" | "name" | "isVisible"
-    > & {
-      id?: string;
-      name?: string;
-      isVisible?: boolean;
-    };
-  };
-};
- */
