@@ -1,0 +1,13 @@
+export const LAYOUT = {
+  SIDE_NAVBAR_WIDTH: "4rem",
+  NAVBAR_ITEM_CONTENT_WIDTH: "20rem",
+  TIMELINE: {
+    TIMELINE_CONTAINER_HEIGHT: "15rem",
+    TRACK_LAYER_HEIGHT: "2.1rem",
+    TRACK_LAYER_HEIGHT_IN_PX: Math.ceil(2.1 * 16),
+    UTILS_LAYER_HEIGHT: "1.8rem",
+    LAYER_NAME_STACK_WIDTH: "8rem",
+    PLAY_HEAD_WIDTH_IN_PX: 4,
+  },
+  PROJECT_HEADER_HEIGHT: "3.5rem",
+} as const;
