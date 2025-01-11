@@ -29,6 +29,7 @@ import { TextAdapter } from "./plugins/text/text.adapter";
 import { TransitionAdapter } from "./plugins/transition/transition.adapter";
 import { CodeAdapter } from "./plugins/code/code.adapter";
 import { HighlightAdapter } from "./plugins/highlight/highlight.adapter";
+import FloatingEditButton from "./components/floating-button";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 const files = ["Scenes", "Global"] as const;
@@ -43,6 +44,9 @@ function XEditor() {
   const [mounted, setMounted] = useState(false);
 
   const { currentProject, updateContent, loadProject } = useProjectStore();
+
+  const [editorInstance, setEditorInstance] =
+    useState<editor.IStandaloneCodeEditor | null>(null);
 
   const {
     config: { content, styles },
@@ -128,6 +132,8 @@ function XEditor() {
   const handleEditorMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
     monacoRef.current = monaco;
+
+    setEditorInstance(editor);
 
     monaco.editor.defineTheme("custom", monacoCustomTheme);
     monaco.editor.setTheme("custom");
@@ -310,6 +316,7 @@ function XEditor() {
           monaco={monacoRef.current}
           onClose={() => setShowCommandMenu(false)}
         />
+        {/* {editorInstance && <FloatingEditButton editor={editorInstance} />} */}
       </div>
     </>
   );
