@@ -1,7 +1,5 @@
 "use client";
-import Dropzone from "@/components/dropzone";
-import dynamic from "next/dynamic";
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { LAYOUT } from "./layout.const";
 // import VideoAndTimeline from "./components/video-and-timeline";
 import type { PlayerRef } from "@remotion/player";
@@ -17,53 +15,67 @@ import { VolumeSlider } from "./timeline/components/player-controls/volume-slide
 import { PlayerFullscreen } from "./timeline/components/player-controls/full-screen";
 import VideoTimeline from "./timeline/components/video-timeline";
 import Toolbar from "./timeline/components/toolbar";
+import dynamic from "next/dynamic";
+import SequenceItemEditor from "./editor/sequence-editor/sequence-item-editor";
 
 const {
   SIDE_NAVBAR_WIDTH,
   NAVBAR_ITEM_CONTENT_WIDTH,
   TIMELINE: { TIMELINE_CONTAINER_HEIGHT },
+  PROJECT_HEADER_HEIGHT,
 } = LAYOUT;
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Page = () => {
   const playerRef = useRef<PlayerRef>(null);
 
   const { zoomPoints, videos, background } = useZoomProjectStore();
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-screen flex-col bg-black">
+      <div
+        className="shrink-0 border-b border-neutral-900"
+        style={{
+          height: PROJECT_HEADER_HEIGHT,
+        }}
+      />
+      {/* -------------------- video player and edit sequence container -------------------- */}
+
       {/* -------------------- video player and edit sequence container -------------------- */}
 
       <div
-        className="flex flex-shrink-0 bg-green-800"
+        className="flex flex-shrink-0"
         style={{
-          height: `calc(100vh - ${TIMELINE_CONTAINER_HEIGHT})`,
+          height: `calc(100vh - ${TIMELINE_CONTAINER_HEIGHT} - ${PROJECT_HEADER_HEIGHT})`,
         }}
       >
-        <section className="editorBg relative flex-[0.8]">
+        <section className="editorBg relative flex flex-[0.75] flex-col">
           <CompositionPreview playerRef={playerRef} />
+          <Toolbar>
+            <div className="flex items-center space-x-3">
+              <PlayPauseButton playerRef={playerRef} />
+              <TimeDisplay
+                playerRef={playerRef}
+                fps={30}
+                durationInFrames={1000} // TODO : FIXED
+              />
+              <MuteButton playerRef={playerRef} />
+              <VolumeSlider playerRef={playerRef} />
+              <PlayerFullscreen playerRef={playerRef} />
+              <Separator orientation="vertical" className="h-8" />
+            </div>
+          </Toolbar>
         </section>
-        <section className="flex-[0.2] border"></section>
+        <section className="flex-[0.25] p-4">
+          {/* --------------------  sequence item editor container starts -------------------- */}
+          <SequenceItemEditor />
+          {/* -------------------- sequence item editor container ends -------------------- */}
+        </section>
       </div>
 
-      <section>
+      <section className="relative h-full">
         {zoomPoints && (
           <VideoTimelineProvider playerRef={playerRef}>
-            <VideoTimeline>
-              <Toolbar>
-                <div className="flex items-center space-x-3">
-                  <PlayPauseButton playerRef={playerRef} />
-                  <TimeDisplay
-                    playerRef={playerRef}
-                    fps={30}
-                    durationInFrames={1000} // TODO : FIXED
-                  />
-                  <MuteButton playerRef={playerRef} />
-                  <VolumeSlider playerRef={playerRef} />
-                  <PlayerFullscreen playerRef={playerRef} />
-                  <Separator orientation="vertical" className="h-8" />
-                </div>
-              </Toolbar>
-            </VideoTimeline>
+            <VideoTimeline />
           </VideoTimelineProvider>
         )}
       </section>
@@ -71,6 +83,4 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default Layout;
-
-// "Error loading image with src: https://remotionlambda-useast1-q7hsmsvlrt.s3.us-east-1.amazonaws.com/sample-images/cave.jpg"
+export default Page;

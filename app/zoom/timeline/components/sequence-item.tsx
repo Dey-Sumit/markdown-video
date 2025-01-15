@@ -25,12 +25,12 @@ import SequenceContextMenuWrapper from "./sequence-context-menu";
  * Map of item types to their corresponding CSS classes for styling.
  */
 export const ITEM_TYPE_TO_STYLES_MAP: Record<ContentType | "preset", string> = {
-  text: "bg-green-600/50 border-green-700 before:bg-green-700 after:bg-green-700  ",
-  image:
-    "bg-purple-600/50 border-purple-600 before:bg-purple-600 after:bg-purple-600",
-  video: "bg-pink-600/50 border-pink-600 before:bg-pink-600 after:bg-pink-600",
-  audio:
-    "bg-orange-600/50 border-orange-600 before:bg-orange-600 after:bg-orange-600",
+  // text: "bg-green-600/50 border-green-700 before:bg-green-700 after:bg-green-700  ",
+  // image:
+  //   "bg-purple-600/50 border-purple-600 before:bg-purple-600 after:bg-purple-600",
+  // video: "bg-pink-600/50 border-pink-600 before:bg-pink-600 after:bg-pink-600",
+  // audio:
+  //   "bg-orange-600/50 border-orange-600 before:bg-orange-600 after:bg-orange-600",
   // TODO : remove this
   caption:
     "bg-green-600/50 border-green-600 before:bg-green-600 after:bg-green-600",
@@ -39,7 +39,14 @@ export const ITEM_TYPE_TO_STYLES_MAP: Record<ContentType | "preset", string> = {
     " bg-green-600/50 border-green-600 before:bg-green-600 after:bg-green-600",
   div: "",
   dummy: "",
-  zoom: "bg-yellow-600/50 border-yellow-600 before:bg-yellow-600 after:bg-yellow-600",
+  zoom: "bg-gradient-to-b from-yellow-700 to-yellow-600 text-yellow-200 border-yellow-600 before:bg-yellow-500 after:bg-yellow-500",
+  text: "bg-gradient-to-b from-green-700 to-green-600 text-green-200 border-green-600 before:bg-green-500 after:bg-green-500",
+  image:
+    "bg-gradient-to-b from-purple-700 to-purple-600 text-purple-200 border-purple-600 before:bg-purple-500 after:bg-purple-500",
+  video:
+    "bg-gradient-to-b from-pink-700 to-pink-600 text-pink-200 border-pink-600 before:bg-pink-500 after:bg-pink-500",
+  audio:
+    "bg-gradient-to-b from-orange-700 to-orange-600 text-orange-200 border-orange-600 before:bg-orange-500 after:bg-orange-500",
 };
 
 const {
@@ -117,7 +124,6 @@ const SequenceItem = ({
   };
 
   const layerIndex = visibleLayerOrder.indexOf(layerId);
-  console.log("SequenceItem renders", item.id);
 
   return (
     <Rnd
@@ -147,15 +153,16 @@ const SequenceItem = ({
         topLeft: false,
         topRight: false,
       }}
-      dragAxis={
-        item.sequenceType === "preset"
-          ? "both"
-          : item.sequenceType === "caption"
-            ? "none"
-            : item.contentType !== "caption-page"
-              ? "both"
-              : "x"
-      }
+      dragAxis={"x"}
+      // dragAxis={
+      //   item.sequenceType === "preset"
+      //     ? "both"
+      //     : item.sequenceType === "caption"
+      //       ? "none"
+      //       : item.contentType !== "caption-page"
+      //         ? "both"
+      //         : "x"
+      // }
       onDragStop={onDragStop}
       onDragStart={onDragStart}
       onResizeStop={onResizeStop}
@@ -234,11 +241,11 @@ const SequenceItem = ({
                 )}
               <div
                 className={cn(
-                  "relative box-border flex h-full w-full items-center justify-center rounded-[2px] border-2 shadow-inner hover:opacity-90 focus:bg-yellow-800",
+                  "relative box-border flex h-full w-full items-center justify-center rounded-md border shadow-xl hover:opacity-90 focus:bg-yellow-800",
                   ITEM_TYPE_TO_STYLES_MAP[item.contentType],
-                  "before:absolute before:inset-y-[2px] before:left-[2px] before:w-1 before:rounded-lg before:content-['']",
-                  "after:absolute after:inset-y-[2px] after:right-[2px] after:w-1 after:rounded-lg after:content-['']",
-                  activeSeqItem?.itemId === item.id && "border-blue-500",
+                  "before:absolute before:inset-y-[4px] before:left-[4px] before:w-1 before:rounded-lg before:content-['']",
+                  "after:absolute after:inset-y-[4px] after:right-[4px] after:w-1 after:rounded-lg after:content-['']",
+                  activeSeqItem?.itemId === item.id && "border-gray-200",
                 )}
               >
                 {item.contentType === "video" && <Video size={14} />}

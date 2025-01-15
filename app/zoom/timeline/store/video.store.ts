@@ -18,6 +18,7 @@ import {
   calculateItemIndices,
   calculateOffset,
 } from "../utils/timeline.utils";
+
 import { toast } from "sonner";
 import { genId } from "../utils/misc.utils";
 import { updateTokens } from "../utils/captions.utils";
@@ -26,6 +27,11 @@ import { updateTokens } from "../utils/captions.utils";
  * Custom hook for managing video store state.
  * @returns {StoreType} The video store state and actions.
  */
+
+export const CONTENT_RESTRICT_LAYERS_TO_ID_MAP = {
+  ZOOM_LAYER_ID: "layer-zoom",
+  VIDEO_LAYER_ID: "layer-video",
+};
 
 const useVideoStore = create<
   StoreType,
@@ -463,6 +469,21 @@ const useVideoStore = create<
           const item = state.props.sequenceItems[itemId];
           if (!item || item.type !== "image") {
             console.warn(`Image item ${itemId} not found in layer ${layerId}`);
+            return;
+          }
+
+          item.editableProps = {
+            ...item.editableProps,
+            ...updates,
+          };
+        });
+      },
+
+      updateZoomEditableProps: (layerId, itemId, updates) => {
+        set((state: StoreType) => {
+          const item = state.props.sequenceItems[itemId];
+          if (!item || item.type !== "zoom") {
+            console.warn(`Zoom item ${itemId} not found in layer ${layerId}`);
             return;
           }
 

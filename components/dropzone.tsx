@@ -79,7 +79,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
   if (!isDragging) return null;
 
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center bg-blue-500 bg-opacity-50">
+    <div className="absolute inset-0 z-50 flex items-center justify-center border bg-blue-500 bg-opacity-50">
       <p className="text-2xl font-bold text-white">Drop files here</p>
       {error && (
         <div className="absolute bottom-4 left-4 right-4 rounded bg-red-500 p-2 text-white">

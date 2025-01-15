@@ -29,7 +29,7 @@ export const filterCaptionLayers = (
   );
 };
 
-const VideoTimeline = ({ children }: { children: React.ReactNode }) => {
+const VideoTimeline = () => {
   const {
     containerRef,
     activeCaptionData,
@@ -42,17 +42,14 @@ const VideoTimeline = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <section
-      className="pattern-bg-black-orchid fixed bottom-0 right-0 border-t"
+      className="pattern-bg-black-orchid"
       style={{ left: SIDE_NAVBAR_WIDTH, height: TIMELINE_CONTAINER_HEIGHT }}
     >
-      {/* -------------------------TOOL BAR------------------------  */}
-      {children}
-
       {/* TIMELINE BODY STARTS */}
       <div
-        className="scrollbar-thumb-rounded-full scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-400/30 hover:scrollbar-thumb-gray-900/80 relative flex overflow-x-auto overflow-y-auto"
+        className="scrollbar-thumb-rounded-full scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-400/30 hover:scrollbar-thumb-gray-900/80 relative flex overflow-x-auto overflow-y-auto border-x border-neutral-900"
         style={{
-          height: "12rem",
+          height: TIMELINE_CONTAINER_HEIGHT,
         }}
         ref={scrollContainerRef}
       >
@@ -101,9 +98,9 @@ const VideoTimeline = ({ children }: { children: React.ReactNode }) => {
         {/* <div className="w-0 bg-transparent"></div> */}
 
         {/* ------------------------------ Right Section -----------------------------  */}
-        <div className="w-max flex-1 border-x" ref={containerRef}>
+        <div className="w-max flex-1" ref={containerRef}>
           <div
-            className="sticky top-0 z-10 flex-1 border-b"
+            className="sticky top-0 z-10 flex-1 border-b border-neutral-900"
             style={{
               height: TRACK_LAYER_HEIGHT,
             }}
@@ -122,7 +119,7 @@ const VideoTimeline = ({ children }: { children: React.ReactNode }) => {
                 {visibleLayerOrder.map((layerId) => (
                   <div
                     key={layerId}
-                    className="relative border-b"
+                    className="relative border-b border-neutral-900"
                     style={{
                       height: TRACK_LAYER_HEIGHT_IN_PX,
                     }}
@@ -185,7 +182,7 @@ const LayerItem = ({ layer }: { layer: LayerType }) => {
         height: `${TRACK_LAYER_HEIGHT_IN_PX}px`,
         width: "100%",
       }}
-      className="border-b"
+      className="border-b border-neutral-900"
     >
       <div className="relative flex h-full w-full items-center px-1">
         <div className="reorder-handle mr-2 cursor-move">

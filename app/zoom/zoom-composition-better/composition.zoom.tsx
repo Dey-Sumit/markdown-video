@@ -6,6 +6,7 @@ import {
   Img,
   OffthreadVideo,
   Series,
+  Video,
 } from "remotion";
 
 import { slide } from "@remotion/transitions/slide";
@@ -43,7 +44,7 @@ export const SafeHTMLRenderer = ({ html }: { html: string }) => {
   return <div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />;
 };
 
-const SequenceItemRenderer: React.FC<{
+export const SequenceItemRenderer: React.FC<{
   item: StyledSequenceItem;
 }> = ({ item }) => {
   if (item.type === "preset") {
@@ -85,9 +86,10 @@ const SequenceItemRenderer: React.FC<{
           <OffthreadVideo
             src={item.editableProps.videoUrl}
             style={item.editableProps?.styles?.element}
-            className="object-cover"
+            // className="object-cover"
             startFrom={item.editableProps.videoStartsFromInFrames}
             endAt={item.editableProps.videoEndsAtInFrames}
+            className="max-h-full object-contain shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]"
           />
         );
       /* case "caption-page":
@@ -121,7 +123,7 @@ const SequenceItemRenderer: React.FC<{
   );
 };
 
-const RenderSequence: React.FC<{
+export const RenderSequence: React.FC<{
   item: LiteSequenceItemType;
   sequenceItems: Record<string, StyledSequenceItem>;
 }> = ({ item, sequenceItems }) => {
@@ -246,9 +248,6 @@ const NestedSequenceComposition = (
                     >
                       <RenderSequence
                         item={item}
-                        // sequenceItems={
-                        //   sequenceItems[layerId].
-                        // }
                         sequenceItems={sequenceItems}
                       />
                     </TransitionSeries.Sequence>

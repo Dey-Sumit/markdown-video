@@ -2,7 +2,9 @@ import { getVideoMetadata } from "@remotion/media-utils";
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { ContentType, LayerId } from "../../timeline.types";
 import { useEditingStore } from "../../store/editing.store";
-import useVideoStore from "../../store/video.store";
+import useVideoStore, {
+  CONTENT_RESTRICT_LAYERS_TO_ID_MAP,
+} from "../../store/video.store";
 import { useTimeline } from "../../video-timeline-context";
 import { genId } from "../misc.utils";
 import { calculatePlaceholderDuration } from "../timeline.utils";
@@ -110,7 +112,10 @@ export function useSequenceAddition(layerId: LayerId, pixelsPerFrame: number) {
 
       if (selectedContentType.sequenceType === "standalone") {
         const contentType =
-          selectedContentType.contentType || selectedNewItemType; //selectedContentType.contentType may come from context menu
+          layerId === CONTENT_RESTRICT_LAYERS_TO_ID_MAP.ZOOM_LAYER_ID
+            ? "zoom"
+            : selectedContentType.contentType || selectedNewItemType; //selectedContentType.contentType may come from context menu
+
         validateAndAddItem({
           layerId,
           duration: placeholderDuration,
@@ -133,7 +138,7 @@ export function useSequenceAddition(layerId: LayerId, pixelsPerFrame: number) {
           },
         });
       }
-      handleTimeLayerClick(e); // so that the playhead moves to the newly added item
+      handleTimeLayerClick(e); // so that the play head moves to the newly added item
     },
     [layerId, selectedNewItemType, handleTimeLayerClick, validateAndAddItem],
   );
@@ -194,6 +199,7 @@ export const useNewItemValidation = () => {
       if (selectedContentType.sequenceType === "standalone") {
         const contentType = selectedContentType.contentType || "dummy"; // Default to "dummy" if not specified
         const newItemId = genId("s", contentType);
+
         if (contentType !== "video" && contentType !== "audio") {
           // call the store action with the validated data
           addSequenceItemToLayer(

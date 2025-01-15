@@ -11,6 +11,9 @@ import {
 import React from "react";
 import type { NestedCompositionProjectType } from "../timeline/timeline.types";
 import type { ZoomPoint } from "../types.zoom";
+import { TransitionSeries } from "@remotion/transitions";
+import { CONTENT_RESTRICT_LAYERS_TO_ID_MAP } from "../timeline/store/video.store";
+import { RenderSequence } from "./composition.zoom";
 
 /* const zoomEvents = [
   {
@@ -38,7 +41,6 @@ const NestedSequenceCompositionLite = (
     )
     .map((item) => {
       const sequenceItem = sequenceItems[item.id];
-      console.log("addedZoomPoints sequenceItem", sequenceItem);
 
       return {
         stayDuration: item.effectiveDuration,
@@ -49,8 +51,6 @@ const NestedSequenceCompositionLite = (
         id: item.id,
       };
     });
-
-  console.log("addedZoomPoints", zoomEvents);
 
   // Get the active zoom event for the current frame
   const activeZoomEvent = zoomEvents.find(
@@ -136,18 +136,37 @@ const NestedSequenceCompositionLite = (
               }}
             />
           )} */}
-
+        {/* 
         <OffthreadVideo
           src={staticFile("videos/screen-recording.mov")}
           className="max-h-full object-contain shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]"
           muted
-          style={
-            {
-              // boxShadow: "5px 8px 22.5px 3px #868686",
-              //   "0px 10px 13px -7px #000000, 5px 5px 15px 5px rgba(0,0,0,0)",
-            }
-          }
-        />
+        /> */}
+
+        <TransitionSeries layout="none">
+          {layers[
+            CONTENT_RESTRICT_LAYERS_TO_ID_MAP.VIDEO_LAYER_ID
+          ].liteItems.map((item) => {
+            return (
+              <React.Fragment key={item.id}>
+                <TransitionSeries.Sequence
+                  durationInFrames={item.sequenceDuration}
+                  name={item.id}
+                  offset={item.offset}
+                  layout="none"
+                >
+                  {/* <OffthreadVideo
+                    key={item.id}
+                    src={staticFile("videos/screen-recording.mov")}
+                    className="max-h-full object-contain shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]"
+                    muted
+                  /> */}
+                  <RenderSequence item={item} sequenceItems={sequenceItems} />
+                </TransitionSeries.Sequence>
+              </React.Fragment>
+            );
+          })}
+        </TransitionSeries>
       </div>
     </AbsoluteFill>
   );

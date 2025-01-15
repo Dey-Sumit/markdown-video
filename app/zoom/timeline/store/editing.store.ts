@@ -39,7 +39,7 @@ export const useEditingStore = create<
   devtools(
     immer((set) => ({
       activeSeqItem: null,
-      selectedContentType: "zoom",
+      selectedContentType: "text",
       draggingItemIdInPlayer: null,
       setActiveSeqItem: (layerId, itemId, itemType, parentItem) => {
         set((state) => {

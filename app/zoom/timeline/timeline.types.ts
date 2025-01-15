@@ -377,6 +377,11 @@ export type StoreActions = {
     itemId: string,
     updates: any,
   ) => void;
+  updateZoomEditableProps: (
+    layerId: LayerId,
+    itemId: string,
+    updates: Partial<ZoomEditablePropsType>,
+  ) => void;
   updateSequenceItemDuration: (
     layerId: LayerId,
     itemId: string,

@@ -115,6 +115,7 @@ export const HoverLayer: React.FC<HoverLayerProps> = React.memo(
             <AddItemPlaceholder
               startX={hoverInfo.startX}
               width={hoverInfo.width}
+              overrideType={layerId === "layer-zoom" ? "zoom" : undefined}
             />
           )}
         </AddItemContextMenu>

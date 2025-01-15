@@ -54,7 +54,7 @@ const Toolbar = ({ children }: { children: React.ReactNode }) => {
   const setSelectedContentType = useEditingStore(
     (state) => state.setSelectedContentType,
   );
-  const { setTimelineZoom, zoom } = useTimeline();
+  // const { setTimelineZoom, zoom } = useTimeline();
   const selectedContentType = useEditingStore(
     (state) => state.selectedContentType,
   );
@@ -98,12 +98,6 @@ const Toolbar = ({ children }: { children: React.ReactNode }) => {
           onClick: () => setSelectedContentType("audio"),
           iconClassName: "text-orange-500",
         },
-        {
-          Icon: ZoomInIcon,
-          label: "Zoom",
-          onClick: () => setSelectedContentType("zoom"),
-          iconClassName: "text-yellow-500",
-        },
       ],
     },
     /*  {
@@ -141,7 +135,7 @@ const Toolbar = ({ children }: { children: React.ReactNode }) => {
         },
       ],
     }, */
-    {
+    /* {
       name: "View",
       items: [
         {
@@ -161,7 +155,7 @@ const Toolbar = ({ children }: { children: React.ReactNode }) => {
           },
         },
       ],
-    },
+    }, */
   ];
 
   // const playerControlCategories: ToolbarCategory[] = [
