@@ -1,7 +1,7 @@
 import type { NestedCompositionProjectType } from "./timeline.types";
 export const PREFETCH_VIDEO_URL =
-  "https://editor-uploads.s3.us-east-1.amazonaws.com/39984216-5579-4077-ba94-778429107468";
-// "https://d7cjozj05bzmu.cloudfront.net/screen-new-large+(1).webm"; //720
+  //  "https://editor-uploads.s3.us-east-1.amazonaws.com/39984216-5579-4077-ba94-778429107468";
+  "https://d7cjozj05bzmu.cloudfront.net/screen-new-large+(1).webm"; //720
 // "https://d7cjozj05bzmu.cloudfront.net/screen-new-large-480.webm";
 // "https://d7cjozj05bzmu.cloudfront.net/screen-new-large.webm";
 // "https://video-serve.dev-sumitdey.workers.dev/sample-screen.mp4";
@@ -21,7 +21,7 @@ export const EMPTY_PROJECT_4: NestedCompositionProjectType = {
         id: "layer-video",
         name: "Layer 1",
         liteItems: [
-          /* {
+          {
             contentType: "video",
             id: "s-video-6cae35de-69f1-4516-b9b8-f549d9d1dd04",
             offset: 0,
@@ -31,7 +31,7 @@ export const EMPTY_PROJECT_4: NestedCompositionProjectType = {
             startFrame: 0,
             linkedCaptionLayerId: null,
             linkedCaptionId: null,
-          }, */
+          },
         ],
         isVisible: true,
         layerType: "normal",

@@ -26,7 +26,7 @@ import { RenderSequence } from "./composition.zoom";
 ];
  */
 const ZOOM_DURATION = 15;
-
+export const ZOOM_COMP_PADDING = 50;
 const NestedSequenceCompositionLite = (
   props: NestedCompositionProjectType["props"],
 ) => {
@@ -105,7 +105,12 @@ const NestedSequenceCompositionLite = (
   const originY = activeZoomEvent?.targetY || height / 2;
 
   return (
-    <AbsoluteFill className="bg-gradient-to-br from-[#7209B7] to-[#A731F5] p-[40px]">
+    <AbsoluteFill
+      className="bg-gradient-to-br from-[#7209B7] to-[yellow]"
+      style={{
+        padding: ZOOM_COMP_PADDING,
+      }}
+    >
       <div
         style={{
           transform: `scale(${scale})`,
@@ -143,7 +148,11 @@ const NestedSequenceCompositionLite = (
           muted
         /> */}
 
-        <TransitionSeries layout="none">
+        <TransitionSeries
+          name="video layer"
+          layout="absolute-fill"
+          className="box-border"
+        >
           {layers[
             CONTENT_RESTRICT_LAYERS_TO_ID_MAP.VIDEO_LAYER_ID
           ].liteItems.map((item) => {
@@ -153,14 +162,9 @@ const NestedSequenceCompositionLite = (
                   durationInFrames={item.sequenceDuration}
                   name={item.id}
                   offset={item.offset}
-                  layout="none"
+                  layout="absolute-fill"
+                  className="h-full w-full"
                 >
-                  {/* <OffthreadVideo
-                    key={item.id}
-                    src={staticFile("videos/screen-recording.mov")}
-                    className="max-h-full object-contain shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]"
-                    muted
-                  /> */}
                   <RenderSequence item={item} sequenceItems={sequenceItems} />
                 </TransitionSeries.Sequence>
               </React.Fragment>

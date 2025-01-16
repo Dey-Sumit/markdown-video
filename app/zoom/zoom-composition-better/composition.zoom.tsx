@@ -6,6 +6,7 @@ import {
   Img,
   OffthreadVideo,
   Series,
+  useVideoConfig,
   Video,
 } from "remotion";
 
@@ -21,6 +22,7 @@ import type {
 } from "../timeline/timeline.types";
 import useThrottle from "../timeline/hooks/use-throttle";
 import useVideoStore from "../timeline/store/video.store";
+import { ZOOM_COMP_PADDING } from "./composition.zoom-lite";
 // import { SortedOutlines } from "~/components/new-player/sorted-outlines";
 // import useThrottle from "~/hooks/use-throttle";
 // import useVideoStore from "~/store/video.store";
@@ -47,6 +49,7 @@ export const SafeHTMLRenderer = ({ html }: { html: string }) => {
 export const SequenceItemRenderer: React.FC<{
   item: StyledSequenceItem;
 }> = ({ item }) => {
+  const { height, width } = useVideoConfig();
   if (item.type === "preset") {
     return null;
   }
@@ -83,14 +86,20 @@ export const SequenceItemRenderer: React.FC<{
         );
       case "video":
         return (
-          <OffthreadVideo
-            src={item.editableProps.videoUrl}
-            style={item.editableProps?.styles?.element}
-            // className="object-cover"
-            startFrom={item.editableProps.videoStartsFromInFrames}
-            endAt={item.editableProps.videoEndsAtInFrames}
-            className="max-h-full object-contain shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]"
-          />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <OffthreadVideo
+              src={item.editableProps.videoUrl}
+              style={{
+                ...item.editableProps?.styles?.element,
+                height: "100%",
+                width: "auto",
+              }}
+              // className="object-cover"
+              startFrom={item.editableProps.videoStartsFromInFrames}
+              endAt={item.editableProps.videoEndsAtInFrames}
+              className="_shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset] rounded-[10px] border-4 border-gray-600/30 object-contain"
+            />
+          </div>
         );
       /* case "caption-page":
         return (
@@ -112,14 +121,15 @@ export const SequenceItemRenderer: React.FC<{
   };
 
   return (
-    <AbsoluteFill
-      style={{
-        ...item.editableProps?.styles?.container,
-        ...item.editableProps?.positionAndDimensions,
-      }}
+    <div
+      // style={{
+      //   ...item.editableProps?.styles?.container,
+      //   ...item.editableProps?.positionAndDimensions,
+      // }}
+      className="absolute inset-0"
     >
       {renderContent()}
-    </AbsoluteFill>
+    </div>
   );
 };
 

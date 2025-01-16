@@ -51,7 +51,7 @@ const ZoomIntoPositionComposition: React.FC<
   const cellHeight = height / rows;
 
   return (
-    <AbsoluteFill className="bg-gradient-to-br from-red-600 to-blue-700 p-[20px]">
+    <AbsoluteFill className="bg-gradient-to-br from-yellow-500 to-blue-700 p-[270px]">
       <div
         style={{
           transform: `scale(${scale})`,

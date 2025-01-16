@@ -52,7 +52,7 @@ const CompositionPreview: React.FC<{ playerRef: RefObject<PlayerRef> }> = ({
   playerRef,
 }) => {
   const { props } = useVideoStore();
-   useEffect(() => {
+  useEffect(() => {
     console.log("Prefetching video...");
 
     const { free, waitUntilDone } = prefetch(PREFETCH_VIDEO_URL, {
@@ -77,35 +77,35 @@ const CompositionPreview: React.FC<{ playerRef: RefObject<PlayerRef> }> = ({
 
   return (
     <div className="flex h-full w-full items-center justify-center bg-black">
-      {props.layers[CONTENT_RESTRICT_LAYERS_TO_ID_MAP.VIDEO_LAYER_ID]?.liteItems
-        ?.length > 0 ? (
-        <Player
-          component={NestedSequenceCompositionLite}
-          durationInFrames={compositionMetaData.duration}
-          fps={compositionMetaData.fps}
-          compositionHeight={compositionMetaData.height}
-          compositionWidth={compositionMetaData.width}
-          style={{
-            width: "100%",
-            height: "100%",
-          }}
-          controls={false}
-          autoPlay={false}
-          loop
-          initiallyMuted
-          errorFallback={(error) => errorFallback(error)}
-          ref={playerRef}
-          schema={NestedCompositionPropsSchema}
-          inputProps={props}
-          browserMediaControlsBehavior={{
-            mode: "register-media-session",
-          }}
-        />
-      ) : (
+      {/* {props.layers[CONTENT_RESTRICT_LAYERS_TO_ID_MAP.VIDEO_LAYER_ID]?.liteItems
+        ?.length > 0 ? ( */}
+      <Player
+        component={NestedSequenceCompositionLite}
+        durationInFrames={compositionMetaData.duration}
+        fps={compositionMetaData.fps}
+        compositionHeight={compositionMetaData.height}
+        compositionWidth={compositionMetaData.width}
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+        controls={false}
+        autoPlay={false}
+        loop
+        initiallyMuted
+        errorFallback={(error) => errorFallback(error)}
+        ref={playerRef}
+        schema={NestedCompositionPropsSchema}
+        inputProps={props}
+        browserMediaControlsBehavior={{
+          mode: "register-media-session",
+        }}
+      />
+      {/* ) : (
         <div className="grid h-full w-full place-items-center">
           <VideoUpload />
         </div>
-      )}
+      )} */}
     </div>
   );
 };
