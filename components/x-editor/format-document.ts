@@ -6,7 +6,7 @@
  * 2. Components under scenes are indented with a tab
  * 3. No blank lines between components within the same scene
  * 4. One blank line between scenes
- * 5. Removes invalid content between arguments
+ * 5. Preserves hyphenated values in arguments
  *
  * @param content - The raw document content to format
  * @returns The formatted document content
@@ -66,10 +66,10 @@ function formatSceneLine(line: string): string {
 
   // Extract and preserve all valid arguments with their values
   const args: string[] = [];
-  const argMatches = line.matchAll(/--\w+(?:=(?:[^-\s"]+|"[^"]*"))?/g);
+  const argMatches = line.matchAll(/--(\w+)=([^-\s"][^"]*|"[^"]*")/g);
 
   for (const match of argMatches) {
-    args.push(match[0]);
+    args.push(`--${match[1]}=${match[2]}`);
   }
 
   // Reconstruct with proper spacing
@@ -84,12 +84,12 @@ function formatComponentLine(line: string): string {
   const [componentCmd] = line.match(/^!\w+\b/) || [""];
   if (!componentCmd) return line;
 
-  // Extract all valid arguments
+  // Extract all valid arguments with their values
   const args: string[] = [];
-  const argMatches = line.matchAll(/--\w+(?:=(?:[^-\s"]+|"[^"]*"))?/g);
+  const argMatches = line.matchAll(/--(\w+)=([^-\s"][^"]*|"[^"]*")/g);
 
   for (const match of argMatches) {
-    args.push(match[0]);
+    args.push(`--${match[1]}=${match[2]}`);
   }
 
   // Reconstruct with proper spacing

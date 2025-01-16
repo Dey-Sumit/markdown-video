@@ -35,7 +35,7 @@ const COMMANDS: Command[] = [
     type: "template",
     label: "Scene: Text with Transition",
     description: "Create scene with text and entrance animation",
-    template: `## !!scene --title=Text --duration=4 --background=black
+    template: `# !scene --title=Text --duration=4 --background=black
 !text --content="Your Text With Animation" --animation=fadeInSlideUp --duration=3 --delay=0.5
 !transition --type=slide --duration=0.3 --direction=from-left`,
     category: "Scenes",
@@ -47,7 +47,7 @@ const COMMANDS: Command[] = [
     type: "template",
     label: "Scene: Code with Transition",
     description: "Code scene with entrance animation",
-    template: `## !!scene --title=Code --duration=4 --background=transparent
+    template: `# !scene --title=Code --duration=4 --background=transparent
 !transition --type=slide --duration=0.8 --direction=from-bottom
 
 \`\`\`js !
@@ -69,7 +69,7 @@ fastestEditor()
     type: "template",
     label: "Scene: Full Template",
     description: "Complete scene with text, code and transitions",
-    template: `## !!scene --title=Full --duration=8
+    template: `# !scene --title=Full --duration=8
 !transition --type=fade --duration=0.3
 
 \`\`\`js !
@@ -83,7 +83,7 @@ fastestEditor()
     type: "template",
     label: "Create Scene",
     description: "Add new scene with basic structure",
-    template: `## !!scene --title=Scene --duration=5\n!transition --type=fade --duration=0.3\n\`\`\`js !\n\n\`\`\``,
+    template: `# !scene --title=Scene --duration=5\n!transition --type=fade --duration=0.3\n\`\`\`js !\n\n\`\`\``,
     keywords: ["scene", "new", "create"],
     category: "Scenes",
   },

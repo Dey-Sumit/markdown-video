@@ -111,7 +111,7 @@ function BaseSlide({
       )} */}
 
       {code && (
-        <div className="flex w-full flex-1 flex-col border-2">
+        <div className="w-full flex-1">
           <Pre
             ref={codeRef}
             code={code}
