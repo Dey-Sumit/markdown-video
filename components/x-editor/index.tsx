@@ -156,18 +156,11 @@ function XEditor() {
     registry.registerFoldingRanges(monaco);
 
     highlightAdapter.setupEditor(editor);
-  };
-
-  const __handleEditorMount: OnMount = (editor, monaco) => {
-    editorRef.current = editor;
-    monacoRef.current = monaco;
-
-    monaco.editor.defineTheme("custom", monacoCustomTheme);
-    monaco.editor.setTheme("custom");
-    monaco.languages.register({ id: EDITOR_LANGUAGE });
 
     editor.onKeyDown((e: IKeyboardEvent) => {
       if (e.browserEvent.key === "\\") {
+        console.log("Show command menu");
+
         // Remove any backslash handling logic, just show the menu
         const position = editor.getPosition();
         if (!position) return;
@@ -189,65 +182,6 @@ function XEditor() {
         });
       }
     });
-
-    // Set up decoration listener
-    const contentChangeDisposable = editor.onDidChangeModelContent(() => {
-      updateDecorations();
-    });
-
-    // Initial decoration update
-    updateDecorations();
-  };
-
-  const _handleEditorMount: OnMount = (editor, monaco) => {
-    editorRef.current = editor;
-    monacoRef.current = monaco;
-    // Register tokenizer first
-    // configureTokenizer(monaco);
-    monaco.editor.defineTheme("custom", monacoCustomTheme);
-    monaco.editor.setTheme("custom");
-    monaco.languages.register({ id: EDITOR_LANGUAGE });
-
-    editor.onKeyDown((e: IKeyboardEvent) => {
-      if (e.browserEvent.key === "\\") {
-        // Remove any backslash handling logic, just show the menu
-        const position = editor.getPosition();
-        if (!position) return;
-
-        // Show menu after the backslash is typed
-        requestAnimationFrame(() => {
-          const coords = editor.getContainerDomNode().getBoundingClientRect();
-          const pos = editor.getScrolledVisiblePosition(position);
-
-          if (pos) {
-            setMenuPosition(
-              calculatePosition({
-                top: coords.top + pos.top,
-                left: coords.left + pos.left,
-              }),
-            );
-            setShowCommandMenu(true);
-          }
-        });
-      }
-    });
-
-    // Set up decoration listener
-    const contentChangeDisposable = editor.onDidChangeModelContent(() => {
-      updateDecorations();
-    });
-
-    // Initial decoration update
-    updateDecorations();
-
-    // configureLinting(editor, monaco);
-    // monaco.languages.register({ id: EDITOR_LANGUAGE });
-    // configureCompletions(monaco);
-
-    /* --------- ON DEV : comment above code block to make the hot reload faster --------- */
-    // configureHoverProvider(editor, monaco);
-    // configureContextMenu(editor, monaco);
-    // configureFoldingProvider(monaco);
   };
 
   const handleFormat = () => {

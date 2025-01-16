@@ -8,6 +8,7 @@ import { dexieDB } from "@/lib/dexie-db";
 import type { ProjectMeta, ProjectStyles } from "@/types/project.types";
 import { DEFAULT_COMPOSITION_STYLES } from "@/lib/const";
 import { DEFAULT_PROJECT_TEMPLATE } from "./project.const";
+import { calculateCompositionDuration } from "@/video/compositions/composition.utils";
 
 const AUTO_SAVE_DELAY = 10 * 1000; // 10 seconds
 const FALLBACK_DURATION_IN_FRAMES = 30 * 10; // 10 seconds
@@ -205,6 +206,7 @@ export const useProjectStore = create<ProjectStore>()(
       updateScenes: (scenes: Scene[]) => {
         set((state) => {
           state.currentProject.scenes = scenes;
+          state.currentProject.duration = calculateCompositionDuration(scenes);
           // No _pendingChanges update since scenes aren't persisted
         });
       },
