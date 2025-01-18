@@ -27,6 +27,7 @@ export const transitionConfig: AdapterConfig = {
         wipe: "Wipes content in from the edge",
         flip: "Flips content in 3D",
       },
+      
       validations: [
         {
           type: "required",

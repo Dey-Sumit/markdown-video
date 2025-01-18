@@ -33,15 +33,16 @@ export class CodeAdapter extends AbstractAdapter {
   }
 
   provideCompletions(context: CommandContext): languages.CompletionItem[] {
-    const { lineContent, position } = context;
-
-    if (this.isCodeBlockStart(lineContent)) {
-      return this.getCodeBlockCompletions(context);
-    }
+    const { lineContent } = context;
+    console.log("Line content:", lineContent);
 
     if (this.matchesPattern(lineContent)) {
       const type = this.getCompletionType(context);
       console.log("Completion type:", type);
+
+      // Log args parsing
+      const args = this.parseArguments(lineContent);
+      console.log("Parsed args:", args);
     }
 
     return super.provideCompletions(context);
@@ -52,11 +53,7 @@ export class CodeAdapter extends AbstractAdapter {
   ): "command" | "value" | "argument" | null {
     const { lineContent, position } = context;
     const type = super.getCompletionType(context);
-    console.log("Base completion type:", type);
-    console.log(
-      "Line until cursor:",
-      lineContent.substring(0, position.column),
-    );
+
     return type;
   }
 
@@ -69,13 +66,13 @@ export class CodeAdapter extends AbstractAdapter {
     return lineContent.trim() === "```";
   }
 
+  // In CodeAdapter
   matchesPattern(lineContent: string): boolean {
     const matches = new RegExp(this.config.pattern.pattern).test(lineContent);
     console.log("Pattern:", this.config.pattern.pattern);
-    console.log("Matches pattern:", matches);
+    console.log("Line matches pattern:", matches);
     return matches;
   }
-
   private getCodeBlockCompletions(
     context: CommandContext,
   ): languages.CompletionItem[] {

@@ -62,7 +62,7 @@ interface CommandContext {
 }
 
 interface CommandPattern {
-  type: "directive" | "component" | "codeComponent";
+  type: "directive" | "component" | "codeComponent" | "codeBlockComponent";
   pattern: string; // Regex pattern
   leadingSymbols?: string[];
 }
