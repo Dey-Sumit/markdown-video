@@ -6,12 +6,13 @@ import { toast } from "sonner";
 import type { Scene } from "@/video/compositions/code-video-composition/types.composition";
 import { dexieDB } from "@/lib/dexie-db";
 import type { ProjectMeta, ProjectStyles } from "@/types/project.types";
-import { DEFAULT_COMPOSITION_STYLES } from "@/lib/const";
+import {
+  AUTO_SAVE_DELAY,
+  DEFAULT_COMPOSITION_STYLES,
+  FALLBACK_DURATION_IN_FRAMES,
+} from "@/lib/const";
 import { DEFAULT_PROJECT_TEMPLATE } from "./project.const";
 import { calculateCompositionDuration } from "@/video/compositions/composition.utils";
-
-const AUTO_SAVE_DELAY = 10 * 1000; // 10 seconds
-const FALLBACK_DURATION_IN_FRAMES = 30 * 10; // 10 seconds
 
 interface ProjectState {
   currentProject: {
@@ -29,7 +30,7 @@ interface ProjectState {
       styles: ProjectStyles;
     };
     scenes: Scene[]; // Runtime only
-    duration: number;
+    durationInFrames: number;
     createdAt: Date;
     lastModified: Date;
   };
@@ -71,7 +72,7 @@ export const useProjectStore = create<ProjectStore>()(
           styles: DEFAULT_COMPOSITION_STYLES,
         },
         scenes: [],
-        duration: FALLBACK_DURATION_IN_FRAMES,
+        durationInFrames: FALLBACK_DURATION_IN_FRAMES,
         createdAt: new Date(),
         lastModified: new Date(),
       },
@@ -115,10 +116,14 @@ export const useProjectStore = create<ProjectStore>()(
           state._pendingChanges = true;
         });
 
+        console.log("updateContent", type, content);
+
         const currentState = get();
         if (!currentState.currentProject.id) return;
 
         saveTimeout = setTimeout(async () => {
+          console.log("Saving content", type, content);
+
           try {
             await dexieDB.updateContent(
               currentState.currentProject.id!,
@@ -130,8 +135,11 @@ export const useProjectStore = create<ProjectStore>()(
               state._lastSaveTimestamp = Date.now();
               state._pendingChanges = false;
             });
+
             toast.success("Changes saved");
           } catch (error) {
+            console.log("Failed to save content", error);
+
             toast.error("Failed to save changes");
           }
         }, AUTO_SAVE_DELAY);
@@ -206,7 +214,8 @@ export const useProjectStore = create<ProjectStore>()(
       updateScenes: (scenes: Scene[]) => {
         set((state) => {
           state.currentProject.scenes = scenes;
-          state.currentProject.duration = calculateCompositionDuration(scenes);
+          state.currentProject.durationInFrames =
+            calculateCompositionDuration(scenes);
           // No _pendingChanges update since scenes aren't persisted
         });
       },
@@ -217,7 +226,7 @@ export const useProjectStore = create<ProjectStore>()(
         }
 
         set((state) => {
-          state.currentProject.duration = duration;
+          state.currentProject.durationInFrames = duration;
           state._pendingChanges = true;
         });
 
@@ -263,7 +272,7 @@ export const useProjectStore = create<ProjectStore>()(
               styles: DEFAULT_COMPOSITION_STYLES,
             },
             scenes: [],
-            duration: FALLBACK_DURATION_IN_FRAMES,
+            durationInFrames: FALLBACK_DURATION_IN_FRAMES,
             createdAt: new Date(),
             lastModified: new Date(),
           };

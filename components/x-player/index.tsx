@@ -13,7 +13,7 @@ const XPlayer = () => {
   const playerRef = useRef<PlayerRef>(null);
   const {
     currentProject: {
-      duration,
+      durationInFrames,
       scenes,
       config: { styles },
     },
@@ -31,7 +31,7 @@ const XPlayer = () => {
       >
         <Player
           component={CodeVideoComposition}
-          durationInFrames={duration}
+          durationInFrames={durationInFrames}
           fps={fps}
           compositionHeight={height}
           compositionWidth={width}
@@ -54,7 +54,7 @@ const XPlayer = () => {
         />
       </div>
       <PlayerControls
-        duration={duration}
+        duration={durationInFrames}
         playerRef={playerRef}
         key={reloadKey}
       />
