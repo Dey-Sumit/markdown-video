@@ -52,11 +52,7 @@ export class CodeAdapter extends AbstractAdapter {
   ): "command" | "value" | "argument" | null {
     const { lineContent, position } = context;
     const type = super.getCompletionType(context);
-    console.log("Base completion type:", type);
-    console.log(
-      "Line until cursor:",
-      lineContent.substring(0, position.column),
-    );
+
     return type;
   }
 
@@ -71,8 +67,7 @@ export class CodeAdapter extends AbstractAdapter {
 
   matchesPattern(lineContent: string): boolean {
     const matches = new RegExp(this.config.pattern.pattern).test(lineContent);
-    console.log("Pattern:", this.config.pattern.pattern);
-    console.log("Matches pattern:", matches);
+
     return matches;
   }
 

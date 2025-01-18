@@ -1,8 +1,9 @@
 import type { AdapterConfig } from "../../core/types/adapter.type";
 
 export const defaultCodeArgValues = {
-  presetStyle: "midnight",
+  theme: "midnight",
   fontSize: 14,
+  align: "left-top",
 };
 
 export const codeConfig: AdapterConfig = {
@@ -14,11 +15,11 @@ export const codeConfig: AdapterConfig = {
   template:
     "```${1:js} ! --theme=${2:midnight} --font-size=${3:14}\n${4:// Your code here}\n```",
   arguments: {
-    presetStyle: {
-      name: "presetStyle",
+    theme: {
+      name: "theme",
       type: "string",
       description: "Code block theme preset",
-      default: defaultCodeArgValues.presetStyle,
+      default: defaultCodeArgValues.theme,
       values: ["midnight", "rainbow"],
       examples: {
         midnight: "Midnight theme",
@@ -46,6 +47,30 @@ export const codeConfig: AdapterConfig = {
           severity: "warning",
         },
       ],
+    },
+    align: {
+      name: "align",
+      type: "string",
+      description: "Code block alignment",
+      default: defaultCodeArgValues.align,
+      values: [
+        "left-center",
+        "right-center",
+        "left-top",
+        "right-top",
+        "left-bottom",
+        "right-bottom",
+        "center-center",
+      ],
+      examples: {
+        "left-center": "Left Center",
+        "right-center": "Right Center",
+        "left-top": "Left Top",
+        "right-top": "Right Top",
+        "left-bottom": "Left Bottom",
+        "right-bottom": "Right Bottom",
+        "center-center": "Center Center",
+      },
     },
   },
 };

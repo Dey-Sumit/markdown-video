@@ -25,7 +25,7 @@ export interface ProjectDB {
   id: string;
   meta: ProjectMeta;
   config: ProjectConfiguration;
-  duration: number;
+  durationInFrames: number;
   createdAt: Date;
   lastModified: Date;
 }
@@ -70,7 +70,7 @@ export class EditorDatabase extends Dexie {
         },
         styles: DEFAULT_COMPOSITION_STYLES,
       },
-      duration: 0,
+      durationInFrames: 3,
       createdAt: now,
       lastModified: now,
     };
@@ -181,11 +181,11 @@ export class EditorDatabase extends Dexie {
   /**
    * Updates project duration
    * @param id Project ID
-   * @param duration New duration
+   * @param durationInFrames New duration
    */
-  async updateDuration(id: string, duration: number): Promise<void> {
+  async updateDuration(id: string, durationInFrames: number): Promise<void> {
     await this.projects.update(id, {
-      duration,
+      durationInFrames: durationInFrames,
       lastModified: new Date(),
     });
   }

@@ -17,6 +17,7 @@ import { sectionParser } from "@/parsers/SectionParser";
 import Section from "./components/composition-section";
 import type { SceneOutputProps } from "@/components/x-editor/plugins/scene/scene.types";
 import CompositionTextRenderer from "./components/composition-text";
+import CodeBlockRenderer from "./components/composition-code";
 
 const { fontFamily } = loadFont();
 
@@ -79,6 +80,7 @@ function BaseSlide({
   // const section = propsParser.contentLayout(scene.contentLayout || "");
   const sectionArgs = scene.section;
   const section = sectionParser.parse(`!section ${sectionArgs}`);
+  // const codeBlockProps =
 
   return (
     <div
@@ -110,22 +112,7 @@ function BaseSlide({
         </div>
       )} */}
 
-      {code && (
-        <div className="w-full flex-1">
-          <Pre
-            ref={codeRef}
-            code={code}
-            handlers={[tokenTransitions, highlight]}
-            className="text-4xl leading-[3.5rem]"
-            style={{
-              fontFamily,
-              fontFeatureSettings: '"liga" 1, "calt" 1',
-              WebkitFontFeatureSettings: '"liga" 1, "calt" 1',
-              fontVariantLigatures: "contextual",
-            }}
-          />
-        </div>
-      )}
+      {code && <CodeBlockRenderer code={code} codeRef={codeRef} />}
 
       {/*       {media?.src && (
         // {media?.src && getMediaType(media.src) === "image" && (
