@@ -20,8 +20,6 @@ export abstract class AbstractAdapter implements BaseAdapter {
     public readonly config: AdapterConfig,
   ) {}
 
-  
-
   provideCompletions(context: CommandContext): languages.CompletionItem[] {
     const type = this.getCompletionType(context);
     if (!type) return [];
@@ -140,8 +138,9 @@ export abstract class AbstractAdapter implements BaseAdapter {
       return trimmed === trigger;
     }
 
-    if (this.config.pattern.type === "codeComponent") {
-      // TODO : add the
+    if (this.config.pattern.type === "codeBlockComponent") {
+      // For code blocks, check for partial command
+      return /^```\w*\s*!?$/.test(trimmed);
     }
 
     const leadingSymbols = this.config.pattern.leadingSymbols ?? [];
@@ -188,16 +187,26 @@ export abstract class AbstractAdapter implements BaseAdapter {
     return args;
   }
 
+  // protected requiresWhitespace(
+  //   lineContent: string,
+  //   position: Position,
+  // ): boolean {
+  //   const textUntilCursor = lineContent.substring(0, position.column);
+
+  //   if (/--(\w+)=\s*$/.test(textUntilCursor)) {
+  //     const lastArgMatch = textUntilCursor.match(/.*?--\w+=[^-]*$/);
+  //     return lastArgMatch ? /\s--\w+=[^-]*$/.test(lastArgMatch[0]) : false;
+  //   }
+
+  //   return /\s--\w*$/.test(textUntilCursor);
+  // }
   protected requiresWhitespace(
     lineContent: string,
     position: Position,
   ): boolean {
     const textUntilCursor = lineContent.substring(0, position.column);
-
-    if (/--(\w+)=\s*$/.test(textUntilCursor)) {
-      const lastArgMatch = textUntilCursor.match(/.*?--\w+=[^-]*$/);
-      return lastArgMatch ? /\s--\w+=[^-]*$/.test(lastArgMatch[0]) : false;
-    }
+    console.log("Text until cursor:", textUntilCursor);
+    console.log("Requires whitespace test:", /\s--\w*$/.test(textUntilCursor));
 
     return /\s--\w*$/.test(textUntilCursor);
   }
@@ -243,6 +252,8 @@ export abstract class AbstractAdapter implements BaseAdapter {
   ): languages.CompletionItem[] {
     const { lineContent, position } = context;
     const used = this.parseArguments(lineContent);
+    console.log("lineContent", lineContent);
+
     const match = lineContent.substring(0, position.column).match(/--(\w*)$/);
     if (!match) return [];
 

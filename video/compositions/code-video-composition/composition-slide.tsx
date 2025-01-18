@@ -80,14 +80,14 @@ function BaseSlide({
   // const section = propsParser.contentLayout(scene.contentLayout || "");
   const sectionArgs = scene.section;
   const section = sectionParser.parse(`!section ${sectionArgs}`);
-  // const codeBlockProps =
+
 
   return (
     <div
       id="composition-slide"
       className={cn("flex h-full w-full flex-col p-6")}
       style={{
-        fontFamily, // TODO : font family here not working
+        // fontFamily, // TODO : font family here not working
         background: getDerivedBackground(sceneProps.background),
       }}
     >
@@ -112,7 +112,7 @@ function BaseSlide({
         </div>
       )} */}
 
-      {code && <CodeBlockRenderer code={code} codeRef={codeRef} />}
+      {code && <CodeBlockRenderer code={code} codeRef={codeRef} meta={code.meta} />}
 
       {/*       {media?.src && (
         // {media?.src && getMediaType(media.src) === "image" && (

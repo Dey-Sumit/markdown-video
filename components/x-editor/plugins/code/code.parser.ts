@@ -1,6 +1,10 @@
 // code.parser.ts
 import BaseParser from "../../core/base/parser";
-import { codeConfig, defaultCodeArgValues } from "./code.config";
+import {
+  codeConfig,
+  defaultCodeArgValues,
+  type CodeAlignValues,
+} from "./code.config";
 
 export interface CodeInputProps {
   theme: string;
@@ -10,6 +14,7 @@ export interface CodeInputProps {
 
 export interface CodeOutputProps extends CodeInputProps {
   id: string;
+  align: CodeAlignValues;
 }
 
 export class CodePropsParser {
