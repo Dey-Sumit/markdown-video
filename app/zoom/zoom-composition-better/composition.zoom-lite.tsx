@@ -106,7 +106,7 @@ const NestedSequenceCompositionLite = (
 
   return (
     <AbsoluteFill
-      className="bg-gradient-to-br from-[#7209B7] to-[yellow]"
+      className="bg-gradient-to-br from-[#7209B7] to-[#A731F5]"
       style={{
         padding: ZOOM_COMP_PADDING,
       }}
