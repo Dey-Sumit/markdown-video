@@ -116,14 +116,10 @@ export const useProjectStore = create<ProjectStore>()(
           state._pendingChanges = true;
         });
 
-        console.log("updateContent", type, content);
-
         const currentState = get();
         if (!currentState.currentProject.id) return;
 
         saveTimeout = setTimeout(async () => {
-          console.log("Saving content", type, content);
-
           try {
             await dexieDB.updateContent(
               currentState.currentProject.id!,
