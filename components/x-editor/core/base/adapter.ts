@@ -138,10 +138,10 @@ export abstract class AbstractAdapter implements BaseAdapter {
       return trimmed === trigger;
     }
 
-    if (this.config.pattern.type === "codeBlockComponent") {
-      // For code blocks, check for partial command
-      return /^```\w*\s*!?$/.test(trimmed);
-    }
+    // if (this.config.pattern.type === "codeBlockComponent") {
+    //   // For code blocks, check for partial command
+    //   return /^```\w*\s*!?$/.test(trimmed);
+    // }
 
     const leadingSymbols = this.config.pattern.leadingSymbols ?? [];
     return leadingSymbols.some(
@@ -187,26 +187,16 @@ export abstract class AbstractAdapter implements BaseAdapter {
     return args;
   }
 
-  // protected requiresWhitespace(
-  //   lineContent: string,
-  //   position: Position,
-  // ): boolean {
-  //   const textUntilCursor = lineContent.substring(0, position.column);
-
-  //   if (/--(\w+)=\s*$/.test(textUntilCursor)) {
-  //     const lastArgMatch = textUntilCursor.match(/.*?--\w+=[^-]*$/);
-  //     return lastArgMatch ? /\s--\w+=[^-]*$/.test(lastArgMatch[0]) : false;
-  //   }
-
-  //   return /\s--\w*$/.test(textUntilCursor);
-  // }
   protected requiresWhitespace(
     lineContent: string,
     position: Position,
   ): boolean {
     const textUntilCursor = lineContent.substring(0, position.column);
-    console.log("Text until cursor:", textUntilCursor);
-    console.log("Requires whitespace test:", /\s--\w*$/.test(textUntilCursor));
+
+    if (/--(\w+)=\s*$/.test(textUntilCursor)) {
+      const lastArgMatch = textUntilCursor.match(/.*?--\w+=[^-]*$/);
+      return lastArgMatch ? /\s--\w+=[^-]*$/.test(lastArgMatch[0]) : false;
+    }
 
     return /\s--\w*$/.test(textUntilCursor);
   }
