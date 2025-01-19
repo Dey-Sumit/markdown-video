@@ -14,7 +14,6 @@ export const codeConfig: AdapterConfig = {
   id: "code",
   pattern: {
     type: "codeBlockComponent",
-    // pattern: "^`{3,4}\\w+\\s*!\\s*",
     pattern: "^`{3,4}\\w+\\s*!",
   },
   template:
