@@ -9,8 +9,8 @@ export const defaultCodeArgValues = {
 export const codeConfig: AdapterConfig = {
   id: "code",
   pattern: {
-    type: "codeComponent",
-    pattern: "^`{3,4}\\w+\\s*!\\s*",
+    type: "codeComponent", // TODO : this is not code component , it's component only
+    pattern: "^\\s*`{3,4}\\w+\\s*!",
   },
   template:
     "```${1:js} ! --theme=${2:midnight} --font-size=${3:14}\n${4:// Your code here}\n```",
