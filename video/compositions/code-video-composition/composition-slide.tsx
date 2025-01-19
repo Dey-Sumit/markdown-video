@@ -18,6 +18,7 @@ import Section from "./components/composition-section";
 import type { SceneOutputProps } from "@/components/x-editor/plugins/scene/scene.types";
 import CompositionTextRenderer from "./components/composition-text";
 import CodeBlockRenderer from "./components/composition-code";
+import CompositionImageRenderer from "./components/composition-image";
 
 const { fontFamily } = loadFont();
 
@@ -112,7 +113,14 @@ function BaseSlide({
         </div>
       )} */}
 
-      {code && <CodeBlockRenderer code={code} codeRef={codeRef} />}
+      {code && (
+        <CodeBlockRenderer code={code} codeRef={codeRef} meta={code.meta} />
+      )}
+
+      <CompositionImageRenderer
+        value={scene.image}
+        sceneDurationInFrames={sceneProps.durationInFrames}
+      />
 
       {/*       {media?.src && (
         // {media?.src && getMediaType(media.src) === "image" && (

@@ -21,7 +21,7 @@ const BaseSchema = z.object({
   font: z.array(z.string()).optional().default([]),
   transition: z.array(z.string()).optional(),
   codeBlockUtils: z.array(z.string()).optional().default([]),
-  media: z.array(z.string()).optional().default([]),
+  image: z.array(z.string()).optional().default([]),
   text: z.array(z.string()).optional().default([]),
   contentLayout: z.array(z.string()).optional().default([]),
   section: z.array(z.string()).optional().default([]),
