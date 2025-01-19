@@ -20,8 +20,6 @@ export abstract class AbstractAdapter implements BaseAdapter {
     public readonly config: AdapterConfig,
   ) {}
 
-  
-
   provideCompletions(context: CommandContext): languages.CompletionItem[] {
     const type = this.getCompletionType(context);
     if (!type) return [];
@@ -140,9 +138,10 @@ export abstract class AbstractAdapter implements BaseAdapter {
       return trimmed === trigger;
     }
 
-    if (this.config.pattern.type === "codeComponent") {
-      // TODO : add the
-    }
+    // if (this.config.pattern.type === "codeBlockComponent") {
+    //   // For code blocks, check for partial command
+    //   return /^```\w*\s*!?$/.test(trimmed);
+    // }
 
     const leadingSymbols = this.config.pattern.leadingSymbols ?? [];
     return leadingSymbols.some(
@@ -243,6 +242,8 @@ export abstract class AbstractAdapter implements BaseAdapter {
   ): languages.CompletionItem[] {
     const { lineContent, position } = context;
     const used = this.parseArguments(lineContent);
+    console.log("lineContent", lineContent);
+
     const match = lineContent.substring(0, position.column).match(/--(\w*)$/);
     if (!match) return [];
 

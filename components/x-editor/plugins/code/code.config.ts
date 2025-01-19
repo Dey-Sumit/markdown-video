@@ -1,24 +1,29 @@
 import type { AdapterConfig } from "../../core/types/adapter.type";
 
 export const defaultCodeArgValues = {
-  presetStyle: "midnight",
-  fontSize: 14,
+  theme: "midnight",
+  fontSize: 38,
+  align: "top",
 };
+
+const CODE_ALIGN_VALUES = ["top", "center"] as const;
+
+export type CodeAlignValues = (typeof CODE_ALIGN_VALUES)[number];
 
 export const codeConfig: AdapterConfig = {
   id: "code",
   pattern: {
-    type: "codeComponent",
-    pattern: "^`{3,4}\\w+\\s*!\\s*",
+    type: "codeBlockComponent",
+    pattern: "^`{3,4}\\w+\\s*!",
   },
   template:
     "```${1:js} ! --theme=${2:midnight} --font-size=${3:14}\n${4:// Your code here}\n```",
   arguments: {
-    presetStyle: {
-      name: "presetStyle",
+    theme: {
+      name: "theme",
       type: "string",
       description: "Code block theme preset",
-      default: defaultCodeArgValues.presetStyle,
+      default: defaultCodeArgValues.theme,
       values: ["midnight", "rainbow"],
       examples: {
         midnight: "Midnight theme",
@@ -43,6 +48,26 @@ export const codeConfig: AdapterConfig = {
           type: "range",
           message: "Font size must be between 12 and 24",
           validate: (value) => Number(value) >= 12 && Number(value) <= 24,
+          severity: "warning",
+        },
+      ],
+    },
+    align: {
+      name: "align",
+      type: "string",
+      description: "Code block alignment",
+      default: defaultCodeArgValues.align,
+      values: CODE_ALIGN_VALUES as unknown as string[],
+      examples: {
+        top: "Align to the top",
+        center: "Center align",
+      },
+      validations: [
+        {
+          type: "enum",
+          message: "Invalid alignment value",
+          validate: (value) =>
+            CODE_ALIGN_VALUES.includes(value as CodeAlignValues),
           severity: "warning",
         },
       ],

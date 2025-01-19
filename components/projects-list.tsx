@@ -55,7 +55,7 @@ const ProjectsList = () => {
                 </div>
 
                 <span className="inline-flex items-center gap-x-1.5 rounded-full border px-2 py-0.5 text-xs font-medium text-neutral-400 dark:border-neutral-600">
-                  {project.duration}
+                  {project.durationInFrames}
                 </span>
               </div>
 

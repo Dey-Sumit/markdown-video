@@ -100,9 +100,9 @@ function XEditor() {
     monaco: monacoRef.current,
   });
 
-  /*   useEffect(() => {
+  useEffect(() => {
     loadProject(projectId);
-  }, [projectId, loadProject]); */
+  }, [projectId, loadProject]);
 
   // Prevent hydration mismatch
   useEffect(() => {
