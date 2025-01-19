@@ -2,14 +2,18 @@ import type { AdapterConfig } from "../../core/types/adapter.type";
 
 export const defaultCodeArgValues = {
   theme: "midnight",
-  fontSize: 14,
-  align: "left-top",
+  fontSize: 38,
+  align: "top",
 };
+
+const CODE_ALIGN_VALUES = ["top", "center"] as const;
+
+export type CodeAlignValues = (typeof CODE_ALIGN_VALUES)[number];
 
 export const codeConfig: AdapterConfig = {
   id: "code",
   pattern: {
-    type: "codeComponent", // TODO : this is not code component , it's component only
+    type: "codeComponent",
     pattern: "^\\s*`{3,4}\\w+\\s*!",
   },
   template:
@@ -53,24 +57,20 @@ export const codeConfig: AdapterConfig = {
       type: "string",
       description: "Code block alignment",
       default: defaultCodeArgValues.align,
-      values: [
-        "left-center",
-        "right-center",
-        "left-top",
-        "right-top",
-        "left-bottom",
-        "right-bottom",
-        "center-center",
-      ],
+      values: CODE_ALIGN_VALUES as unknown as string[],
       examples: {
-        "left-center": "Left Center",
-        "right-center": "Right Center",
-        "left-top": "Left Top",
-        "right-top": "Right Top",
-        "left-bottom": "Left Bottom",
-        "right-bottom": "Right Bottom",
-        "center-center": "Center Center",
+        top: "Align to the top",
+        center: "Center align",
       },
+      validations: [
+        {
+          type: "enum",
+          message: "Invalid alignment value",
+          validate: (value) =>
+            CODE_ALIGN_VALUES.includes(value as CodeAlignValues),
+          severity: "warning",
+        },
+      ],
     },
   },
 };
