@@ -496,7 +496,7 @@ const Wrapper = ({
   return (
     <div
       id="comp-text-wrapper"
-      className="absolute inset-0 flex w-full flex-col items-center justify-center gap-10 p-2 font-sans text-8xl font-black tracking-wider text-white"
+      className="absolute inset-0 flex w-full flex-col items-center justify-center gap-10 p-2 text-8xl font-extrabold tracking-wider text-white"
       style={{
         ...style,
         zIndex: 5,
