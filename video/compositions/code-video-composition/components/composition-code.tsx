@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
 import { fontFamily } from "@remotion/google-fonts/FiraCode";
-import { type HighlightedCode, Pre, highlight } from "codehike/code";
+import { type HighlightedCode, Pre } from "codehike/code";
 import { tokenTransitions } from "../annotations/token-transitions";
 import codeParser from "@/components/x-editor/plugins/code/code.parser";
+import { highlight } from "../annotations/highlight";
 
 const CodeBlockRenderer = ({
   code,
@@ -26,7 +27,7 @@ const CodeBlockRenderer = ({
         ref={codeRef}
         code={code}
         handlers={[tokenTransitions, highlight]}
-        className="w-max leading-[3.5rem]"
+        className="w-max leading-[5rem]"
         style={{
           fontFamily,
           fontFeatureSettings: '"liga" 1, "calt" 1',

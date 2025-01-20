@@ -17,10 +17,10 @@ import { validateHighlight } from "@/components/x-editor/plugins/highlight/highl
 
 export const highlight: AnnotationHandler = {
   name: "highlight",
-  
 
   transform: (annotation: CodeAnnotation) => {
-    // Validate the annotation
+    return annotation;
+    /*    // Validate the annotation
     const { annotation: validatedAnnotation, issues } =
       validateHighlight(annotation);
 
@@ -30,7 +30,7 @@ export const highlight: AnnotationHandler = {
     }
 
     // Return the validated annotation (will have fallback values if needed)
-    return validatedAnnotation;
+    return validatedAnnotation; */
   },
 
   AnnotatedLine: ({ annotation, ...props }) => {
@@ -38,6 +38,7 @@ export const highlight: AnnotationHandler = {
     const {
       data: { color, delayInFrames, durationInFrames },
     } = highlightParser.parse(annotation.query);
+    console.log("color", color, "delayInFrames", delayInFrames);
 
     const { r: red, g: green, b: blue } = parseColorToRGBA(color);
 
@@ -74,7 +75,7 @@ export const highlight: AnnotationHandler = {
         {...props}
         style={{
           backgroundColor,
-          padding: "0.25rem 0.5rem 0.25rem 0",
+          padding: "0.25rem 0.75rem",
           margin: "0 0 0 -0.5rem ",
           borderLeft: `4px solid ${borderColor}`,
         }}

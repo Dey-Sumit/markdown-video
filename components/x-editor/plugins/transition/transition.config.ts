@@ -56,7 +56,7 @@ export const transitionConfig: AdapterConfig = {
         {
           type: "range",
           message: "Duration must be between 0.2 and 1 second",
-          validate: (value) => Number(value) >= 0.2 && Number(value) <= 1,
+          validate: (value) => Number(value) >= 0.3 && Number(value) <= 2,
           severity: "error",
         },
       ],
