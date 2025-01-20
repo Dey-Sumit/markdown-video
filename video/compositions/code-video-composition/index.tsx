@@ -57,11 +57,11 @@ const CodeVideoComposition = ({
       }}
     >
       <div
-        className="absolute !h-auto !w-auto overflow-hidden shadow-2xl"
+        className="_shadow-2xl absolute !h-auto !w-auto overflow-hidden border border-gray-600"
         style={{
           inset: padding,
           borderRadius: borderRadius,
-          borderWidth: inset,
+          // borderWidth: inset,
           fontFamily: fontFamily,
         }}
       >

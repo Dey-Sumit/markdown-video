@@ -213,49 +213,57 @@ function XEditor() {
 
   return (
     <>
-      <div className="flex h-full flex-col">
-        <div className="flex justify-between gap-2 border-b">
-          <div>
-            {files.map((fileName, index) => (
-              <Button
-                key={fileName}
-                variant="outline"
-                onClick={() => setActiveFile(fileName)}
-                size="sm"
-                className={`${activeFile === fileName ? "bg-accent" : ""} rounded-none border-y-0`}
-              >
-                {fileName}
-              </Button>
-            ))}
+      <div className="relative flex h-full flex-col">
+        <div className="relative z-10 flex h-full flex-col">
+          <div className="flex justify-between gap-2 border-b bg-black">
+            <div>
+              {files.map((fileName, index) => (
+                <Button
+                  key={fileName}
+                  variant="outline"
+                  onClick={() => setActiveFile(fileName)}
+                  size="sm"
+                  className={`${activeFile === fileName ? "bg-accent" : ""} rounded-none border-y-0`}
+                >
+                  {fileName}
+                </Button>
+              ))}
+            </div>
+            <Button
+              onClick={handleFormat}
+              size="sm"
+              variant="outline"
+              className="rounded-none border-y-0"
+            >
+              Format Editor &nbsp; 🧹
+            </Button>
           </div>
-          <Button
-            onClick={handleFormat}
-            size="sm"
-            variant="outline"
-            className="rounded-none border-y-0"
-          >
-            Format Editor &nbsp; 🧹
-          </Button>
+          <Editor
+            height="100%"
+            defaultLanguage={EDITOR_LANGUAGE}
+            onMount={handleEditorMount}
+            options={monacoCustomOptions}
+            value={
+              activeFile === "Scenes" ? content.sceneLevel : content.global
+            }
+            onChange={handleEditorChange}
+          />
+          <CommandMenu
+            position={menuPosition}
+            isVisible={showCommandMenu}
+            editor={editorRef.current}
+            monaco={monacoRef.current}
+            onClose={() => setShowCommandMenu(false)}
+          />
         </div>
-        <Editor
-          height="100%"
-          defaultLanguage={EDITOR_LANGUAGE}
-          onMount={handleEditorMount}
-          options={monacoCustomOptions}
-          value={activeFile === "Scenes" ? content.sceneLevel : content.global}
-          onChange={handleEditorChange}
-        />
-        <CommandMenu
-          position={menuPosition}
-          isVisible={showCommandMenu}
-          editor={editorRef.current}
-          monaco={monacoRef.current}
-          onClose={() => setShowCommandMenu(false)}
-        />
-        {/* {editorInstance && <FloatingEditButton editor={editorInstance} />} */}
+        <div className="editor-background absolute -inset-1 z-0 h-full w-full"></div>
       </div>
     </>
   );
 }
 
 export default XEditor;
+
+{
+  /* {editorInstance && <FloatingEditButton editor={editorInstance} />} */
+}
