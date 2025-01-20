@@ -57,9 +57,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.className} scroll-smooth`}
+      className={`${inter.className} dark scroll-smooth`}
       suppressHydrationWarning
-      data-theme="dark"
+      data-mode="dark"
     >
       <head>
         <link
@@ -79,6 +79,7 @@ export default function RootLayout({
           sizes="16x16"
           href="/favicon-16x16.png"
         />
+        <meta name="color-scheme" content="dark"></meta>
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body className="bg-background text-foreground">

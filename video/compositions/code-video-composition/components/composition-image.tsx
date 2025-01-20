@@ -1,3 +1,5 @@
+import imageParser from "@/components/x-editor/plugins/image/image.parser";
+import type { ImageOutputProps } from "@/components/x-editor/plugins/image/image.types";
 import { cn } from "@/lib/utils";
 import { Img, interpolate, useCurrentFrame } from "remotion";
 
@@ -116,13 +118,13 @@ const animationConfig: Record<
 
 const CompositionImage = ({
   src,
-  slideDurationInFrames,
+  sceneDurationInFrames,
   mediaAppearanceDelay,
   withMotion,
   animationType = "pop-in",
 }: {
   src: string;
-  slideDurationInFrames: number;
+  sceneDurationInFrames: number;
   mediaAppearanceDelay: number;
   withMotion?: boolean;
   animationType?: keyof typeof animationConfig; // Limit to defined animations
@@ -134,7 +136,7 @@ const CompositionImage = ({
   const FALLBACK_STILL_DURATION = 10;
 
   const stillDuration =
-    slideDurationInFrames -
+    sceneDurationInFrames -
     (mediaAppearanceDelay + 2 * TRANSITION_DURATION_IN_FRAMES) -
     BUFFER_IN_FRAMES;
 
@@ -203,4 +205,57 @@ const CompositionImage = ({
   );
 };
 
-export default CompositionImage;
+interface CompositionImageRendererProps {
+  value: string | string[];
+  sceneDurationInFrames?: number;
+}
+const CompositionImageRenderer = ({
+  value,
+  sceneDurationInFrames = 150, // default 5 seconds at 30fps
+}: {
+  value: string[];
+  sceneDurationInFrames?: number;
+}) => {
+  // Parse all image props from the array of directives
+  const parsedProps = imageParser.parse(value);
+
+  // Map animation types from parser to component
+  const mapAnimationType = (animation: ImageOutputProps["animation"]) => {
+    const animationMap = {
+      none: "none",
+      fadeIn: "fade-in",
+      zoomIn: "pop-in",
+      slideInLeft: "slide-left",
+      slideInRight: "slide-right",
+      slideInTop: "slide-up",
+      slideInBottom: "slide-down",
+    } as const;
+
+    return animationMap[animation] || "pop-in";
+  };
+
+  return (
+    <>
+      {parsedProps.data.map((imageProp, index) => {
+        // if (!parsedProps.isValid[index]) {
+        //   console.warn(`Invalid image props at index ${index}:`, imageProp);
+        //   return null;
+        // }
+        if (!imageProp || !imageProp.src) return null;
+
+        return (
+          <CompositionImage
+            key={imageProp.id}
+            src={imageProp.src}
+            sceneDurationInFrames={sceneDurationInFrames}
+            mediaAppearanceDelay={imageProp.delayInFrames}
+            withMotion={false}
+            animationType={mapAnimationType(imageProp.animation)}
+          />
+        );
+      })}
+    </>
+  );
+};
+
+export default CompositionImageRenderer;

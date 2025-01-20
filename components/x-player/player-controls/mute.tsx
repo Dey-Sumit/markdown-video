@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 export const MuteButton: React.FC<{
   playerRef: React.RefObject<PlayerRef>;
 }> = ({ playerRef }) => {
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(false);
 
   const onClick = React.useCallback(() => {
     if (!playerRef.current) {

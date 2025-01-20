@@ -5,7 +5,6 @@ export async function POST(req: Request) {
   try {
     const data = await req.json();
     const city = geolocation(req);
-    console.log({ city });
 
     const supabase = await createClient();
 

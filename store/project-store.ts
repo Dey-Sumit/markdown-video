@@ -1,64 +1,37 @@
-/**
- * @fileoverview Project store implementation using Zustand
- * Manages project state, auto-save, and database interactions
- */
-
 import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
 import { devtools } from "zustand/middleware";
-import { db, type ProjectStyles } from "../lib/dexie-db";
+import { immer } from "zustand/middleware/immer";
+
 import { toast } from "sonner";
-import { editor } from "monaco-editor";
-import { validateMarkdown } from "@/components/x-editor/utils";
 import type { Scene } from "@/video/compositions/code-video-composition/types.composition";
+import { dexieDB } from "@/lib/dexie-db";
+import type { ProjectMeta, ProjectStyles } from "@/types/project.types";
+import {
+  AUTO_SAVE_DELAY,
+  DEFAULT_COMPOSITION_STYLES,
+  FALLBACK_DURATION_IN_FRAMES,
+} from "@/lib/const";
+import { DEFAULT_PROJECT_TEMPLATE } from "./project.const";
 import { calculateCompositionDuration } from "@/video/compositions/composition.utils";
-import { DEFAULT_COMPOSITION_STYLES } from "@/lib/const";
-
-const AUTO_SAVE_DELAY = 20 * 1000; // 10 seconds
-
-export const DEFAULT_PROJECT_TEMPLATE = `## !!scene --title=Text --duration=4 --background=blue
-!text --content="Your Text With Animation" --animation=fadeInSlideUp --duration=3 --delay=0.5
-!transition --type=slide --duration=0.3 --direction=from-left
-
-## !!scene --title=Code --duration=4 --background=transparent
-!transition --type=slide --duration=0.8 --direction=from-bottom
-\`\`\`js !
-const fastestEditor = () => {
-    return "markdownvideo.com"
-}
-fastestEditor()
-\`\`\`
-
-## !!scene --title=Scene --duration=5
-!transition --type=fade --duration=0.3
-\`\`\`js !
-\`\`\``;
-
-export const PLAYGROUND_PROJECT_TEMPLATE = `## !!scene --title=Text --duration=4 --background=blue
-!text --content="Your Text With Animation" --animation=fadeInSlideUp --duration=3 --delay=0.5
-!transition --type=slide --duration=0.3 --direction=from-left
-
-## !!scene --title=Code --duration=4 --background=transparent
-!transition --type=slide --duration=0.8 --direction=from-bottom
-\`\`\`js !
-const fastestEditor = () => {
-    return "markdownvideo.com"
-}
-fastestEditor()
-\`\`\`
-
-## !!scene --title=Scene --duration=5
-!transition --type=fade --duration=0.3
-\`\`\`js !
-\`\`\``;
 
 interface ProjectState {
   currentProject: {
     id: string | null;
-    content: string;
-    styles: ProjectStyles;
-    scenes: Scene[];
-    duration: number;
+    meta: {
+      title: string;
+      description: string;
+      category: string;
+    };
+    config: {
+      content: {
+        global: string;
+        sceneLevel: string;
+      };
+      styles: ProjectStyles;
+    };
+    scenes: Scene[]; // Runtime only
+    durationInFrames: number;
+    createdAt: Date;
     lastModified: Date;
   };
   isLoading: boolean;
@@ -69,7 +42,8 @@ interface ProjectState {
 
 interface ProjectActions {
   loadProject: (id: string) => Promise<void>;
-  updateContent: (content: string) => void;
+  updateContent: (type: "global" | "sceneLevel", content: string) => void;
+  updateMeta: (meta: Partial<ProjectMeta>) => void;
   updateStyles: (styles: ProjectStyles) => void;
   updateScenes: (scenes: Scene[]) => void;
   setDuration: (duration: number) => void;
@@ -77,70 +51,51 @@ interface ProjectActions {
 }
 
 type ProjectStore = ProjectState & ProjectActions;
+
 let saveTimeout: NodeJS.Timeout | null = null;
-/**
- * Creates and configures the project store with Zustand
- */
+
 export const useProjectStore = create<ProjectStore>()(
   devtools(
     immer((set, get) => ({
       currentProject: {
         id: null,
-        content: "",
-        styles: DEFAULT_COMPOSITION_STYLES,
+        meta: {
+          title: "",
+          description: "",
+          category: "",
+        },
+        config: {
+          content: {
+            global: "",
+            sceneLevel: DEFAULT_PROJECT_TEMPLATE,
+          },
+          styles: DEFAULT_COMPOSITION_STYLES,
+        },
         scenes: [],
-        duration: 3,
+        durationInFrames: FALLBACK_DURATION_IN_FRAMES,
+        createdAt: new Date(),
         lastModified: new Date(),
       },
       isLoading: false,
       error: null,
       _lastSaveTimestamp: Date.now(),
       _pendingChanges: false,
-      updateScenes: (scenes) =>
-        set((state) => {
-          state.currentProject.scenes = scenes;
-          state.currentProject.duration = calculateCompositionDuration(scenes);
-        }),
 
-      setDuration: (duration) =>
-        set((state) => {
-          state.currentProject.duration = duration;
-        }),
-
-      /**
-       * Loads a project from the database
-       * @param id - Project ID to load
-       */
       loadProject: async (id: string) => {
-        const PLAYGROUND_PROJECT_ID = "playground";
-        console.log("Loading project", id);
-
         set((state) => {
           state.isLoading = true;
-          state.error = null;
         });
-
-        if (!id) {
-          set((state) => {
-            state.currentProject.id = PLAYGROUND_PROJECT_ID;
-            state.currentProject.content = PLAYGROUND_PROJECT_TEMPLATE;
-            state.currentProject.styles = DEFAULT_COMPOSITION_STYLES;
-            state.isLoading = false;
-          });
-          return;
-        }
-
         try {
-          const project = await db.projects.get(id);
+          const project = await dexieDB.getProject(id);
           if (!project) throw new Error("Project not found");
 
           set((state) => {
-            state.currentProject.id = project.id;
-            state.currentProject.content = project.content;
-            state.currentProject.styles = project.styles;
-            state.currentProject.lastModified = project.lastModified;
-
+            state.currentProject = {
+              ...project,
+              scenes: [], // Initialize empty scenes array
+            };
             state.isLoading = false;
+            state._pendingChanges = false;
           });
         } catch (error) {
           set((state) => {
@@ -151,83 +106,174 @@ export const useProjectStore = create<ProjectStore>()(
         }
       },
 
-      /**
-       * Updates project content with auto-save
-       * @param content - New content to save
-       */
-      updateContent: (content: string) => {
-        // Clear existing timeout
+      updateContent: (type: "global" | "sceneLevel", content: string) => {
         if (saveTimeout) {
           clearTimeout(saveTimeout);
         }
 
         set((state) => {
-          state.currentProject.content = content;
+          state.currentProject.config.content[type] = content;
           state._pendingChanges = true;
         });
 
-        saveTimeout = setTimeout(async () => {
-          const currentState = get();
-          if (!currentState._pendingChanges) return;
+        const currentState = get();
+        if (!currentState.currentProject.id) return;
 
+        saveTimeout = setTimeout(async () => {
           try {
-            await db.updateProject(currentState.currentProject.id!, {
+            await dexieDB.updateContent(
+              currentState.currentProject.id!,
+              type,
               content,
+            );
+
+            set((state) => {
+              state._lastSaveTimestamp = Date.now();
+              state._pendingChanges = false;
             });
+
+            toast.success("Changes saved");
+          } catch (error) {
+            console.log("Failed to save content", error);
+
+            toast.error("Failed to save changes");
+          }
+        }, AUTO_SAVE_DELAY);
+      },
+
+      updateMeta: (meta: Partial<ProjectMeta>) => {
+        if (saveTimeout) {
+          clearTimeout(saveTimeout);
+        }
+
+        set((state) => {
+          state.currentProject.meta = {
+            ...state.currentProject.meta,
+            ...meta,
+          };
+          state._pendingChanges = true;
+        });
+
+        const currentState = get();
+        if (!currentState.currentProject.id) return;
+
+        saveTimeout = setTimeout(async () => {
+          try {
+            await dexieDB.updateProjectMeta(
+              currentState.currentProject.id!,
+              meta,
+            );
+
             set((state) => {
               state._lastSaveTimestamp = Date.now();
               state._pendingChanges = false;
             });
             toast.success("Changes saved");
           } catch (error) {
-            toast.error("Save failed");
+            toast.error("Failed to save changes");
           }
         }, AUTO_SAVE_DELAY);
       },
 
-      /**
-       * Updates project styles
-       * @param styles - New styles configuration
-       */
       updateStyles: (styles: ProjectStyles) => {
-        const state = get();
-        if (!state.currentProject.id) return;
-
-        set((state) => {
-          state.currentProject.styles = styles;
-        });
-
-        // Auto-save styles
-        if ((state as any)._stylesSaveTimeout) {
-          clearTimeout((state as any)._stylesSaveTimeout);
+        if (saveTimeout) {
+          clearTimeout(saveTimeout);
         }
 
-        (state as any)._stylesSaveTimeout = setTimeout(async () => {
+        set((state) => {
+          state.currentProject.config.styles = styles;
+          state._pendingChanges = true;
+        });
+
+        const currentState = get();
+        if (!currentState.currentProject.id) return;
+
+        saveTimeout = setTimeout(async () => {
           try {
-            await db.updateProject(state.currentProject.id!, {
+            await dexieDB.updateProjectConfig(
+              currentState.currentProject.id!,
+              "styles",
               styles,
-              lastModified: new Date(),
+            );
+
+            set((state) => {
+              state._lastSaveTimestamp = Date.now();
+              state._pendingChanges = false;
             });
+            toast.success("Styles saved");
           } catch (error) {
-            toast.error("Failed to save style changes");
+            toast.error("Failed to save styles");
           }
         }, AUTO_SAVE_DELAY);
       },
 
-      /**
-       * Clears current project state
-       */
+      updateScenes: (scenes: Scene[]) => {
+        set((state) => {
+          state.currentProject.scenes = scenes;
+          state.currentProject.durationInFrames =
+            calculateCompositionDuration(scenes);
+          // No _pendingChanges update since scenes aren't persisted
+        });
+      },
+
+      setDuration: (duration: number) => {
+        if (saveTimeout) {
+          clearTimeout(saveTimeout);
+        }
+
+        set((state) => {
+          state.currentProject.durationInFrames = duration;
+          state._pendingChanges = true;
+        });
+
+        const currentState = get();
+        if (!currentState.currentProject.id) return;
+
+        saveTimeout = setTimeout(async () => {
+          try {
+            await dexieDB.updateDuration(
+              currentState.currentProject.id!,
+              duration,
+            );
+
+            set((state) => {
+              state._lastSaveTimestamp = Date.now();
+              state._pendingChanges = false;
+            });
+            toast.success("Duration updated");
+          } catch (error) {
+            toast.error("Failed to update duration");
+          }
+        }, AUTO_SAVE_DELAY);
+      },
+
       clearCurrentProject: () => {
+        if (saveTimeout) {
+          clearTimeout(saveTimeout);
+        }
+
         set((state) => {
           state.currentProject = {
             id: null,
-            content: "",
-            styles: DEFAULT_COMPOSITION_STYLES,
+            meta: {
+              title: "",
+              description: "",
+              category: "",
+            },
+            config: {
+              content: {
+                global: "",
+                sceneLevel: "",
+              },
+              styles: DEFAULT_COMPOSITION_STYLES,
+            },
             scenes: [],
-            duration: 0,
+            durationInFrames: FALLBACK_DURATION_IN_FRAMES,
+            createdAt: new Date(),
             lastModified: new Date(),
           };
           state.error = null;
+          state._pendingChanges = false;
         });
       },
     })),
@@ -237,3 +283,13 @@ export const useProjectStore = create<ProjectStore>()(
     },
   ),
 );
+
+export const mergeContent = (global: string, sceneLevel: string): string => {
+  const trimmedGlobal = global.trim();
+  const trimmedSceneLevel = sceneLevel.trim();
+
+  if (!trimmedGlobal) return trimmedSceneLevel;
+  if (!trimmedSceneLevel) return trimmedGlobal;
+
+  return `${trimmedGlobal}\n\n${trimmedSceneLevel}`;
+};

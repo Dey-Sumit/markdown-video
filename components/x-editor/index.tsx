@@ -7,35 +7,51 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { monacoCustomOptions } from "./editor-config";
 import { useEditorShortcuts } from "./hooks/use-editor-shortcuts";
 import { monacoCustomTheme } from "./theme";
-import { configureFoldingProvider } from "./utils/configure-folding-provider";
-import { configureHoverProvider } from "./utils/configure-hover-provider";
+
 // import { provideCodeActions } from "./utils/quick-fixes";
 import {
   configureJSX,
   configureKeyboardShortcuts,
   configureLinting,
 } from "./utils";
-import { configureCompletions } from "./utils/completion-provider.new";
-import { configureTokenizer } from "./utils/syntax-highlight/configure-tokens";
-import { configureDiagnostics } from "./utils/configure-diagnostics.new";
-import { configureContextMenu } from "./utils/context-menu/configure-context-menu.new";
+
 import { configureSnippets } from "./utils/snippets";
 import CommandMenu, { type Position } from "./command-menu";
 import { provideCodeActions } from "./utils/code-action/code-action.new";
 import { useProjectStore } from "@/store/project-store";
 import { useParams } from "next/navigation";
 import { EDITOR_LANGUAGE } from "./const";
+import { Button } from "../ui/button";
+import { formatDocument } from "./format-document";
+import { PluginRegistry } from "./core/registry";
+import { SceneAdapter } from "./plugins/scene/scene.adapter";
+import { TextAdapter } from "./plugins/text/text.adapter";
+import { TransitionAdapter } from "./plugins/transition/transition.adapter";
+import { CodeAdapter } from "./plugins/code/code.adapter";
+import { HighlightAdapter } from "./plugins/highlight/highlight.adapter";
+import FloatingEditButton from "./components/floating-button";
+import { ImageAdapter } from "./plugins/image/adapter";
 // import { configureCompletions } from "./utils/configure-autocompletion";
+
+const files = ["Scenes", "Global"] as const;
+type FileName = (typeof files)[number];
 
 function XEditor() {
   const { id: projectId } = useParams<{
     id: string;
   }>();
+  const [activeFile, setActiveFile] = useState<FileName>("Scenes");
 
   const [mounted, setMounted] = useState(false);
 
   const { currentProject, updateContent, loadProject } = useProjectStore();
-  const { content, styles } = currentProject;
+
+  const [editorInstance, setEditorInstance] =
+    useState<editor.IStandaloneCodeEditor | null>(null);
+
+  const {
+    config: { content, styles },
+  } = currentProject;
 
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
@@ -80,7 +96,7 @@ function XEditor() {
 
   useMdxProcessor();
   useEditorShortcuts({
-    content,
+    content: content.sceneLevel, // TODO :  Is it correct?
     editor: editorRef.current,
     monaco: monacoRef.current,
   });
@@ -118,12 +134,35 @@ function XEditor() {
     editorRef.current = editor;
     monacoRef.current = monaco;
 
+    setEditorInstance(editor);
+
     monaco.editor.defineTheme("custom", monacoCustomTheme);
     monaco.editor.setTheme("custom");
     monaco.languages.register({ id: EDITOR_LANGUAGE });
 
+    const registry = new PluginRegistry(monaco);
+
+    registry.register(new SceneAdapter(monaco));
+    registry.register(new TextAdapter(monaco));
+    registry.register(new TransitionAdapter(monaco));
+    registry.register(new CodeAdapter(monaco));
+    registry.register(new ImageAdapter(monaco));
+
+    const highlightAdapter = new HighlightAdapter(monaco);
+    registry.register(highlightAdapter);
+
+    registry.registerCompletions(editor.getModel()!);
+    registry.registerDiagnostics(editor.getModel()!);
+    registry.registerHoverProvider(editor.getModel()!);
+    registry.registerDecorations(editor.getModel()!);
+    registry.registerFoldingRanges(monaco);
+
+    highlightAdapter.setupEditor(editor);
+
     editor.onKeyDown((e: IKeyboardEvent) => {
       if (e.browserEvent.key === "\\") {
+        console.log("Show command menu");
+
         // Remove any backslash handling logic, just show the menu
         const position = editor.getPosition();
         if (!position) return;
@@ -145,124 +184,86 @@ function XEditor() {
         });
       }
     });
-
-    configureCompletions(monaco);
-
-    // Set up decoration listener
-    const contentChangeDisposable = editor.onDidChangeModelContent(() => {
-      updateDecorations();
-    });
-
-    // Initial decoration update
-    updateDecorations();
-
-    const model = editor.getModel();
-    let disposable: IDisposable;
-    if (model) disposable = configureDiagnostics(monaco, model);
-    monaco.languages.registerCodeActionProvider(EDITOR_LANGUAGE, {
-      provideCodeActions: provideCodeActions,
-    });
-    configureContextMenu(monaco, editor);
-    configureFoldingProvider(monaco);
-    // configureKeyboardShortcuts(editor, monaco);
-    configureHoverProvider(monaco);
-
-    // Cleanup when editor is disposed
-    // TODO : I don't this should work. xD
-    return () => {
-      contentChangeDisposable.dispose();
-      disposable.dispose();
-    };
   };
 
-  const _handleEditorMount: OnMount = (editor, monaco) => {
-    editorRef.current = editor;
-    monacoRef.current = monaco;
-    // Register tokenizer first
-    // configureTokenizer(monaco);
-    monaco.editor.defineTheme("custom", monacoCustomTheme);
-    monaco.editor.setTheme("custom");
-    monaco.languages.register({ id: EDITOR_LANGUAGE });
+  const handleFormat = () => {
+    if (!editorRef.current) return;
+    const model = editorRef.current.getModel();
+    if (!model) return;
 
-    editor.onKeyDown((e: IKeyboardEvent) => {
-      if (e.browserEvent.key === "\\") {
-        // Remove any backslash handling logic, just show the menu
-        const position = editor.getPosition();
-        if (!position) return;
+    const content = model.getValue();
+    const formatted = formatDocument(content);
 
-        // Show menu after the backslash is typed
-        requestAnimationFrame(() => {
-          const coords = editor.getContainerDomNode().getBoundingClientRect();
-          const pos = editor.getScrolledVisiblePosition(position);
+    model.pushEditOperations(
+      [],
+      [
+        {
+          range: model.getFullModelRange(),
+          text: formatted,
+        },
+      ],
+      () => null,
+    );
+  };
 
-          if (pos) {
-            setMenuPosition(
-              calculatePosition({
-                top: coords.top + pos.top,
-                left: coords.left + pos.left,
-              }),
-            );
-            setShowCommandMenu(true);
-          }
-        });
-      }
-    });
-    // configureSnippets(monaco);
-    configureCompletions(monaco);
-    // Set up decoration listener
-    const contentChangeDisposable = editor.onDidChangeModelContent(() => {
-      updateDecorations();
-    });
-
-    // Initial decoration update
-    updateDecorations();
-
-    // Add diagnostics
-    // Get the editor's model
-    const model = editor.getModel();
-    let disposable: IDisposable;
-    if (model) disposable = configureDiagnostics(monaco, model);
-    monaco.languages.registerCodeActionProvider(EDITOR_LANGUAGE, {
-      provideCodeActions: provideCodeActions,
-    });
-    configureContextMenu(monaco, editor);
-
-    // Cleanup when editor is disposed
-    // TODO : I don't this should work. xD
-    return () => {
-      contentChangeDisposable.dispose();
-      disposable.dispose();
-    };
-
-    // configureLinting(editor, monaco);
-    // monaco.languages.register({ id: EDITOR_LANGUAGE });
-    // configureCompletions(monaco);
-
-    /* --------- ON DEV : comment above code block to make the hot reload faster --------- */
-    // configureHoverProvider(editor, monaco);
-    // configureContextMenu(editor, monaco);
-    // configureFoldingProvider(monaco);
+  const handleEditorChange = (value: string | undefined) => {
+    const fileType = activeFile === "Global" ? "global" : "sceneLevel";
+    updateContent(fileType, value ?? "");
   };
 
   return (
     <>
-      <Editor
-        height="100%"
-        defaultLanguage={EDITOR_LANGUAGE}
-        value={content}
-        onChange={(value) => updateContent(value ?? "")}
-        onMount={handleEditorMount}
-        options={monacoCustomOptions}
-      />
-      <CommandMenu
-        position={menuPosition}
-        isVisible={showCommandMenu}
-        editor={editorRef.current}
-        monaco={monacoRef.current}
-        onClose={() => setShowCommandMenu(false)}
-      />
+      <div className="relative flex h-full flex-col">
+        <div className="relative z-10 flex h-full flex-col">
+          <div className="flex justify-between gap-2 border-b bg-black">
+            <div>
+              {files.map((fileName, index) => (
+                <Button
+                  key={fileName}
+                  variant="outline"
+                  onClick={() => setActiveFile(fileName)}
+                  size="sm"
+                  className={`${activeFile === fileName ? "bg-accent" : ""} rounded-none border-y-0`}
+                >
+                  {fileName}
+                </Button>
+              ))}
+            </div>
+            <Button
+              onClick={handleFormat}
+              size="sm"
+              variant="outline"
+              className="rounded-none border-y-0"
+            >
+              Format Editor &nbsp; 🧹
+            </Button>
+          </div>
+          <Editor
+            height="100%"
+            defaultLanguage={EDITOR_LANGUAGE}
+            onMount={handleEditorMount}
+            options={monacoCustomOptions}
+            value={
+              activeFile === "Scenes" ? content.sceneLevel : content.global
+            }
+            onChange={handleEditorChange}
+          />
+          <CommandMenu
+            position={menuPosition}
+            isVisible={showCommandMenu}
+            editor={editorRef.current}
+            monaco={monacoRef.current}
+            onClose={() => setShowCommandMenu(false)}
+          />
+        </div>
+        <div className="editor-background absolute -inset-1 z-0 h-full w-full"></div>
+      </div>
     </>
   );
 }
 
 export default XEditor;
+
+{
+  /* {editorInstance && <FloatingEditButton editor={editorInstance} />} */
+}

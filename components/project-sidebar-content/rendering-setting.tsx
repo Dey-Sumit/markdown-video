@@ -30,13 +30,15 @@ const Megabytes: React.FC<{
 
 const RenderingSettingStuff = () => {
   const searchParams = useSearchParams();
-  console.log(searchParams);
   const owner = searchParams.get("owner");
   const renderDisabled = owner !== "sumit";
 
   // const
   const {
-    currentProject: { scenes, styles },
+    currentProject: {
+      scenes,
+      config: { styles },
+    },
   } = useProjectStore();
   const { renderMedia, state, undo } = useRendering(
     "code-transition-composition",
