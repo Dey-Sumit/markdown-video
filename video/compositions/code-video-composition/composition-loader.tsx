@@ -4,25 +4,23 @@ import { calculateCompositionDuration } from "../composition.utils";
 import { compositionMetaData } from "./config";
 import { SceneSchema, type CompositionStore } from "./types.composition";
 
-// const HARDCODED_STEPS: CompositionStore["scenes"] = [];
-// const HARDCODED_STYLES = {
-//   backgroundContainer: {
-//     background: "#000000",
-//   },
-//   sceneContainer: {
-//     inset: 10,
-//     padding: 10,
-//   },
-// };
-
-import SampleMarkdownContent from "../../../samples/background-sample.md";
+import SampleMarkdownContent from "../../../samples/layout-sample-v2.md";
+// import SampleMarkdownContent from "../../../samples/background-sample.md";
 import { Block, parseRoot } from "codehike/blocks";
 import { z } from "zod";
 
-const { scene: scenes, title } = parseRoot(
+const {
+  scene: scenes,
+  title,
+  global,
+} = parseRoot(
   SampleMarkdownContent,
   Block.extend({
     scene: z.array(SceneSchema),
+    global: z.object({
+      title: z.string(),
+      scene: z.string(),
+    }),
   }),
 );
 
@@ -33,7 +31,7 @@ const HARDCODED_STYLES: CompositionStore["styles"] = {
       color: "#000000",
       gradient: {
         angle: 0,
-        colors: ["#65C7F7", "#0052D4"],
+        colors: ["#203A43", "#2C5364"],
       },
     },
   },
@@ -55,7 +53,7 @@ export default function CodeTransitionCompositionLoader() {
         styles: HARDCODED_STYLES,
       }}
       calculateMetadata={({ props }) => {
-        const duration = calculateCompositionDuration(props.scenes) || 30;
+        const duration = calculateCompositionDuration(props.scenes) || 90;
 
         return {
           durationInFrames: duration,

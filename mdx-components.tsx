@@ -28,19 +28,13 @@ const CustomCode = ({ children }: { children: React.ReactNode }) => {
     return (
       <>
         {children.map((child, index) => {
-          console.log("child", child);
-
-          console.log(
-            "child.props.children?.toString()",
-            child.props?.children?.toString(),
-          );
+          
 
           if (
             typeof child === "object" &&
             "props" in child &&
             child.props.children?.toString().startsWith("`")
           ) {
-            console.log("here", child);
 
             // This is the backtick-wrapped content
             const content = child.props.children.slice(1, -1);

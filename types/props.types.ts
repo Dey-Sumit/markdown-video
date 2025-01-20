@@ -11,8 +11,16 @@ export interface SceneMetaResult {
   background?: string;
 }
 
+
+
 export type PropsParserConfig = Record<
-  "transition" | "code" | "media" | "sceneMeta" | "mark" | "text",
+  | "transition"
+  | "code"
+  | "media"
+  | "sceneMeta"
+  | "mark"
+  | "text"
+  | "contentLayout",
   TypeConfig
 >;
 

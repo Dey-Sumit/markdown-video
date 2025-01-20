@@ -23,7 +23,7 @@ export const monacoCustomTheme: editor.IStandaloneThemeData = {
     // { token: "argumentValue", foreground: "#98c379" }, // Green for values
   ],
   colors: {
-    "editor.background": "#000000",
+    "editor.background": "#00000099",
     // "editor.background": "#111111",
     "editorCursor.foreground": "#ffffff",
     "editor.lineHighlightBackground": "#1a1a1a",

@@ -17,7 +17,7 @@ const repeatedString = repeatStringWithEllipsis("Maula mere", 3);
 console.log(repeatedString); // Outputs: "Maula mere, Maula mere, Maula mere..."
 ```
 
-## !!scene --duration=3
+## !scene --duration=3
 !transition --type=magic --duration=2
 
 
@@ -32,7 +32,7 @@ function repeatStringWithEllipsis(str, times) {
   return result;
 }
 ```
-## !!scene --duration=3
+## !scene --duration=3
 !transition --type=magic --duration=2
 
 
@@ -97,6 +97,3 @@ const repeatedString = repeatStringWithEllipsis("Maula mere", 3);
 console.log(repeatedString); // Outputs: "Maula mere, Maula mere, Maula mere..."
 ```
 
-/* -------------------------------------------------------------------------- */
-/*          Create repeatStringWithEllipsis() function in javascript          */
-/* -------------------------------------------------------------------------- */

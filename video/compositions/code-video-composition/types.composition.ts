@@ -17,14 +17,15 @@ export const TransitionType = z.enum(VALID_TRANSITIONS);
 export type TransitionType = z.infer<typeof TransitionType>;
 
 const BaseSchema = z.object({
-  code: HighlightedCodeBlock.optional(),
-  font: z.string().optional().default(""),
-  transition: z.string().optional().default("--name=magic --duration=0.3"),
-  codeBlockUtils: z.string().optional().default(""),
-  media: z.string().optional().default(""),
-  text: z.string().optional().default(""),
+  code: z.array(HighlightedCodeBlock).optional().default([]),
+  font: z.array(z.string()).optional().default([]),
+  transition: z.array(z.string()).optional(),
+  codeBlockUtils: z.array(z.string()).optional().default([]),
+  image: z.array(z.string()).optional().default([]),
+  text: z.array(z.string()).optional().default([]),
+  contentLayout: z.array(z.string()).optional().default([]),
+  section: z.array(z.string()).optional().default([]),
 });
-
 export const SceneSchema = Block.extend(BaseSchema.shape);
 
 export type Scene = z.infer<typeof SceneSchema>;
@@ -42,6 +43,7 @@ export const CodeTransitionCompositionPropsSchema = z.object({
         image: z.string().optional(),
         activeType: z.enum(["color", "gradient", "image"]),
       }),
+      fontFamily: z.string().optional(),
     }),
     sceneContainer: z.object({
       inset: z.number().optional(),

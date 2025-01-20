@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CreateProjectDialog } from "./create-project-dialog";
-import { db, type Project } from "@/lib/dexie-db";
+import { dexieDB, type ProjectDB } from "@/lib/dexie-db";
 
 import {
   AlertDialog,
@@ -23,17 +23,18 @@ const getRandomEmoji = () => {
 };
 
 const ProjectsList = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<ProjectDB[]>([]);
 
   useEffect(() => {
     const loadProjects = async () => {
-      const allProjects = await db.getAllProjects();
-      console.log("ProjectsList", allProjects);
+      const allProjects = await dexieDB.getAllProjects();
 
       setProjects(allProjects);
     };
     loadProjects();
   }, []);
+
+  console.log({ projects });
 
   return (
     <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
@@ -49,12 +50,12 @@ const ProjectsList = () => {
               <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <div className="grow">
                   <h5 className="font-semibold text-gray-800 dark:text-neutral-200">
-                    {project.title}
+                    {project.meta.title}
                   </h5>
                 </div>
 
                 <span className="inline-flex items-center gap-x-1.5 rounded-full border px-2 py-0.5 text-xs font-medium text-neutral-400 dark:border-neutral-600">
-                  {project.duration}
+                  {project.durationInFrames}
                 </span>
               </div>
 
@@ -73,7 +74,7 @@ const ProjectsList = () => {
 
                 <div className="grow">
                   <p className="text-sm text-gray-800 dark:text-neutral-200">
-                    {project.category}
+                    {project.meta.category}
                   </p>
                   <p className="inline-flex items-center gap-x-1 text-xs text-muted-foreground">
                     <svg
@@ -124,7 +125,7 @@ const ProjectsList = () => {
                       <AlertDialogAction
                         className="bg-red-600 hover:bg-red-700"
                         onClick={async () => {
-                          await db.deleteProject(project.id);
+                          await dexieDB.deleteProject(project.id);
                           setProjects((prevProjects) =>
                             prevProjects.filter((p) => p.id !== project.id),
                           );
