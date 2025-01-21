@@ -6,6 +6,10 @@ export const top25GoogleFonts = [
     load: () => import("@remotion/google-fonts/Inter") as Promise<GoogleFont>,
   },
   {
+    family: "DMSans",
+    load: () => import("@remotion/google-fonts/DMSans") as Promise<GoogleFont>,
+  },
+  {
     family: "Kanit",
     load: () => import("@remotion/google-fonts/Kanit") as Promise<GoogleFont>,
   },
