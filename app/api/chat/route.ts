@@ -1,39 +1,15 @@
+import { type CoreMessage, generateObject, generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
-/* import { generateObject } from "ai";
-import { openai } from "@ai-sdk/openai";
 
 export async function POST(req: Request) {
-  const { prompt }: { prompt: string } = await req.json();
+  const { messages }: { messages: CoreMessage[] } = await req.json();
 
-  const result = await generateObject({
-    model: openai("gpt-4"),
-    system: "You generate three notifications for a messages app.",
-    prompt,
-    schema: z.object({
-      notifications: z.array(
-        z.object({
-          name: z.string().describe("Name of a fictional person."),
-          message: z.string().describe("Do not use emojis or links."),
-          minutesAgo: z.number(),
-        }),
-      ),
-    }),
-  });
-
-  return result.toJsonResponse();
-}
- */
-
-import { type CoreMessage, generateObject } from "ai";
-import { openai } from "@ai-sdk/openai";
-
-export async function POST(req: Request) {
-  const { prompt }: { prompt: string } = await req.json();
   const result = await generateObject({
     model: openai("gpt-4"),
     system:
       "My app creates video from text. You are an assistant helping a user create a scene of a video. A video is a series of scenes. Each scene has a name.",
-    prompt,
+    messages,
     schema: z.object({
       scene: z.object({
         props: z.object({
@@ -57,6 +33,7 @@ export async function POST(req: Request) {
       }),
     }),
   });
+  console.log({ result });
 
   return result.toJsonResponse();
 }
