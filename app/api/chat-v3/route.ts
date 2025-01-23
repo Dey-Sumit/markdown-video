@@ -1,55 +1,12 @@
-import SYSTEM_PROMPT from "@/app/ai/chat-v3/system-prompt";
+// import SYSTEM_PROMPT from "@/app/ai/chat-v3/system-prompt";
 import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
 import { z } from "zod";
-import { SceneConfigSchema, UpdateSceneToolSchema } from "./shared-types";
-import { sceneConfig } from "@/components/x-editor/plugins/scene/scene.config";
-import { updater } from "./scene-updater";
+import { CreateSceneConfigSchema, UpdateSceneToolSchema } from "./shared-types";
+import SYSTEM_PROMPT from "@/app/ai/chat-v3/new-system-prompt";
+import updateScene from "./scene-updater";
 
 const model = openai("gpt-4-turbo");
-/* export const UpdateSceneToolSchema = z.object({
-  id: z.string().describe("ID of scene to update"),
-  update: z.object({
-    sceneProps: z
-      .object({
-        duration: z.number().min(0.5).max(30).optional(),
-        background: z.string().optional(),
-      })
-      .optional(),
-    components: z
-      .object({
-        text: z
-          .array(
-            z.object({
-              index: z.number().min(0).max(9),
-              content: z.string().optional(),
-              animation: z.enum(["fadeIn", "slideIn", "zoomIn"]).optional(),
-            }),
-          )
-          .optional(),
-        image: z
-          .array(
-            z.object({
-              index: z.number().min(0).max(4),
-              src: z.string().optional(),
-              animation: z.enum(["fadeIn", "zoomIn", "slideIn"]).optional(),
-            }),
-          )
-          .optional(),
-        transition: z
-          .array(
-            z.object({
-              type: z.enum(["fade", "wipe", "dissolve"]).optional(),
-              duration: z.number().min(0.5).optional(),
-            }),
-          )
-          .max(1)
-          .optional(),
-      })
-      .optional(),
-  }),
-  originalScene: CreateSceneToolSchema, // Your existing scene config schema
-}); */
 
 export async function POST(request: Request) {
   const { messages } = await request.json();
@@ -60,23 +17,27 @@ export async function POST(request: Request) {
     system: SYSTEM_PROMPT,
     abortSignal: request.signal,
     onStepFinish: (step) => {
-      console.log({ toolCalls: step.toolCalls });
+      console.log({ step, toolCalls: step.toolCalls });
     },
     tools: {
       createScene: {
-        description: `Create a video scene and analyze for improvements.
+        description: `Create a video scene and add 3 points for improvements.
         Required:
-        - Scene configuration with valid components
+        - Scene configuration with valid components with unique identifier
         - EXACTLY 3 contextual suggestions based on:
           1. Missing/underutilized components
           2. Visual elements (colors, animations, layout)
           3. Timing and flow
         Suggestions must be specific and actionable.`,
-        parameters: SceneConfigSchema,
-        execute: async (sceneConfig: z.infer<typeof SceneConfigSchema>) => {
+        parameters: CreateSceneConfigSchema,
+        execute: async (
+          sceneConfig: z.infer<typeof CreateSceneConfigSchema>,
+        ) => {
           const { suggestedImprovements, ...leanSceneConfig } = sceneConfig;
+          console.log("createScene", { sceneConfig });
+
           return {
-            sceneId: "custom-scene-id",
+            sceneId: leanSceneConfig.id,
             sceneConfig: leanSceneConfig,
             suggestedImprovements,
           };
@@ -88,6 +49,10 @@ export async function POST(request: Request) {
     
     Requirements:
     - Scene ID must match existing scene
+    - Components require action: "add", "update", or "remove"
+      - Action "add": Requires all mandatory fields and add a uuid
+      - Action "update": Only changed fields needed
+      - Action "remove": Only index needed
     - Original scene data required for context
     - Valid update parameters respecting component limits
     - EXACTLY 3 new contextual suggestions based on updated scene
@@ -102,27 +67,28 @@ export async function POST(request: Request) {
     - Font size: 8-72px
     - Position: 0-100 range
     - Components cannot exceed scene duration`,
+
         parameters: UpdateSceneToolSchema,
         execute: async ({
           id,
           update,
         }: z.infer<typeof UpdateSceneToolSchema>) => {
-          // const updatedScene = sceneUpdater.updateScene({
-          //   id,
-          //   update,
-          //   originalScene,
-          // });
-          console.log({ id, update, sceneConfig: JSON.stringify(update) });
-
-          const updatedScene = updater.updateScene({
+          console.log({
             id,
-            update,
-            originalScene: update.originalScene,
+            update: JSON.stringify(update),
+            originalScene: JSON.stringify(update.originalScene),
+          });
+
+          const { originalScene, ...updates } = update;
+          const updatedScene = updateScene({
+            id,
+            updates,
+            originalScene: update.originalScene?.sceneConfig,
           });
 
           return {
             sceneId: id,
-            updatedScene,
+            sceneConfig: updatedScene,
           };
         },
       },
@@ -133,6 +99,7 @@ export async function POST(request: Request) {
     getErrorMessage: errorHandler,
   });
 }
+
 export function errorHandler(error: unknown) {
   if (error == null) {
     return "unknown error";

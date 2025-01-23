@@ -2,21 +2,37 @@ import { z } from "zod";
 
 // Define our component schemas
 export const TextComponentSchema = z.object({
-  content: z.string(),
-  animation: z.enum(["fadeIn", "slideIn", "zoomIn"]),
+  content: z.string().describe("Content of the text"),
+  animation: z
+    .enum(["fadeIn", "slideIn", "zoomIn"])
+    .default("fadeIn")
+    .describe("Animation effect for the text"),
+  id: z.string().describe("Unique uuid for the component"),
 });
 
 export const ImageComponentSchema = z.object({
   src: z.string().default("https://via.placeholder.com/150"),
-  animation: z.enum(["fadeIn", "zoomIn", "slideIn"]),
+  animation: z
+    .enum(["fadeIn", "zoomIn", "slideIn"])
+    .default("slideIn")
+    .describe("Animation effect for the image"),
+  id: z.string().describe("Unique uuid  for the component"),
 });
 
 export const TransitionComponentSchema = z.object({
   type: z.enum(["fade", "wipe", "dissolve"]),
   duration: z.number(),
+  id: z.string().describe("Unique uuid  for the component"),
 });
-export const SceneConfigSchema = z.object({
-  id: z.string(),
+
+export type AITextComponentType = z.infer<typeof TextComponentSchema>;
+export type AIImageComponentType = z.infer<typeof ImageComponentSchema>;
+export type AITransitionComponentType = z.infer<
+  typeof TransitionComponentSchema
+>;
+
+const BaseSceneConfigSchema = z.object({
+  id: z.string().describe("Unique uuid for the scene"),
   sceneProps: z.object({
     duration: z.number(),
     name: z.string().optional(),
@@ -27,8 +43,26 @@ export const SceneConfigSchema = z.object({
     image: z.array(ImageComponentSchema).optional(),
     transition: z.array(TransitionComponentSchema).max(1).optional(),
   }),
-  suggestedImprovements: z.array(z.string()).min(3).max(3).optional(),
 });
+
+const SceneImprovementsSchema = z.object({
+  suggestedImprovements: z
+    .array(z.string())
+    .min(3)
+    .max(3)
+    .describe("Suggested improvements for the scene")
+    .default([]),
+});
+
+export const CreateSceneConfigSchema = BaseSceneConfigSchema.merge(
+  SceneImprovementsSchema,
+);
+
+const ComponentActionSchema = z
+  .enum(["update", "add", "remove"])
+  .describe(
+    "Action to perform on component: add (new), update (existing), remove (delete)",
+  );
 
 export const UpdateSceneToolSchema = z.object({
   id: z.string(),
@@ -44,18 +78,20 @@ export const UpdateSceneToolSchema = z.object({
         text: z
           .array(
             z.object({
-              index: z.number().min(0).max(9),
-              content: z.string().optional(),
+              content: z.string(),
               animation: z.enum(["fadeIn", "slideIn", "zoomIn"]).optional(),
+              action: ComponentActionSchema,
+              id: z.string().describe("Unique uuid for the component"),
             }),
           )
           .optional(),
         image: z
           .array(
             z.object({
-              index: z.number().min(0).max(4),
               src: z.string().optional(),
               animation: z.enum(["fadeIn", "zoomIn", "slideIn"]).optional(),
+              action: ComponentActionSchema,
+              id: z.string().describe("Unique uuid for the component"),
             }),
           )
           .optional(),
@@ -72,8 +108,19 @@ export const UpdateSceneToolSchema = z.object({
       .optional(),
     originalScene: z
       .object({
-        sceneConfig: SceneConfigSchema,
+        sceneConfig: BaseSceneConfigSchema,
       })
       .required(),
   }),
 });
+
+type UpdateSceneToolType = z.infer<typeof UpdateSceneToolSchema>;
+export type AISceneConfigType = z.infer<typeof CreateSceneConfigSchema>;
+
+export type AISceneUpdates = Omit<
+  UpdateSceneToolType["update"],
+  "originalScene"
+>;
+
+export type AiSceneUpdatesOriginalScene =
+  UpdateSceneToolType["update"]["originalScene"]["sceneConfig"];

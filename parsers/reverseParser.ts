@@ -1,6 +1,8 @@
-import { type TextComponentType as TextComponent } from "@/app/api/chat-v3/shared-types";
-import { type ImageComponentType as ImageComponent } from "@/app/api/chat-v3/shared-types";
-import { type TransitionComponentType as TransitionComponent } from "@/app/api/chat-v3/shared-types";
+import type {
+  AIImageComponentType,
+  AITextComponentType,
+  AITransitionComponentType,
+} from "@/app/api/chat-v3/shared-types";
 
 interface SceneConfig {
   id: string;
@@ -9,9 +11,9 @@ interface SceneConfig {
     background?: string;
   };
   components: {
-    text?: TextComponent[];
-    image?: ImageComponent[];
-    transition?: TransitionComponent[];
+    text?: AITextComponentType[];
+    image?: AIImageComponentType[];
+    transition?: AITransitionComponentType[];
   };
 }
 
@@ -64,15 +66,17 @@ class SceneReverseParser {
     return `# !scene ${props.join(" ")}`;
   }
 
-  private parseTextComponent(text: TextComponent): string {
+  private parseTextComponent(text: AITextComponentType): string {
     return `!text --content=${this.formatValue(text.content)} --animation=${text.animation}`;
   }
 
-  private parseImageComponent(image: ImageComponent): string {
+  private parseImageComponent(image: AIImageComponentType): string {
     return `!image --src=${this.formatValue(image.src)} --animation=${image.animation}`;
   }
 
-  private parseTransitionComponent(transition: TransitionComponent): string {
+  private parseTransitionComponent(
+    transition: AITransitionComponentType,
+  ): string {
     return `!transition --type=${transition.type} --duration=${transition.duration}`;
   }
 

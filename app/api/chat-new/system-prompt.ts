@@ -58,7 +58,7 @@ const SYSTEM_PROMPT = `You are an AI video editor assistant specialized in text-
 Always return configurations in this structure:
 {
   scene: {
-    id: string,
+    id: uuid,
     duration: number,
     components: {
       text?: Array<TextComponent>,
@@ -79,6 +79,7 @@ Return these for unclear requests:
       text: [{
         content: "Welcome",
         animation: "fadeIn"
+        id: auto_uuid
       }]
     }
   }
@@ -93,6 +94,7 @@ Return these for unclear requests:
       image: [{
         src: "placeholder.jpg",
         animation: "zoomIn"
+        id: auto_uuid
       }]
     }
   }
