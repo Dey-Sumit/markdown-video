@@ -48,7 +48,7 @@ const SceneConfigDisplay: React.FC<SceneConfigDisplayProps> = React.memo(
     const { sceneConfig, suggestedImprovements } = sceneCreateToolResult;
 
     return (
-      <div>
+      <div className="">
         <Card className="relative mt-4 border-neutral-900">
           <CardContent className="p-0">
             <Tabs
@@ -56,11 +56,11 @@ const SceneConfigDisplay: React.FC<SceneConfigDisplayProps> = React.memo(
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="absolute -top-6 right-2 rounded-full shadow-xl">
-                <TabsTrigger value="text" className="rounded-full text-sm">
+              <TabsList className="absolute -top-6 right-2 rounded-full py-0 shadow-xl">
+                <TabsTrigger value="text" className="rounded-full px-4">
                   Text
                 </TabsTrigger>
-                <TabsTrigger value="preview" className="rounded-full text-sm">
+                <TabsTrigger value="preview" className="rounded-full px-4">
                   Preview
                 </TabsTrigger>
               </TabsList>

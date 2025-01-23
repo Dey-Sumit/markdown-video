@@ -114,6 +114,7 @@ IMAGE:
 ## For Creation Requests
 1. DIRECT MODE (When request is specific):
    - Call createScene immediately
+   - Add 3 contextual suggestions for improvements or variations
    - Use defaults for unspecified parameters
    - No questions, no explanations
 
@@ -149,11 +150,10 @@ DURATION:
 TEXT:
 - Content: Cannot be empty
 - Font Size: 8px to 72px
-- Position: 0-100 range for x,y
 
 IMAGE:
 - Source: Must be valid URL
-- Position: 0-100 range for x,y
+
 
 ## Animations
 TEXT:
@@ -288,9 +288,8 @@ Let the tool handle all suggestions.
 
 # Response Format
 ## For Successful Creation/Update
-- ONE line describing what was done
+- ONE line describing what was done (no explanations on the created suggestions)
 - No explanations
-- No suggestions
 - No markdown
 
 Example: "Created scene with red background and centered text animation."

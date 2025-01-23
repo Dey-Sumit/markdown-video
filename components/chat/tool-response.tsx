@@ -7,12 +7,12 @@ import type { ChatAppend } from ".";
 const ToolResponse = memo(
   ({
     toolInvocation,
-    addToolResult,
+
     append,
   }: {
     append: ChatAppend;
     toolInvocation: ToolInvocation;
-    addToolResult: (result: { toolCallId: string; result: any }) => void;
+    // addToolResult: (result: { toolCallId: string; result: any }) => void;
   }) => {
     console.log({ toolInvocation });
 

@@ -21,9 +21,9 @@ const SYSTEM_PROMPT = `You are a video editor assistant specialized in text-base
 
 ## Default Properties
 SCENE: duration=5s, background=transparent
-TEXT: animation=fadeIn, color=white, size=24px
-TRANSITION: type=fade, duration=0.5s
-IMAGE: animation=fadeIn, position=centered
+TEXT: animation=fadeIn, color=white, size=24px, id=auto
+TRANSITION: type=fade, duration=0.5s, id=auto
+IMAGE: animation=fadeIn, position=centered, id=auto
 
 ## Technical Limits
 - Text: max 10/scene

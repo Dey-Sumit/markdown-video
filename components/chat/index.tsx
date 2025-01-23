@@ -1,5 +1,11 @@
 "use client";
-import React, { useCallback, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import { ChatMessage } from "@/app/ai/chat-new/components/ChatMessage";
 import ToolResponse from "./tool-response";
@@ -10,14 +16,89 @@ import { cn } from "@/lib/utils";
 import { Loader2, Square, Send } from "lucide-react";
 import { Button } from "../ui/button";
 import { type Message, useChat } from "ai/react";
-
+const MESSAGES = [
+  {
+    id: "nF6Y97KIeQXn1fVr",
+    createdAt: "2025-01-23T23:10:39.780Z",
+    role: "user",
+    content: "create a scene with red background and hello world text",
+  },
+  {
+    id: "KUZMzfF0KQQND7ci",
+    role: "assistant",
+    content: "",
+    createdAt: "2025-01-23T23:10:46.522Z",
+    toolInvocations: [
+      {
+        state: "result",
+        toolCallId: "call_9IhxC2cYKZkkpG1z62GQFuDZ",
+        toolName: "createScene",
+        args: {
+          id: "unique_scene_id_001",
+          sceneProps: {
+            duration: 5,
+            background: "red",
+          },
+          components: {
+            text: [
+              {
+                content: "Hello World",
+                animation: "fadeIn",
+                id: "text_component_001",
+              },
+            ],
+          },
+          suggestedImprovements: [
+            "Consider adding an image for visual interest.",
+            "Experiment with a slideIn animation for the text to enhance entry effect.",
+            "Adjust the scene duration to better fit the content if necessary.",
+          ],
+        },
+        result: {
+          sceneId: "unique_scene_id_001",
+          sceneConfig: {
+            id: "unique_scene_id_001",
+            sceneProps: {
+              duration: 5,
+              background: "red",
+            },
+            components: {
+              text: [
+                {
+                  content: "Hello World",
+                  animation: "fadeIn",
+                  id: "text_component_001",
+                },
+              ],
+            },
+          },
+          suggestedImprovements: [
+            "Consider adding an image for visual interest.",
+            "Experiment with a slideIn animation for the text to enhance entry effect.",
+            "Adjust the scene duration to better fit the content if necessary.",
+          ],
+        },
+      },
+    ],
+    revisionId: "8xiCW1DEbRFt13J9",
+  },
+  {
+    id: "TxiMk9CkfnUux8jn",
+    role: "assistant",
+    content:
+      'Created scene with red background and centered text saying "Hello World". Here are some suggestions for improvement:\n1. Consider adding an image for visual interest.\n2. Experiment with a slideIn animation for the text to enhance the entry effect.\n3. Adjust the scene duration to better fit the content if necessary.',
+    createdAt: "2025-01-23T23:10:47.722Z",
+    revisionId: "556gSR65kc18FbjW",
+  },
+];
 export type ChatAppend = (
   message: Message | CreateMessage,
   chatRequestOptions?: ChatRequestOptions,
 ) => Promise<string | null | undefined>;
 
-const Chat = () => {
+const AIChat = () => {
   const [isStreaming, setIsStreaming] = useState(false);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const {
     messages,
@@ -47,23 +128,20 @@ const Chat = () => {
   );
 
   const memoizedMessages = useMemo(() => messages, [messages]);
-  console.log({ messages });
+  // Auto-scroll to bottom when new messages are added
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+    }
+  }, [memoizedMessages]);
 
   return (
-    <section className="relative h-full w-full rounded-lg border-neutral-800 bg-neutral-950 shadow-sm">
-      <ScrollArea className="h-full p-4 pb-24">
-        <div className="space-y-6">
+    <section className="relative h-full w-full flex-grow rounded-lg border-neutral-800 bg-neutral-950 shadow-sm">
+      <ScrollArea className="h-full p-4 pb-24" ref={scrollAreaRef}>
+        <div className="space-y-4">
           {memoizedMessages.map((m: Message) => (
-            <div key={m.id} className="space-y-2">
-              <ChatLeanMessage message={m} />
-              {m.toolInvocations?.map((toolInvocation: ToolInvocation) => (
-                <ToolResponse
-                  key={toolInvocation.toolCallId}
-                  toolInvocation={toolInvocation}
-                  addToolResult={addToolResult}
-                  append={append}
-                />
-              ))}
+            <div key={m.id} className="space-y-0">
+              <ChatLeanMessage message={m} append={append} />
             </div>
           ))}
         </div>
@@ -83,6 +161,7 @@ const Chat = () => {
           <Button
             type={isStreaming ? "button" : "submit"}
             onClick={isStreaming ? stop : undefined}
+            disabled={isLoading || !input}
             className={cn(
               "transition-all duration-200 ease-in-out",
               isStreaming ? "bg-red-500 hover:bg-red-600" : "",
@@ -102,4 +181,4 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default AIChat;

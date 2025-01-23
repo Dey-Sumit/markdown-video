@@ -1,57 +1,76 @@
-export class SceneUpdater {
-  updateScene({ id, update, originalScene }: UpdateSceneInput): SceneConfig {
-    const sceneConfig = originalScene.sceneConfig;
-    const updatedScene = structuredClone(sceneConfig);
+import type {
+  AISceneConfigType,
+  AISceneUpdates,
+  AiSceneUpdatesOriginalScene,
+} from "./shared-types";
+type UpdateSceneInput = {
+  id: string;
+  updates: AISceneUpdates;
+  originalScene: AiSceneUpdatesOriginalScene;
+};
+function updateScene({ id, updates, originalScene }: UpdateSceneInput) {
+  const updatedScene = structuredClone(originalScene);
+  console.log("updateScene", { id, updates, originalScene, updatedScene });
 
-    // Update scene props
-    if (update.sceneProps) {
-      updatedScene.sceneProps = {
-        ...updatedScene.sceneProps,
-        ...update.sceneProps,
-      };
-    }
+  // Update scene props
+  if (updates.sceneProps) {
+    updatedScene.sceneProps = {
+      ...updatedScene.sceneProps,
+      ...updates.sceneProps,
+    };
+  }
 
-    // Update components
-    if (update.components) {
-      updatedScene.components = updatedScene.components || {};
+  // Update components
+  if (updates.components?.text) {
+    for (const update of updates.components.text) {
+      const texts = updatedScene.components.text || [];
 
-      // Update text components
-      if (update.components.text) {
-        updatedScene.components.text = updatedScene.components.text || [];
-        update.components.text.forEach((textUpdate) => {
-          if (updatedScene.components.text[textUpdate.index]) {
-            updatedScene.components.text[textUpdate.index] = {
-              ...updatedScene.components.text[textUpdate.index],
-              ...textUpdate,
-            };
+      switch (update.action) {
+        case "add":
+          if (!update.content || !update.animation) {
+            throw new Error("Content and animation required for new text");
           }
-        });
+          texts.push({
+            content: update.content,
+            animation: update.animation,
+            id: update.id,
+          });
+          break;
+
+        case "update": {
+          if (!update.id) {
+            throw new Error("Id required for update"); // TODO : we should not throw error here, we should call the LLM again to ask for the index
+          }
+
+          const index = texts.findIndex((t) => t.id === update.id);
+          if (index === -1) {
+            throw new Error("Text component not found");
+          }
+
+          const { action, ...leanUpdate } = update;
+
+          texts[index] = {
+            ...texts[index],
+            ...leanUpdate,
+          };
+          break;
+        }
+        case "remove": {
+          if (!update.id) {
+            throw new Error("Id required for remove");
+          }
+
+          const index = texts.findIndex((t) => t.id === update.id);
+          texts.splice(index, 1);
+          break;
+        }
       }
 
-      // Update transition
-      if (update.components.transition) {
-        updatedScene.components.transition = update.components.transition;
-      }
-    }
-
-    this.validate(updatedScene);
-    return updatedScene;
-  }
-
-  private validate(scene: SceneConfig) {
-    const { duration } = scene.sceneProps;
-    if (duration < 0.5 || duration > 30) {
-      throw new Error("Duration must be between 0.5 and 30 seconds");
-    }
-
-    if (scene.components.transition?.length > 1) {
-      throw new Error("Maximum one transition allowed");
-    }
-
-    if (scene.components.text?.length > 10) {
-      throw new Error("Maximum 10 text components allowed");
+      updatedScene.components.text = texts;
     }
   }
+
+  return updatedScene;
 }
 
-export const updater = new SceneUpdater();
+export default updateScene;
