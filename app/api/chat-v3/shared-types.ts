@@ -73,7 +73,6 @@ export const UpdateSceneToolSchema = z.object({
     originalScene: z
       .object({
         sceneConfig: SceneConfigSchema,
-        suggestedImprovements: z.array(z.string()),
       })
       .required(),
   }),

@@ -4,6 +4,7 @@ import { streamText } from "ai";
 import { z } from "zod";
 import { SceneConfigSchema, UpdateSceneToolSchema } from "./shared-types";
 import { sceneConfig } from "@/components/x-editor/plugins/scene/scene.config";
+import { updater } from "./scene-updater";
 
 const model = openai("gpt-4-turbo");
 /* export const UpdateSceneToolSchema = z.object({
@@ -113,12 +114,15 @@ export async function POST(request: Request) {
           // });
           console.log({ id, update, sceneConfig: JSON.stringify(update) });
 
+          const updatedScene = updater.updateScene({
+            id,
+            update,
+            originalScene: update.originalScene,
+          });
+
           return {
             sceneId: id,
-            sceneConfig: {},
-            suggestedImprovements: [
-              // Generated based on updated scene analysis
-            ],
+            updatedScene,
           };
         },
       },
