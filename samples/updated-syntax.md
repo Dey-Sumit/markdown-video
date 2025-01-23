@@ -2,7 +2,7 @@
 !text --content="Image as Background" --animation=fadeInSlideUp 
 
 
-# !!scene --duration=3 --background="linear-gradient(40deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)"
+# !scene --duration=3 --background="linear-gradient(40deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)"
 !text --content="Linear Gradient" --animation=fadeInSlideUp --presetStyle=fancy() --color=white  --delay=0.5
 !transition --type=slide --duration=0.5 
 

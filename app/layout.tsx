@@ -60,6 +60,7 @@ export default function RootLayout({
       className={`${inter.className} dark scroll-smooth`}
       suppressHydrationWarning
       data-mode="dark"
+      translate="no"
     >
       <head>
         <link

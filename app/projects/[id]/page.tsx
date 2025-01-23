@@ -14,12 +14,7 @@ import {
 import ClientSideEditor from "@/components/x-editor/dynamic-x-editor";
 import { ProjectSidebar2 } from "@/components/project-sidebar-2";
 import ClientXPlayer from "@/components/x-editor/dynamic-x-player";
-
-
-
-
-
-
+import Chat from "@/components/chat";
 
 function Page() {
   return (
@@ -40,7 +35,7 @@ function Page() {
           <p className="font-mono text-sm font-medium">markdown video </p>
         </header>
         <div className="h-full w-full">
-          <ResizablePanelGroup
+          {/* <ResizablePanelGroup
             direction="horizontal"
             className="min-h-[200px] md:min-w-[450px]"
           >
@@ -48,8 +43,31 @@ function Page() {
               <ClientSideEditor />
             </ResizablePanel>
             <ResizableHandle withHandle />
+            
             <ResizablePanel defaultSize={40} minSize={20}>
               <ClientXPlayer />
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </div> */}
+
+          <ResizablePanelGroup
+            direction="horizontal"
+            className="rounded-lg md:min-w-[450px]"
+          >
+            <ResizablePanel defaultSize={50} minSize={20}>
+              <ClientSideEditor />
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={50}>
+              <ResizablePanelGroup direction="vertical">
+                <ResizablePanel defaultSize={50} minSize={20}>
+                  <ClientXPlayer />
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                <ResizablePanel defaultSize={50} minSize={20}>
+                  <Chat />
+                </ResizablePanel>
+              </ResizablePanelGroup>
             </ResizablePanel>
           </ResizablePanelGroup>
         </div>

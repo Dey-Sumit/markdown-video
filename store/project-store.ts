@@ -13,6 +13,10 @@ import {
 } from "@/lib/const";
 import { DEFAULT_PROJECT_TEMPLATE } from "./project.const";
 import { calculateCompositionDuration } from "@/video/compositions/composition.utils";
+interface InsertSceneOptions {
+  position?: "start" | "end";
+  content: string;
+}
 
 interface ProjectState {
   currentProject: {
@@ -48,6 +52,7 @@ interface ProjectActions {
   updateScenes: (scenes: Scene[]) => void;
   setDuration: (duration: number) => void;
   clearCurrentProject: () => void;
+  insertScene: (options: InsertSceneOptions) => void;
 }
 
 type ProjectStore = ProjectState & ProjectActions;
@@ -275,6 +280,54 @@ export const useProjectStore = create<ProjectStore>()(
           state.error = null;
           state._pendingChanges = false;
         });
+      },
+
+      insertScene: (options: InsertSceneOptions) => {
+        // if (saveTimeout) {
+        //   clearTimeout(saveTimeout);
+        // }
+
+        set((state) => {
+          const { content, position = "end" } = options;
+          const currentContent = state.currentProject.config.content.sceneLevel;
+
+          // Handle insertion position
+          let newContent = currentContent;
+          if (position === "start") {
+            newContent =
+              content + (currentContent ? "\n\n" + currentContent : "");
+          } else {
+            console.log("Inserting at end");
+
+            newContent =
+              currentContent + (currentContent ? "\n\n" : "") + content;
+          }
+
+          state.currentProject.config.content.sceneLevel = newContent;
+          state._pendingChanges = true;
+        });
+
+        // const currentState = get();
+        // if (!currentState.currentProject.id) return;
+
+        // // Trigger auto-save
+        // saveTimeout = setTimeout(async () => {
+        //   try {
+        //     await dexieDB.updateContent(
+        //       currentState.currentProject.id!,
+        //       "sceneLevel",
+        //       currentState.currentProject.config.content.sceneLevel,
+        //     );
+
+        //     set((state) => {
+        //       state._lastSaveTimestamp = Date.now();
+        //       state._pendingChanges = false;
+        //     });
+        //     toast.success("Scene added successfully");
+        //   } catch (error) {
+        //     toast.error("Failed to save scene");
+        //   }
+        // }, AUTO_SAVE_DELAY);
       },
     })),
     {
