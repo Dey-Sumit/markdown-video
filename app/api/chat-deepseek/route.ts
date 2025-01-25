@@ -2,11 +2,17 @@
 import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
 import { z } from "zod";
-import { CreateSceneConfigSchema, UpdateSceneToolSchema } from "./shared-types";
-import SYSTEM_PROMPT from "@/app/ai/chat-v3/new-system-prompt";
-import updateScene from "./scene-updater";
+// import { CreateSceneConfigSchema, UpdateSceneToolSchema } from "./shared-types";
+import NEW_SYSTEM_PROMPT from "@/app/ai/chat-v3/new-system-prompt";
+import { deepseek } from "@ai-sdk/deepseek";
+import {
+  CreateSceneArgsSchema,
+  UpdateSceneToolSchema__OtherModel,
+  type CreateSceneArgsType,
+} from "../chat-claude/shared-types";
+import updateScene from "../chat-claude/scene-updater";
 
-const model = openai("gpt-4-turbo");
+const model = deepseek("deepseek-chat");
 
 export async function POST(request: Request) {
   const { messages } = await request.json();
@@ -14,32 +20,31 @@ export async function POST(request: Request) {
   const result = streamText({
     model,
     messages,
-    system: SYSTEM_PROMPT,
+    toolCallStreaming: true,
+    system: NEW_SYSTEM_PROMPT,
     abortSignal: request.signal,
     onStepFinish: (step) => {
-      console.log({ step, toolCalls: step.toolCalls });
+      console.log("onStepFinish : ", {
+        toolCalls: step.toolCalls.map((tc) => tc.toolName),
+      });
     },
     tools: {
       createScene: {
-        description: `Create a video scene and add 3 points for improvements.
+        description: `Create a video scene and must add 3 points for improvements.
         Required:
-        - Scene configuration with valid components with unique identifier
+        - Scene configuration with valid components with unique uuid identifier
         - EXACTLY 3 contextual suggestions based on:
           1. Missing/underutilized components
           2. Visual elements (colors, animations, layout)
           3. Timing and flow
         Suggestions must be specific and actionable.`,
-        parameters: CreateSceneConfigSchema,
-        execute: async (
-          sceneConfig: z.infer<typeof CreateSceneConfigSchema>,
-        ) => {
-          const { suggestedImprovements, ...leanSceneConfig } = sceneConfig;
-          console.log("createScene", { sceneConfig });
+        parameters: CreateSceneArgsSchema,
+        execute: async (createSceneConfig: CreateSceneArgsType) => {
+          //   const { ...leanSceneConfig } = sceneConfig;
+          console.log("createScene", { createSceneConfig });
 
           return {
-            sceneId: leanSceneConfig.id,
-            sceneConfig: leanSceneConfig,
-            suggestedImprovements,
+            createSceneConfig,
           };
         },
       },
@@ -68,16 +73,16 @@ export async function POST(request: Request) {
     - Position: 0-100 range
     - Components cannot exceed scene duration`,
 
-        parameters: UpdateSceneToolSchema,
+        parameters: UpdateSceneToolSchema__OtherModel,
         execute: async ({
           id,
           update,
-        }: z.infer<typeof UpdateSceneToolSchema>) => {
-          console.log({
-            id,
-            update: JSON.stringify(update),
-            originalScene: JSON.stringify(update.originalScene),
-          });
+        }: z.infer<typeof UpdateSceneToolSchema__OtherModel>) => {
+          //   console.log({
+          //     id,
+          //     update: JSON.stringify(update),
+          //     originalScene: JSON.stringify(update.originalScene),
+          //   });
 
           const { originalScene, ...updates } = update;
           const updatedScene = updateScene({

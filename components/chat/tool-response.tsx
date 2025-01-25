@@ -1,4 +1,4 @@
-import SceneConfigDisplay from "@/app/ai/chat-v3/scene-config-display";
+import SceneConfigDisplay from "@/app/ai/chat-v3/create-scene-display";
 import type { ToolInvocation } from "ai";
 import { Loader2 } from "lucide-react";
 import { memo } from "react";
@@ -38,10 +38,28 @@ const ToolResponse = memo(
     switch (toolInvocation.toolName) {
       case "createScene":
         return (
-          <SceneConfigDisplay
-            handleAppend={handleAppend}
-            sceneCreateToolResult={toolInvocation.result}
-          />
+          <div className="border p-4">
+            <pre className="text-sm">
+              {JSON.stringify(toolInvocation.result, null, 2)}
+            </pre>
+          </div>
+          // <SceneConfigDisplay
+          //   handleAppend={handleAppend}
+          //   sceneCreateToolResult={toolInvocation.result}
+          // />
+        );
+      case "updateScene":
+        return (
+          <div className="border p-4">
+            <pre className="text-sm">
+              {JSON.stringify(toolInvocation.result, null, 2)}
+            </pre>
+          </div>
+
+          // <SceneConfigDisplay
+          //   handleAppend={handleAppend}
+          //   sceneCreateToolResult={toolInvocation.result}
+          // />
         );
 
       default:
