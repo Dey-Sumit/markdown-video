@@ -32,6 +32,6 @@
     "app/poc/markdown/docs.mdx",
     "lib/config/remotion-deploy.mjs",
     "app/_components/web-vitals.js"
-  ],
+, "node-ai/index.js"  ],
   "exclude": ["node_modules"]
 }
