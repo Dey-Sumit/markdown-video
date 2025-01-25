@@ -2,7 +2,7 @@ import type {
   AIImageComponentType,
   AITextComponentType,
   AITransitionComponentType,
-} from "@/app/api/chat-v3/shared-types";
+} from "@/app/api/chat-claude/shared-types";
 
 interface SceneConfig {
   id: string;

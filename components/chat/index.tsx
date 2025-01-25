@@ -110,11 +110,11 @@ const AIChat = () => {
     stop,
     append,
   } = useChat({
-    api: "/api/chat-v3",
+    api: "/api/chat-claude",
     onToolCall: async ({ toolCall }) => {
-      console.log("Tool Call", toolCall);
+      console.log("Tool Call", toolCall.toolName);
     },
-    maxSteps: 5,
+    maxSteps: 1,
     onFinish: () => setIsStreaming(false),
   });
 
@@ -137,15 +137,18 @@ const AIChat = () => {
 
   return (
     <section className="relative h-full w-full flex-grow rounded-lg border-neutral-800 bg-neutral-950 shadow-sm">
-      <ScrollArea className="h-full p-4 pb-24" ref={scrollAreaRef}>
+      <div
+        className="h-full max-w-full overflow-y-scroll p-4 pb-24"
+        ref={scrollAreaRef}
+      >
         <div className="space-y-4">
           {memoizedMessages.map((m: Message) => (
-            <div key={m.id} className="space-y-0">
+            <div key={m.id} className="space-y-2">
               <ChatLeanMessage message={m} append={append} />
             </div>
           ))}
         </div>
-      </ScrollArea>
+      </div>
 
       <form
         onSubmit={handleFormSubmit}

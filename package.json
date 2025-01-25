@@ -17,6 +17,8 @@
     "test:preview": "vitest --ui --api.port 51204"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^1.1.2",
+    "@ai-sdk/deepseek": "^0.1.3",
     "@ai-sdk/openai": "^1.1.0",
     "@arcjet/ip": "1.0.0-alpha.34",
     "@arcjet/next": "1.0.0-alpha.34",
@@ -71,7 +73,7 @@
     "@types/mdx": "^2.0.13",
     "@vercel/analytics": "^1.4.1",
     "@vercel/functions": "^1.5.2",
-    "ai": "^4.0.22",
+    "ai": "^4.1.4",
     "autoprefixer": "10.4.20",
     "babel-plugin-react-compiler": "19.0.0-beta-df7b47d-20241124",
     "class-variance-authority": "^0.7.1",

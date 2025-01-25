@@ -1,16 +1,19 @@
 import type {
   AISceneConfigType,
   AISceneUpdates,
-  AiSceneUpdatesOriginalScene,
+  AiSceneUpdatesOriginalScene__Claude,
 } from "./shared-types";
 type UpdateSceneInput = {
   id: string;
   updates: AISceneUpdates;
-  originalScene: AiSceneUpdatesOriginalScene;
+  originalScene: AiSceneUpdatesOriginalScene__Claude;
 };
 function updateScene({ id, updates, originalScene }: UpdateSceneInput) {
   const updatedScene = structuredClone(originalScene);
-  console.log("updateScene", { id, updates, originalScene, updatedScene });
+  console.log(
+    "updateScene util function ",
+    JSON.stringify({ id, updates, originalScene }),
+  );
 
   // Update scene props
   if (updates.sceneProps) {
@@ -28,7 +31,7 @@ function updateScene({ id, updates, originalScene }: UpdateSceneInput) {
       switch (update.action) {
         case "add":
           if (!update.content || !update.animation) {
-            throw new Error("Content and animation required for new text");
+            return texts; // NO CHANGE
           }
           texts.push({
             content: update.content,
@@ -39,12 +42,14 @@ function updateScene({ id, updates, originalScene }: UpdateSceneInput) {
 
         case "update": {
           if (!update.id) {
-            throw new Error("Id required for update"); // TODO : we should not throw error here, we should call the LLM again to ask for the index
+            return texts; // NO CHANGE
+            // throw new Error("Id required for update"); // TODO : we should not throw error here, we should call the LLM again to ask for the index
           }
 
           const index = texts.findIndex((t) => t.id === update.id);
           if (index === -1) {
-            throw new Error("Text component not found");
+            return texts; // NO CHANGE
+            // throw new Error("Text component not found");
           }
 
           const { action, ...leanUpdate } = update;
@@ -57,7 +62,8 @@ function updateScene({ id, updates, originalScene }: UpdateSceneInput) {
         }
         case "remove": {
           if (!update.id) {
-            throw new Error("Id required for remove");
+            // throw new Error("Id required for remove");
+            return texts; // NO CHANGE
           }
 
           const index = texts.findIndex((t) => t.id === update.id);

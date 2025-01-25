@@ -18,7 +18,7 @@ const ChatLeanMessage = memo(
         {message.content && (
           <div
             className={cn(
-              "prose prose-neutral max-w-none rounded-md border p-4 text-sm dark:prose-invert",
+              "prose prose-neutral rounded-md border p-4 text-sm dark:prose-invert",
               {
                 "border border-[#1d1d1d50] bg-[#131313]":
                   message.role === "user",
