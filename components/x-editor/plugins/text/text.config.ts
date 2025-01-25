@@ -14,7 +14,7 @@ export const defaultTextArgValues = {
   animationApplyTo: "word",
 };
 
-export const textConfig: AdapterConfig = {
+const textConfig: AdapterConfig = {
   id: "text",
   pattern: {
     type: "component",
@@ -137,7 +137,8 @@ export const textConfig: AdapterConfig = {
         {
           type: "enum",
           message: "Invalid animation type",
-          validate: (value) => AVAILABLE_TEXT_ANIMATIONS.includes(value),
+          validate: (value) =>
+            ["fadeInSlideUp", "fadeInSlideDown", "fadeInOnly"].includes(value),
           severity: "warning",
         },
       ],

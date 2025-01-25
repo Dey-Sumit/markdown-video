@@ -1,6 +1,6 @@
 // text.parser.ts
 import BaseParser from "../../core/base/parser";
-import { textConfig, defaultTextArgValues } from "./text.config";
+import textConfig, { defaultTextArgValues } from "./text.config";
 import type { TextInputProps, TextOutputProps } from "./text.types";
 
 export class TextPropsParser {

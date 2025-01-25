@@ -143,10 +143,10 @@ function XEditor() {
     const registry = new PluginRegistry(monaco);
 
     registry.register(new SceneAdapter(monaco));
-    registry.register(new TextAdapter(monaco));
     registry.register(new TransitionAdapter(monaco));
     registry.register(new CodeAdapter(monaco));
     registry.register(new ImageAdapter(monaco));
+    registry.register(new TextAdapter(monaco));
 
     const highlightAdapter = new HighlightAdapter(monaco);
     registry.register(highlightAdapter);

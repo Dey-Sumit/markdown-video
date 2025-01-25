@@ -7,38 +7,34 @@ const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: "MarkdownVideo",
-  description:
-    "Easily transform Markdown into clean, beautiful code walkthrough videos. Perfect for developers, educators, and content creators. Fast, clean, and seamless!",
-  robots: "follow, index",
-  applicationName: "MarkdownVideo",
-  keywords: [
-    "markdownvideoe",
-    "text video editor",
-    "markdown to video",
-    "code walkthrough",
-    "video generator",
-    "markdown video generator",
-    "code video editor",
-    "markdown editor",
-    "tutorial video tool",
-    "code walkthrough generator",
-    "markdown to code video",
-    "create code walkthrough videos",
-    "developer video editor",
-    "educational video creation",
-    "markdown video creator",
-  ],
-  // twitter: {
-  //   site: "@markdownvideo",
-  //   creator: "@markdownvideo",
-  // },
-  creator: "Sumit Dey",
-  category:
-    "Software Development Tools, Content Creation Tools, Developer Productivity, Video Editing Software, Educational Software",
-};
+// export const metadata: Metadata = {
+//   title: "MarkdownVideo",
+//   description:
+//     "Easily transform Markdown into clean, beautiful code walkthrough videos. Perfect for developers, educators, and content creators. Fast, clean, and seamless!",
+//   robots: "follow, index",
+//   applicationName: "MarkdownVideo",
+//   keywords: [
+//     "markdownvideoe",
+//     "text video editor",
+//     "markdown to video",
+//     "code walkthrough",
+//     "video generator",
+//     "markdown video generator",
+//     "code video editor",
+//     "markdown editor",
+//     "tutorial video tool",
+//     "code walkthrough generator",
+//     "markdown to code video",
+//     "create code walkthrough videos",
+//     "developer video editor",
+//     "educational video creation",
+//     "markdown video creator",
+//   ],
+
+//   creator: "Sumit Dey",
+//   category:
+//     "Software Development Tools, Content Creation Tools, Developer Productivity, Video Editing Software, Educational Software",
+// };
 
 import { Inter } from "next/font/google";
 import type { Metadata } from "next";
@@ -91,7 +87,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Toaster richColors />
-          <Analytics />
+          {/* <Analytics /> */}
           <main className="flex min-h-screen flex-col">
             <>{children}</>
           </main>

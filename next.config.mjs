@@ -21,6 +21,7 @@ const nextConfig = {
       fs: false,
       path: false,
     };
+    config.optimization.minimize = false;
 
     return config;
   },

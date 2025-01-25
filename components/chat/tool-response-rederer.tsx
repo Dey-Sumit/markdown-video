@@ -15,9 +15,6 @@ const ToolResponseRenderer = memo(
     toolInvocation: ToolInvocation;
     // addToolResult: (result: { toolCallId: string; result: any }) => void;
   }) => {
-    console.log({ toolInvocation });
-
-
     const handleAppend = (message: string, data?: any) => {
       append({
         role: "user",

@@ -8,12 +8,4 @@ export class ImageAdapter extends AbstractAdapter {
   constructor(monaco: Monaco) {
     super(monaco, imageConfig);
   }
-
-  matchesPattern(lineContent: string): boolean {
-    return super.matchesPattern(lineContent);
-  }
-
-  provideCompletions(context: CommandContext) {
-    return super.provideCompletions(context);
-  }
 }

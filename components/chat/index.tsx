@@ -468,6 +468,7 @@ const MESSAGES_2 = [
     revisionId: "DAx1AevdhkurNSVq",
   },
 ];
+
 export type ChatAppend = (
   message: Message | CreateMessage,
   chatRequestOptions?: ChatRequestOptions,
@@ -476,8 +477,6 @@ export type ChatAppend = (
 const AIChat = () => {
   const [isStreaming, setIsStreaming] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-
-  const [hardMessages, setHardMessages] = useState(MESSAGES_2);
 
   const {
     messages,
@@ -491,12 +490,11 @@ const AIChat = () => {
   } = useChat({
     api: "/api/chat-claude",
     onToolCall: async ({ toolCall }) => {
-      console.log("Tool Call", toolCall.toolName);
+      // console.log("Tool Call", toolCall.toolName);
     },
     maxSteps: 2,
     onFinish: () => setIsStreaming(false),
   });
-  console.log({ messages });
 
   const handleFormSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -507,8 +505,6 @@ const AIChat = () => {
     [handleSubmit],
   );
 
-  
-
   useEffect(() => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTo({
@@ -516,7 +512,7 @@ const AIChat = () => {
         behavior: "smooth",
       });
     }
-  }, [hardMessages]);
+  }, [messages]);
 
   return (
     <section className="relative h-full w-full flex-grow rounded-lg border-neutral-800 bg-neutral-950 shadow-sm">
@@ -525,7 +521,7 @@ const AIChat = () => {
         ref={scrollAreaRef}
       >
         <div className="space-y-4">
-          {hardMessages.map((m: Message) => (
+          {messages.map((m: Message) => (
             <div key={m.id} className="space-y-2">
               <ChatMessage message={m} append={append} />
             </div>
@@ -561,12 +557,6 @@ const AIChat = () => {
               <Send className="h-4 w-4" />
             )}
           </Button>
-          {/* <button
-            onClick={() => setHardMessages([...hardMessages, ...MESSAGES_2])}
-            className="absolute bottom-0 right-0 rounded-bl-lg bg-neutral-800 p-2 text-neutral-200"
-          >
-            ADD MESSAGES
-          </button> */}
         </div>
       </form>
     </section>

@@ -89,4 +89,4 @@ export const transitionConfig: AdapterConfig = {
     "Transition with the previous scene. If multiple transition added, only the first one will be used.",
 };
 
-export default transitionConfig;
+
