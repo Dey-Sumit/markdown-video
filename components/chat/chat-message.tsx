@@ -3,10 +3,10 @@ import type { Message, ToolInvocation } from "ai";
 import { User, Bot } from "lucide-react";
 import { memo } from "react";
 import ReactMarkdown from "react-markdown";
-import ToolResponse from "./tool-response";
+import ToolResponseRenderer from "./tool-response-rederer";
 import type { ChatAppend } from ".";
 
-const ChatLeanMessage = memo(
+const ChatMessage = memo(
   ({ message, append }: { message: Message; append: ChatAppend }) => (
     <div className={cn("flex items-start gap-3")}>
       {message.role === "user" ? (
@@ -32,7 +32,7 @@ const ChatLeanMessage = memo(
         )}
 
         {message.toolInvocations?.map((toolInvocation: ToolInvocation) => (
-          <ToolResponse
+          <ToolResponseRenderer
             key={toolInvocation.toolCallId}
             toolInvocation={toolInvocation}
             append={append}
@@ -42,6 +42,6 @@ const ChatLeanMessage = memo(
     </div>
   ),
 );
-ChatLeanMessage.displayName = "ChatMessage";
+ChatMessage.displayName = "ChatMessage";
 
-export default ChatLeanMessage;
+export default ChatMessage;

@@ -1,10 +1,11 @@
 import SceneConfigDisplay from "@/app/ai/chat-v3/create-scene-display";
 import type { ToolInvocation } from "ai";
 import { Loader2 } from "lucide-react";
-import { memo } from "react";
+import { memo, useState } from "react";
 import type { ChatAppend } from ".";
+import CreateScene from "./tool-response/create-scene";
 
-const ToolResponse = memo(
+const ToolResponseRenderer = memo(
   ({
     toolInvocation,
 
@@ -15,6 +16,7 @@ const ToolResponse = memo(
     // addToolResult: (result: { toolCallId: string; result: any }) => void;
   }) => {
     console.log({ toolInvocation });
+
 
     const handleAppend = (message: string, data?: any) => {
       append({
@@ -38,11 +40,7 @@ const ToolResponse = memo(
     switch (toolInvocation.toolName) {
       case "createScene":
         return (
-          <div className="border p-4">
-            <pre className="text-sm">
-              {JSON.stringify(toolInvocation.result, null, 2)}
-            </pre>
-          </div>
+          <CreateScene toolInvocation={toolInvocation} />
           // <SceneConfigDisplay
           //   handleAppend={handleAppend}
           //   sceneCreateToolResult={toolInvocation.result}
@@ -67,6 +65,6 @@ const ToolResponse = memo(
     }
   },
 );
-ToolResponse.displayName = "ToolResponse";
+ToolResponseRenderer.displayName = "ToolResponse";
 
-export default ToolResponse;
+export default ToolResponseRenderer;
