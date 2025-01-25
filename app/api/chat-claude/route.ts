@@ -1,5 +1,3 @@
-// import SYSTEM_PROMPT from "@/app/ai/chat-v3/system-prompt";
-import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
 import { z } from "zod";
 import {
@@ -11,8 +9,10 @@ import SYSTEM_PROMPT from "@/app/ai/chat-v3/system-prompt-claude";
 import updateScene from "./scene-updater";
 import { anthropic } from "@ai-sdk/anthropic";
 import { attachIdsToScenes } from "./utils";
+import { deepseek } from "@ai-sdk/deepseek";
 
-const model = anthropic("claude-3-5-sonnet-latest");
+const model = deepseek("deepseek-chat");
+// const model = anthropic("claude-3-5-sonnet-latest");
 // const model = openai("gpt-4-turbo");
 
 export async function POST(request: Request) {
@@ -25,6 +25,9 @@ export async function POST(request: Request) {
     abortSignal: request.signal,
     onStepFinish: (step) => {
       console.log({ toolCalls: step.toolCalls.map((tc) => tc.toolName) });
+    },
+    experimental_providerMetadata: {
+      anthropic: { cacheControl: { type: "ephemeral" } },
     },
     tools: {
       createScene: {
