@@ -21,8 +21,10 @@ export const FontPicker = ({
     async (value: string) => {
       const selectedFont = top25GoogleFonts.find((f) => f.family === value);
       if (!selectedFont) return;
+      console.log("Selected Font", selectedFont);
 
       const loaded = await selectedFont.load();
+console.log("Selected Font ", selectedFont, " Loaded ", loaded);
 
       const { fontFamily, ...otherInfo } = loaded.loadFont();
 

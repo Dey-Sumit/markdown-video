@@ -57,7 +57,7 @@ export function CreateProjectDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-        <div className="group flex h-full min-h-52 w-full gap-y-2 rounded-lg border border-dashed border-gray-300 bg-gray-100 p-1 hover:border-gray-400 focus:border-gray-400 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600 dark:focus:border-neutral-600">
+        <div className="group flex h-full min-h-52 w-full gap-y-2 rounded-lg border border-dashed border-gray-300 bg-gray-100 p-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600 dark:focus:border-neutral-600">
           <div className="flex h-full min-h-40 w-full flex-col items-center justify-center rounded-md bg-white shadow-sm dark:bg-neutral-900">
             <svg
               className="size-7 shrink-0 text-primary dark:text-primary"

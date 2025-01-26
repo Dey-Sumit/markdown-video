@@ -17,11 +17,7 @@ const SceneRenderer = ({
 }) => {
   return (
     <div className="relative rounded-[4px] bg-neutral-900/50 p-2 text-sm">
-      <div className="">
-        <div>
-          <pre>{JSON.stringify(scene, null, 2)}</pre>
-        </div>
-      </div>
+      <pre>{JSON.stringify(scene, null, 2)}</pre>
     </div>
   );
 };

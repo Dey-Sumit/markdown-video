@@ -14,11 +14,12 @@ import { useVideoConfig } from "remotion";
 
 import ComponentLayoutRenderer from "./components/compone-layout-renderer";
 import { sectionParser } from "@/parsers/SectionParser";
-import Section from "./components/composition-section";
+import Section from "./components/_composition-section";
 import type { SceneOutputProps } from "@/components/x-editor/plugins/scene/scene.types";
 import CompositionTextRenderer from "./components/composition-text";
 import CodeBlockRenderer from "./components/composition-code";
 import CompositionImageRenderer from "./components/composition-image";
+import CompositionSectionRenderer from "./components/composition-section-renderer";
 
 const { fontFamily } = loadFont();
 
@@ -76,12 +77,17 @@ function BaseSlide({
   const { fps } = useVideoConfig();
   // const media = scene.media ? propsParser.media(scene.media) : null;
 
-  // TODO : we can put this logic and all inside the ComponentLayoutRenderer
-  // const contentLayout = propsParser.contentLayout(scene.contentLayout || "");
-  // const section = propsParser.contentLayout(scene.contentLayout || "");
-  const sectionArgs = scene.section;
-  const section = sectionParser.parse(`!section ${sectionArgs}`);
-  // const codeBlockProps =
+  // // TODO : we can put this logic and all inside the ComponentLayoutRenderer
+  // // const contentLayout = propsParser.contentLayout(scene.contentLayout || "");
+  // // const section = propsParser.contentLayout(scene.contentLayout || "");
+  // const sectionArgs = scene.section;
+  // const section = sectionParser.parse(`!section ${sectionArgs}`);
+  // // const codeBlockProps =
+
+  // console.log("code-video-composition/composition-slide.tsx", {
+  //   scene,
+  //   section,
+  // });
 
   return (
     <div
@@ -120,6 +126,11 @@ function BaseSlide({
       <CompositionImageRenderer
         value={scene.image}
         sceneDurationInFrames={sceneProps.durationInFrames}
+      />
+
+      <CompositionSectionRenderer
+        sceneDurationInFrames={sceneProps.durationInFrames}
+        value={scene.section}
       />
 
       {/*       {media?.src && (

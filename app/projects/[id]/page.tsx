@@ -45,11 +45,11 @@ function Page() {
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={50}>
               <ResizablePanelGroup direction="vertical">
-                <ResizablePanel defaultSize={50} minSize={20}>
+                <ResizablePanel defaultSize={80} minSize={20}>
                   <ClientXPlayer />
                 </ResizablePanel>
                 <ResizableHandle withHandle />
-                <ResizablePanel defaultSize={50} minSize={20}>
+                <ResizablePanel defaultSize={20} minSize={20}>
                   <AIChat />
                 </ResizablePanel>
               </ResizablePanelGroup>

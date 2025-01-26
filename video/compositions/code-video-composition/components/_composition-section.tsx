@@ -23,7 +23,7 @@ const Section = ({ data }: SectionProps) => {
 
   return (
     <div
-      className="h-full w-full text-white"
+      className="h-full w-full"
       style={{
         display: "grid",
         gridTemplateColumns: cols ? `repeat(${cols}, 1fr)` : "auto",
@@ -37,7 +37,6 @@ const Section = ({ data }: SectionProps) => {
           case "section":
             return <Section key={index} type="section" data={item.data} />;
           case "text": {
-
             return (
               <div
                 className="relative rounded-md border border-gray-100/20"

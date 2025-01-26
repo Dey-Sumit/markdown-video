@@ -30,7 +30,8 @@ import { TransitionAdapter } from "./plugins/transition/transition.adapter";
 import { CodeAdapter } from "./plugins/code/code.adapter";
 import { HighlightAdapter } from "./plugins/highlight/highlight.adapter";
 import FloatingEditButton from "./components/floating-button";
-import { ImageAdapter } from "./plugins/image/adapter";
+import { ImageAdapter } from "./plugins/image/image.adapter";
+import { SectionAdapter } from "./plugins/section/section.adapter";
 // import { configureCompletions } from "./utils/configure-autocompletion";
 
 const files = ["Scenes", "Global"] as const;
@@ -147,6 +148,7 @@ function XEditor() {
     registry.register(new CodeAdapter(monaco));
     registry.register(new ImageAdapter(monaco));
     registry.register(new TextAdapter(monaco));
+    registry.register(new SectionAdapter(monaco));
 
     const highlightAdapter = new HighlightAdapter(monaco);
     registry.register(highlightAdapter);

@@ -41,7 +41,7 @@ const ProjectsList = () => {
       {projects.map((project) => (
         <div
           key={project.id}
-          className="flex min-h-52 cursor-pointer flex-col rounded-lg border border-gray-200 bg-gray-100 p-1 dark:border-neutral-700 dark:bg-neutral-800"
+          className="flex min-h-52 cursor-pointer flex-col rounded-lg border border-gray-200 bg-gray-100 p-2 dark:border-neutral-700 dark:bg-neutral-800"
         >
           <Link href={`/projects/${project.id}`} key={project.id}>
             <div className="flex h-full min-h-40 flex-col justify-between rounded-md bg-white p-4 shadow-sm dark:bg-neutral-900">
