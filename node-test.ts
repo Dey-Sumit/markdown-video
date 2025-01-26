@@ -62,11 +62,18 @@ function formatScene(lines: string[]): string {
   const sceneHeader = formatSceneLine(lines[0]);
   formattedLines.push(sceneHeader);
 
-  // Format the rest of the lines with indentation
+  // Format the rest of the lines
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i].trim();
-    if (line) {
-      formattedLines.push("  " + line); // Indent non-empty lines
+    if (!line) continue; // Skip empty lines
+
+    if (line.startsWith("!section")) {
+      // Handle nested sections
+      const formattedSection = formatSectionBlock(line, 1);
+      formattedLines.push(...formattedSection);
+    } else {
+      // Handle other components (e.g., !text)
+      formattedLines.push("  " + line);
     }
   }
 
@@ -96,11 +103,6 @@ function extractNestedSection(content: string): string {
   console.log(`Extracted Content: ${result}`); // Debug log
   return result;
 }
-
-const input = `
-# !scene --duration=5 --title=scene
-!section --cols=2 --rows=2 --items=(!section --cols=1 --rows=1 --items=(!text --content="Nested" --size=30 !text --content="Text" --size=30) !text --content="Main" --size=40)
-`;
 
 function splitComponents(content: string): string[] {
   const components: string[] = [];
@@ -179,4 +181,13 @@ function formatSectionBlock(content: string, level: number): string[] {
 
 const nestedContent = `!section --cols=1 --rows=1 --items=(!text --content="Nested" --size=30 !text --content="Text" --size=30)`;
 
-console.log(formatSectionBlock(nestedContent, 1).join("\n"));
+// console.log(formatSectionBlock(nestedContent, 1).join("\n"));
+
+const input = `
+# !scene --duration=5 --title=scene1
+!section --cols=2 --rows=2 --items=(!section --cols=1 --rows=1 --items=(!text --content="Nested1" --size=30 !text --content="Text1" --size=30) !text --content="Main1" --size=40)
+
+# !scene --duration=10 --title=scene2
+!section --cols=3 --rows=3 --items=(!text --content="Main2" --size=50)
+`;
+console.log(formatDocument(input));
