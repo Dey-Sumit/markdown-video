@@ -511,7 +511,7 @@ const Wrapper = ({
 
 export const CompositionText = ({
   animationType = "none",
-  text = "Hello, This is the next step",
+  text = "Add Content",
   applyTo = "word",
   delay = 0, // Delay for the entire animation to start
   color = "white",

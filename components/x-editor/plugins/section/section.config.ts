@@ -4,6 +4,7 @@ export const defaultSectionArgValues = {
   cols: 1,
   rows: 1,
   gap: 16,
+  items: [],
 };
 
 const sectionConfig: AdapterConfig = {
@@ -81,9 +82,26 @@ const sectionConfig: AdapterConfig = {
           severity: "error",
         },
         {
-          type: "pattern",
+          type: "custom",
           message: "Items must be wrapped in parentheses",
-          pattern: "^\\(.*\\)$",
+          validate: (value) => {
+            console.log("validate", value);
+
+            // Handle multi-line item lists and nested sections
+            const trimmedValue = value.trim();
+            if (!trimmedValue.startsWith("(") || !trimmedValue.endsWith(")")) {
+              return false;
+            }
+
+            // Count parentheses to ensure proper nesting
+            let depth = 0;
+            for (const char of trimmedValue) {
+              if (char === "(") depth++;
+              if (char === ")") depth--;
+              if (depth < 0) return false;
+            }
+            return depth === 0;
+          },
           severity: "error",
         },
       ],

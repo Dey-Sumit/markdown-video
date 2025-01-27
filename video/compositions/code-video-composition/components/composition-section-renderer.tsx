@@ -1,32 +1,33 @@
-import sectionParser from "@/components/x-editor/plugins/section/section.parser";
+// import sectionParser from "@/components/x-editor/plugins/section/section.parser";
 import React from "react";
 import CompositionTextRenderer, { CompositionText } from "./composition-text";
 import CompositionImageRenderer from "./composition-image";
-import type { Section } from "@/components/x-editor/plugins/section/section.types";
+import type { SectionOutputProps } from "@/components/x-editor/plugins/section/section.types";
+import parseCustomMarkup from "@/components/x-editor/plugins/section/section.parser-new";
+import sectionWrapperParser from "@/components/x-editor/plugins/section/section.parser-new";
 
 const CompositionSectionRenderer = ({
   value,
   sceneDurationInFrames,
 }: {
-  value: string[];
+  value: string[] | undefined;
   sceneDurationInFrames: number;
 }) => {
-  console.log("SectionRenderer : ", value, sceneDurationInFrames);
-  const { data: sectionData } = sectionParser.parse(value[0]);
-  console.log("SectionRendererParsedProps : ", sectionData);
-  if (!sectionData) return null;
+  if (!value) return null;
 
-  return <Section sectionData={sectionData} />;
+  const data = sectionWrapperParser.parse(`!section ${value[0]}`);
+  if (!data) return null;
+  return <Section sectionData={data} />;
 };
 
 export default CompositionSectionRenderer;
 
-const Section = ({ sectionData }: { sectionData: Section }) => {
-  const { cols, rows, footer, header, gap = 0, items } = sectionData.data;
+const Section = ({ sectionData }: { sectionData: SectionOutputProps }) => {
+  const { cols, rows, footer, header, gap = 0, items = [] } = sectionData;
 
   return (
     <div
-      className="h-full w-full border-8"
+      className="h-full w-full"
       style={{
         display: "grid",
         gridTemplateColumns: cols ? `repeat(${cols}, 1fr)` : "auto",
@@ -36,7 +37,7 @@ const Section = ({ sectionData }: { sectionData: Section }) => {
     >
       {items.map((item, index) => {
         switch (item.type) {
-          case "section":
+          case "section": {
             return (
               <Section
                 key={index}
@@ -47,14 +48,17 @@ const Section = ({ sectionData }: { sectionData: Section }) => {
                 // sceneDurationInFrames={sceneDurationInFrames}
               />
             );
+          }
           case "text": {
-            const textProps = item.data;
+            // const textProps = item.data;
 
             return (
-              <div className="relative border-8 border-red-800" key={index}>
+              <div className="relative border-2 border-red-800" key={index}>
                 <CompositionText
-                  text={textProps.content}
-                  color={textProps.color}
+                  text={item.content}
+                  color={item.color}
+                  animationType={item.animation}
+                  delay={item.delay}
                 />
               </div>
             );

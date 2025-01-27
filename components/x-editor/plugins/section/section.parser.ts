@@ -1,166 +1,102 @@
 import BaseParser from "../../core/base/parser";
-import sectionConfig, { defaultSectionArgValues } from "./section.config";
-import type { Section, Component, SectionInputProps } from "./section.types";
 
-export class SectionParser {
-  private baseParser: BaseParser<SectionInputProps>;
+interface SectionData {
+  cols?: number;
+  rows?: number;
+  direction?: "row" | "column";
+  gap?: number;
+  items: any[];
+}
 
-  constructor() {
-    this.baseParser = new BaseParser(sectionConfig, defaultSectionArgValues);
-  }
+export class SectionPropsParser {
+  parse(input: string): { data: SectionData } {
+    // Remove !section prefix if present
+    const content = input.startsWith("!section") ? input.slice(8) : input;
 
-  parse(input: string): {
-    data: Section;
-    errors?: string[];
-  } {
-    try {
-      // First pass: parse the section properties
-      const { data: sectionData } = this.baseParser.parse(input);
-      console.log("parse sectionData", sectionData);
+    const section: SectionData = {
+      cols: undefined,
+      rows: undefined,
+      direction: "row",
+      gap: 0,
+      items: [],
+    };
 
-      // Extract items string from the input
-      const itemsMatch = input.match(/--items=\((.*)\)/s);
-      if (!itemsMatch) {
-        return {
-          data: this.createSection(sectionData, []),
-          errors: ["No items found in section"],
-        };
-      }
-
-      // Parse the items
-      const items = this.parseItems(itemsMatch[1]);
-
-      return {
-        data: this.createSection(sectionData, items),
-      };
-    } catch (error) {
-      return {
-        data: this.createEmptySection(),
-        errors: [(error as Error).message],
-      };
+    // Extract properties before items
+    const propsMatch = content.match(/--(\w+)=([^(\s]+)/g);
+    if (propsMatch) {
+      propsMatch.forEach((prop) => {
+        const [key, value] = prop.replace("--", "").split("=");
+        if (key === "cols" || key === "rows" || key === "gap") {
+          section[key] = parseInt(value);
+        } else if (key === "direction") {
+          section[key] = value as "row" | "column";
+        }
+      });
     }
+
+    // Extract items between parentheses
+    const itemsMatch = content.match(/--items=\(([\s\S]*)\)/);
+    if (itemsMatch) {
+      section.items = this.parseItems(itemsMatch[1]);
+    }
+
+    return { data: section };
   }
 
-  private createSection(data: SectionInputProps, items: Component[]): Section {
-    return {
-      type: "section",
-      id: this.baseParser.generateId(),
-      data: {
-        ...data,
-        items,
-      },
-    };
-  }
-
-  private createEmptySection(): Section {
-    return {
-      type: "section",
-      id: this.baseParser.generateId(),
-      data: {
-        ...defaultSectionArgValues,
-        items: [],
-      },
-    };
-  }
-
-  private parseItems(input: string): Component[] {
-    const items: Component[] = [];
-    let currentItem = "";
+  private parseItems(input: string): any[] {
+    const items: any[] = [];
+    let current = "";
     let depth = 0;
 
-    // Split items handling nested parentheses
     for (let i = 0; i < input.length; i++) {
       const char = input[i];
 
-      // Track nested structure depth
       if (char === "(") depth++;
       if (char === ")") depth--;
 
-      // Only split on commas at the root level
-      if (char === "," && depth === 0) {
-        if (currentItem.trim()) {
-          const item = this.parseItem(currentItem.trim());
-          if (item) items.push(item);
-        }
-        currentItem = "";
+      if (char === "\n" && depth === 0 && current.trim()) {
+        items.push(this.parseItem(current.trim()));
+        current = "";
       } else {
-        currentItem += char;
+        current += char;
       }
     }
 
-    // Handle last item
-    if (currentItem.trim()) {
-      const item = this.parseItem(currentItem.trim());
-      if (item) items.push(item);
+    if (current.trim()) {
+      items.push(this.parseItem(current.trim()));
     }
 
     return items;
   }
 
-  private parseItem(input: string): Component | null {
-    // Early return for empty input
-    if (!input) return null;
-
-    // Handle nested sections
+  private parseItem(input: string): any {
     if (input.startsWith("!section")) {
-      return this.parse(input).data;
+      return new SectionPropsParser().parse(input).data;
     }
 
-    // Handle other component types
-    const componentMatch = input.match(/!([\w]+)\s*(.*)/);
-    if (!componentMatch) return null;
+    // Parse text component
+    if (input.startsWith("!text")) {
+      const props: any = {};
+      const matches = input.matchAll(/--(\w+)=(?:"([^"]*)"|([^"\s]*))/g);
 
-    const [, type, propsString] = componentMatch;
+      for (const match of matches) {
+        const [, key, quotedValue, unquotedValue] = match;
+        props[key] = quotedValue ?? unquotedValue;
 
-    return {
-      type: type as Component["type"],
-      data: this.parseComponentProps(propsString),
-    };
-  }
-
-  private parseComponentProps(input: string): Record<string, any> {
-    const props: Record<string, any> = {};
-    const matches = input.matchAll(
-      /--(\w+)=([^,\s()]+|"[^"]*"|'[^']*'|\([^)]*\))/g,
-    );
-
-    for (const [, key, value] of matches) {
-      props[key] = this.processValue(value);
-    }
-
-    return props;
-  }
-
-  private processValue(value: string): any {
-    // Remove surrounding quotes if present
-    value = value.replace(/^["']|["']$/g, "");
-
-    // Handle numbers
-    if (/^\d+$/.test(value)) return Number(value);
-    if (/^\d*\.\d+$/.test(value)) return parseFloat(value);
-
-    // Handle booleans
-    if (value === "true") return true;
-    if (value === "false") return false;
-
-    // Handle arrays (if needed)
-    if (value.startsWith("[") && value.endsWith("]")) {
-      try {
-        return JSON.parse(value);
-      } catch {
-        return value;
+        if (key === "size") {
+          props[key] = parseInt(props[key]);
+        }
       }
+
+      return {
+        type: "text",
+        ...props,
+      };
     }
 
-    // Handle nested parentheses content
-    if (value.startsWith("(") && value.endsWith(")")) {
-      return this.parseItems(value.slice(1, -1));
-    }
-
-    return value;
+    return input; // Return raw string for unknown types
   }
 }
 
-// Create singleton instance
-const sectionParser = new SectionParser();
+const sectionParser = new SectionPropsParser();
 export default sectionParser;

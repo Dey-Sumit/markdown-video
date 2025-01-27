@@ -21,7 +21,7 @@ export const imageConfig: AdapterConfig = {
   description:
     "Add an image to the scene with optional animations and styling.",
   template:
-    'image --src="${1:path/to/image.jpg}" --width=${2:400} --height=${3:300}',
+    'image --src="${1:https://fakeimg.pl/450x400/?text=DUMMY-IMAGE}" --width=${2:400} --height=${3:300}',
   arguments: {
     src: {
       name: "src",

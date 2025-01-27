@@ -1,34 +1,17 @@
 // section.types.ts
+
+import type { TextOutputProps } from "../text/text.types";
+
 export interface SectionInputProps {
-  cols?: number;
-  rows?: number;
-  gap?: number;
+  cols: number;
+  rows: number;
+  gap: number;
+  items: string; // Raw items string with parentheses
   header?: string;
   footer?: string;
 }
 
-export interface SectionOutputProps
-  extends Required<Omit<SectionInputProps, "header" | "footer">> {
-  header?: string;
-  footer?: string;
-}
-
-export interface ComponentBase {
-  type: string;
-  data: Record<string, any>;
-}
-
-export interface Section extends ComponentBase {
-  type: "section";
+export interface SectionOutputProps extends Omit<SectionInputProps, "items"> {
   id: string;
-  data: SectionOutputProps & {
-    items: Component[];
-  };
-}
-
-export type Component = Section | ComponentBase;
-
-export interface ParserResult<T> {
-  data: T;
-  errors?: string[];
+  items: (SectionOutputProps | TextOutputProps)[]; // Will be populated later
 }

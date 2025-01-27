@@ -20,10 +20,8 @@ const BaseSchema = z.object({
   code: z.array(HighlightedCodeBlock).optional().default([]),
   font: z.array(z.string()).optional().default([]),
   transition: z.array(z.string()).optional(),
-  codeBlockUtils: z.array(z.string()).optional().default([]),
   image: z.array(z.string()).optional().default([]),
   text: z.array(z.string()).optional().default([]),
-  contentLayout: z.array(z.string()).optional().default([]),
   section: z.array(z.string()).optional().default([]),
 });
 export const SceneSchema = Block.extend(BaseSchema.shape);
