@@ -20,8 +20,6 @@ export abstract class AbstractAdapter implements BaseAdapter {
     public readonly config: AdapterConfig,
   ) {}
 
-  
-
   provideCompletions(context: CommandContext): languages.CompletionItem[] {
     const type = this.getCompletionType(context);
     if (!type) return [];
@@ -326,14 +324,81 @@ export abstract class AbstractAdapter implements BaseAdapter {
     };
   }
 
+  protected getBlockContent(
+    model: editor.ITextModel,
+    startLine: number,
+  ): {
+    content: string;
+    startLine: number;
+    endLine: number;
+  } | null {
+    const lineCount = model.getLineCount();
+    let content = "";
+    let endLine = startLine;
+    let depth = 0;
+
+    // Get first line
+    const firstLine = model.getLineContent(startLine);
+    content += firstLine;
+
+    // Find opening parenthesis
+    const openParenIndex = firstLine.indexOf("(");
+    if (openParenIndex === -1) return null;
+
+    // Count initial parentheses
+    for (const char of firstLine.slice(openParenIndex)) {
+      if (char === "(") depth++;
+      if (char === ")") depth--;
+    }
+
+    // Continue reading lines until we find the matching closing parenthesis
+    for (let i = startLine + 1; i <= lineCount && depth > 0; i++) {
+      const line = model.getLineContent(i);
+      content += "\n" + line;
+
+      for (const char of line) {
+        if (char === "(") depth++;
+        if (char === ")") depth--;
+      }
+
+      endLine = i;
+      if (depth === 0) break;
+    }
+
+    return {
+      content,
+      startLine,
+      endLine,
+    };
+  }
+
+  protected createMultiLineRange(
+    startLine: number,
+    endLine: number,
+    model: editor.ITextModel,
+  ): IRange {
+    return {
+      startLineNumber: startLine,
+      endLineNumber: endLine,
+      startColumn: 1,
+      endColumn: model.getLineMaxColumn(endLine),
+    };
+  }
+
   provideDiagnostics(context: CommandContext): editor.IMarkerData[] {
     if (!this.matchesPattern(context.lineContent)) return [];
 
-    const args = this.parseArguments(context.lineContent);
+    // Allow components to override validation behavior
+    const customValidation = this.validateComponent?.(context);
+    if (customValidation) {
+      return customValidation;
+    }
 
+    // Default validation behavior
+    const args = this.parseArguments(context.lineContent);
     const markers: editor.IMarkerData[] = [];
 
-    // Important: Also check for required args that aren't present
+    // Check required args
     for (const [argName, argConfig] of Object.entries(this.config.arguments)) {
       if (
         argConfig.validations?.some((v) => v.type === "required") &&
@@ -366,6 +431,10 @@ export abstract class AbstractAdapter implements BaseAdapter {
 
     return markers;
   }
+
+  protected validateComponent?(
+    context: CommandContext,
+  ): editor.IMarkerData[] | null;
 
   protected getHoverType(
     word: string,
