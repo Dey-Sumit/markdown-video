@@ -2,22 +2,15 @@
 
 import { useMdxProcessor } from "@/hooks/codehike/useMDXProcessor";
 import { Editor, type Monaco, type OnMount } from "@monaco-editor/react";
-import { editor, type IDisposable, type IKeyboardEvent } from "monaco-editor";
+import { editor, type IKeyboardEvent } from "monaco-editor";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { monacoCustomOptions } from "./editor-config";
 import { useEditorShortcuts } from "./hooks/use-editor-shortcuts";
 import { monacoCustomTheme } from "./theme";
 
-// import { provideCodeActions } from "./utils/quick-fixes";
-import {
-  configureJSX,
-  configureKeyboardShortcuts,
-  configureLinting,
-} from "./utils";
-
-import { configureSnippets } from "./utils/snippets";
+// import { configureSnippets } from "./utils/snippets";
+// import { provideCodeActions } from "./utils/code-action/code-action.new";
 import CommandMenu, { type Position } from "./command-menu";
-import { provideCodeActions } from "./utils/code-action/code-action.new";
 import { useProjectStore } from "@/store/project-store";
 import { useParams } from "next/navigation";
 import { EDITOR_LANGUAGE } from "./const";
@@ -29,10 +22,8 @@ import { TextAdapter } from "./plugins/text/text.adapter";
 import { TransitionAdapter } from "./plugins/transition/transition.adapter";
 import { CodeAdapter } from "./plugins/code/code.adapter";
 import { HighlightAdapter } from "./plugins/highlight/highlight.adapter";
-import FloatingEditButton from "./components/floating-button";
 import { ImageAdapter } from "./plugins/image/image.adapter";
 import { SectionAdapter } from "./plugins/section/section.adapter";
-// import { configureCompletions } from "./utils/configure-autocompletion";
 
 const files = ["Scenes", "Global"] as const;
 type FileName = (typeof files)[number];
@@ -47,53 +38,17 @@ function XEditor() {
 
   const { currentProject, updateContent, loadProject } = useProjectStore();
 
-  const [editorInstance, setEditorInstance] =
-    useState<editor.IStandaloneCodeEditor | null>(null);
-
   const {
-    config: { content, styles },
+    config: { content },
   } = currentProject;
 
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
-  const activeDecorationsRef = useRef<string[]>([]); // Add this ref
   const [showCommandMenu, setShowCommandMenu] = useState(false);
   const [menuPosition, setMenuPosition] = useState<Position>({
     top: 0,
     left: 0,
   });
-
-  // Add this function at component level
-  const updateDecorations = useCallback(() => {
-    const editor = editorRef.current;
-    const monaco = monacoRef.current;
-    if (!editor || !monaco) return;
-
-    const model = editor.getModel();
-    if (!model) return;
-
-    const decorations: editor.IModelDeltaDecoration[] = [];
-    const lineCount = model.getLineCount();
-
-    for (let lineNumber = 1; lineNumber <= lineCount; lineNumber++) {
-      const lineContent = model.getLineContent(lineNumber);
-      if (lineContent.includes("!!scene")) {
-        decorations.push({
-          range: new monaco.Range(lineNumber, 1, lineNumber, 1),
-          options: {
-            isWholeLine: true,
-            className: "scene-line-highlight",
-            marginClassName: "scene-line-margin",
-          },
-        });
-      }
-    }
-
-    activeDecorationsRef.current = editor.deltaDecorations(
-      activeDecorationsRef.current,
-      decorations,
-    );
-  }, []);
 
   useMdxProcessor();
   useEditorShortcuts({
@@ -134,8 +89,6 @@ function XEditor() {
   const handleEditorMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
     monacoRef.current = monaco;
-
-    setEditorInstance(editor);
 
     monaco.editor.defineTheme("custom", monacoCustomTheme);
     monaco.editor.setTheme("custom");
@@ -219,7 +172,7 @@ function XEditor() {
         <div className="relative z-10 flex h-full flex-col">
           <div className="flex justify-between gap-2 border-b bg-black">
             <div>
-              {files.map((fileName, index) => (
+              {files.map((fileName) => (
                 <Button
                   key={fileName}
                   variant="outline"

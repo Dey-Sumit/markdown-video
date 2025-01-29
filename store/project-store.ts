@@ -20,7 +20,7 @@ interface InsertSceneOptions {
 
 interface ProjectState {
   currentProject: {
-    id: string | null;
+    id: string;
     meta: {
       title: string;
       description: string;
@@ -51,7 +51,6 @@ interface ProjectActions {
   updateStyles: (styles: ProjectStyles) => void;
   updateScenes: (scenes: Scene[]) => void;
   setDuration: (duration: number) => void;
-  clearCurrentProject: () => void;
   insertScene: (options: InsertSceneOptions) => void;
 }
 
@@ -63,7 +62,7 @@ export const useProjectStore = create<ProjectStore>()(
   devtools(
     immer((set, get) => ({
       currentProject: {
-        id: null,
+        id: "initial",
         meta: {
           title: "",
           description: "",
@@ -175,7 +174,8 @@ export const useProjectStore = create<ProjectStore>()(
             });
             toast.success("Changes saved");
           } catch (error) {
-            toast.error("Failed to save changes");
+            const _error = error as Error;
+            toast.error(`Failed to save changes: ${_error.message}`);
           }
         }, AUTO_SAVE_DELAY);
       },
@@ -207,12 +207,15 @@ export const useProjectStore = create<ProjectStore>()(
             });
             toast.success("Styles saved");
           } catch (error) {
-            toast.error("Failed to save styles");
+            const _error = error as Error;
+            toast.error(`Failed to save styles: ${_error.message}`);
           }
         }, AUTO_SAVE_DELAY);
       },
 
       updateScenes: (scenes: Scene[]) => {
+        console.log("Updating scenes", scenes);
+
         set((state) => {
           state.currentProject.scenes = scenes;
           state.currentProject.durationInFrames =
@@ -247,39 +250,10 @@ export const useProjectStore = create<ProjectStore>()(
             });
             toast.success("Duration updated");
           } catch (error) {
-            toast.error("Failed to update duration");
+            const _error = error as Error;
+            toast.error(`Failed to update duration: ${_error.message}`);
           }
         }, AUTO_SAVE_DELAY);
-      },
-
-      clearCurrentProject: () => {
-        if (saveTimeout) {
-          clearTimeout(saveTimeout);
-        }
-
-        set((state) => {
-          state.currentProject = {
-            id: null,
-            meta: {
-              title: "",
-              description: "",
-              category: "",
-            },
-            config: {
-              content: {
-                global: "",
-                sceneLevel: "",
-              },
-              styles: DEFAULT_COMPOSITION_STYLES,
-            },
-            scenes: [],
-            durationInFrames: FALLBACK_DURATION_IN_FRAMES,
-            createdAt: new Date(),
-            lastModified: new Date(),
-          };
-          state.error = null;
-          state._pendingChanges = false;
-        });
       },
 
       insertScene: (options: InsertSceneOptions) => {

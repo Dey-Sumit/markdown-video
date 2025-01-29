@@ -22,9 +22,12 @@ export const calculateCompositionDuration = (
     );
 
     const transitionDurationInFrames =
-      transitionProps.type && transitionProps.type !== "magic"
+      transitionProps.type &&
+      transitionProps.type !== "magic" &&
+      transitionProps.type !== "none"
         ? convertSecondsToFramerate(transitionProps.duration, fps)
         : 0;
+    console.log({ transitionDurationInFrames });
 
     return acc + sceneProps.durationInFrames - transitionDurationInFrames;
   }, 0);
