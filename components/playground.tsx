@@ -12,7 +12,7 @@ import SparklesText from "./sparkle-text";
 import { RainbowButton } from "./ui/rainbow-button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MinimalDocs from "./minimal-docs";
-import { Brush, ChefHat } from "lucide-react";
+import { Brush } from "lucide-react";
 
 const Playground = () => {
   const isMobile = useIsMobile();

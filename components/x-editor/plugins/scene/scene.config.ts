@@ -1,4 +1,4 @@
-// components/x-editor/plugins/scene/config.ts
+// components/x-editor/plugins/scene/config-1.ts
 
 import type { AdapterConfig } from "../../core/types/adapter.type";
 

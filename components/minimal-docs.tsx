@@ -1,5 +1,6 @@
 import React from "react";
-import Content from "../app/poc/markdown/new-docs.mdx";
+import Content from "../app/minimal-docs.mdx";
+// import Content from "../app/poc/markdown/new-docs.mdx";
 const MinimalDocs = () => {
   return (
     <article className="prose prose-invert mx-auto max-w-4xl p-4">

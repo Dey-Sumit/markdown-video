@@ -10,7 +10,7 @@ const CODE_ALIGN_VALUES = ["top", "center"] as const;
 
 export type CodeAlignValues = (typeof CODE_ALIGN_VALUES)[number];
 
-export const codeConfig: AdapterConfig = {
+const codeConfig: AdapterConfig = {
   id: "code",
   pattern: {
     type: "codeComponent",

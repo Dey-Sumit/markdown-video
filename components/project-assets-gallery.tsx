@@ -3,16 +3,7 @@
 import * as React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Copy,
-  ImageIcon,
-  Video,
-  FileIcon,
-  Trash2,
-  FileVideo,
-  RefreshCcw,
-} from "lucide-react";
+import { Copy, FileVideo, RefreshCcw } from "lucide-react";
 import { toast } from "sonner";
 import { formatFileSize } from "./file-dropzone";
 
@@ -37,20 +28,28 @@ export function AssetGallery() {
       const response = await fetch("/api/assets");
       const data = await response.json();
 
-      const formattedAssets: S3Asset[] = data.assets.map((asset: any) => {
-        const isVideo = asset.url.match(/\.(mp4|mov|webm)$/i);
+      const formattedAssets: S3Asset[] = data.assets.map(
+        (asset: {
+          key: string;
+          url: string;
+          lastModified: string;
+          size: number;
+          name: string;
+        }) => {
+          const isVideo = asset.url.match(/\.(mp4|mov|webm)$/i);
 
-        return {
-          id: asset.key,
-          url: asset.url,
-          type: isVideo ? "video" : "image",
-          // For videos, we can generate thumbnail using the first frame
-          thumbnailUrl: isVideo ? `${asset.url}#t=0.1` : undefined,
-          lastModified: asset.lastModified,
-          size: asset.size,
-          name: asset.name,
-        };
-      });
+          return {
+            id: asset.key,
+            url: asset.url,
+            type: isVideo ? "video" : "image",
+            // For videos, we can generate thumbnail using the first frame
+            thumbnailUrl: isVideo ? `${asset.url}#t=0.1` : undefined,
+            lastModified: asset.lastModified,
+            size: asset.size,
+            name: asset.name,
+          };
+        },
+      );
 
       console.log("formattedAssets", formattedAssets);
       setAssets(formattedAssets);
@@ -155,6 +154,7 @@ function AssetCard({
       <div className="shrink-0">
         {asset.type.startsWith("image/") ? (
           <div className="size-10 overflow-hidden rounded-sm">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={asset.url}
               alt={asset.type}

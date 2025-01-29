@@ -8,6 +8,7 @@ import {
 import { Slider } from "../ui/slider";
 import SidebarBlock from "./sidebar-block";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sidebarContents: Record<string, any> = {
   Editor: {
     title: "Editor Settings",

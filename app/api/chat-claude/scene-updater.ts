@@ -1,5 +1,4 @@
 import type {
-  AISceneConfigType,
   AISceneUpdates,
   AiSceneUpdatesOriginalScene__Claude,
 } from "./shared-types";
@@ -53,6 +52,7 @@ function updateScene({ id, updates, originalScene }: UpdateSceneInput) {
           }
 
           const { action, ...leanUpdate } = update;
+          console.log({ action });
 
           texts[index] = {
             ...texts[index],

@@ -1,10 +1,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
-import { geolocation } from "@vercel/functions";
 export async function POST(req: Request) {
   try {
     const data = await req.json();
-    const city = geolocation(req);
 
     const supabase = await createClient();
 

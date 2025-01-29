@@ -1,6 +1,6 @@
 // plugins/image/image.parser.ts
 import BaseParser from "../../core/base/parser";
-import { imageConfig, defaultImageArgValues } from "./image.config";
+import imageConfig, { defaultImageArgValues } from "./image.config";
 import type { ImageInputProps, ImageOutputProps } from "./image.types";
 
 export class ImagePropsParser {

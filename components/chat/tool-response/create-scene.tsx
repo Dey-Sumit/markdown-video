@@ -1,10 +1,9 @@
-import type {
-  BaseSceneConfigSchemaWithIds,
-  BaseSceneConfigSchemaWithoutIds,
-} from "@/app/api/chat-claude/shared-types";
+import type { BaseSceneConfigSchemaWithIds } from "@/app/api/chat-claude/shared-types";
+
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+// import { AlertDialog } from "@radix-ui/react-alert-dialog";
 import type { ToolInvocation } from "ai";
 import { ArrowUp } from "lucide-react";
 import React, { useState } from "react";
@@ -72,9 +71,13 @@ const CreateScene = ({
         <div className="flex flex-col gap-4">
           <p>Suggested Improvements ✨</p>
           <div className="flex flex-col gap-2 text-sm">
-            {suggestedImprovements.map((suggestion) => {
+            {suggestedImprovements.map((suggestion, index) => {
               return (
-                <Button variant="outline" className="flex justify-between">
+                <Button
+                  variant="outline"
+                  className="flex justify-between"
+                  key={index}
+                >
                   <div>✨ {suggestion}</div>
                   <ArrowUp className="h-4 w-4" />
                 </Button>

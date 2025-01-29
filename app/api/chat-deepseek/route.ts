@@ -1,5 +1,4 @@
 // import SYSTEM_PROMPT from "@/app/ai/chat-v3/system-prompt";
-import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
 import { z } from "zod";
 // import { CreateSceneConfigSchema, UpdateSceneToolSchema } from "./shared-types";
@@ -88,7 +87,7 @@ export async function POST(request: Request) {
           const updatedScene = updateScene({
             id,
             updates,
-            originalScene: update.originalScene?.sceneConfig,
+            originalScene: originalScene,
           });
 
           return {

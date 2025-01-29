@@ -1,5 +1,5 @@
 import React from "react";
-import ContainerScroll from "./landing-2/container-scroll";
+import ContainerScroll from "../components/landing-page/container-scroll";
 import Particles from "@/components/magicui/particles";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
@@ -59,7 +59,7 @@ const LandingPage = () => {
             <p className="mx-auto max-w-xl text-sm text-gray-300 sm:max-w-3xl md:text-base">
               Focus on your content—we’ll handle the rest. No need to learn
               complex video editing tools. Make stunning code walkthrough videos
-              just by writing a simple markdown. It's magic .
+              just by writing a simple markdown. It&#39;s magic .
             </p>
 
             <a href="#waitlist">

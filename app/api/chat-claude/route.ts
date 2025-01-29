@@ -7,7 +7,6 @@ import {
 } from "./shared-types";
 import SYSTEM_PROMPT from "@/app/ai/chat-v3/system-prompt-claude";
 import updateScene from "./scene-updater";
-import { anthropic } from "@ai-sdk/anthropic";
 import { attachIdsToScenes } from "./utils";
 import { deepseek } from "@ai-sdk/deepseek";
 

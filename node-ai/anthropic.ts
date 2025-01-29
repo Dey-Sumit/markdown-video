@@ -49,7 +49,6 @@ async function main() {
             console.log("createScene", { sceneConfig });
 
             return {
-              sceneId: leanSceneConfig.id,
               sceneConfig: leanSceneConfig,
               suggestedImprovements,
             };

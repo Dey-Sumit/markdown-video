@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -8,8 +7,9 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "target": "ESNext",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -31,7 +31,8 @@
     ".next/types/**/*.ts",
     "app/poc/markdown/docs.mdx",
     "lib/config/remotion-deploy.mjs",
-    "app/_components/web-vitals.js"
-, "node-ai/index.js"  ],
+    "app/_components/web-vitals.js",
+    "node-ai/index.js"
+  ],
   "exclude": ["node_modules"]
 }

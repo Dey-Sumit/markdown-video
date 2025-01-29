@@ -1,23 +1,8 @@
 "use client";
-import { BorderBeam } from "@/components/magicui/border-beam";
 import HeroVideoDialog from "@/components/magicui/hero-video-dialog";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { DialogDescription } from "@radix-ui/react-dialog";
-import {
-  useScroll,
-  useTransform,
-  motion,
-  useMotionValueEvent,
-} from "framer-motion";
-import { Play, PlayCircle } from "lucide-react";
-import React, { useRef, useState } from "react";
+import { useScroll, useTransform, motion } from "framer-motion";
+import React, { useRef } from "react";
 
 const ContainerScroll = () => {
   const containerRef = useRef(null);

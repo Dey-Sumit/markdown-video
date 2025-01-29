@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import { Label } from "@radix-ui/react-label";
-import { Separator } from "@radix-ui/react-separator";
+import { Label } from "../ui/label";
+import { Separator } from "../ui/separator";
 
 const SidebarBlock = ({
   children,

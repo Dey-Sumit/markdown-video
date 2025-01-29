@@ -1,6 +1,12 @@
 // code.parser.ts
+// import { AlertDialog } from "@radix-ui/react-alert-dialog";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 import BaseParser from "../../core/base/parser";
-import { codeConfig, defaultCodeArgValues } from "./code.config";
+import codeConfig, { defaultCodeArgValues } from "./code.config";
+
+const a = 12;
+
+export { a };
 
 export interface CodeInputProps {
   theme: string;

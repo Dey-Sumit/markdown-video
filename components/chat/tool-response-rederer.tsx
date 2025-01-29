@@ -1,7 +1,6 @@
-import SceneConfigDisplay from "@/app/ai/chat-v3/create-scene-display";
 import type { ToolInvocation } from "ai";
 import { Loader2 } from "lucide-react";
-import { memo, useState } from "react";
+import { memo } from "react";
 import type { ChatAppend } from ".";
 import CreateScene from "./tool-response/create-scene";
 

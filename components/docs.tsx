@@ -1,4 +1,4 @@
-import Content from "../app/poc/markdown/docs.mdx";
+import Content from "../app/minimal-docs.mdx";
 import {
   SidebarContent,
   SidebarHeader,

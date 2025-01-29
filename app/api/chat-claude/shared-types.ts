@@ -207,23 +207,6 @@ export type AISceneUpdates = Omit<
 export type AiSceneUpdatesOriginalScene__Claude =
   UpdateSceneToolArgsType__Claude["originalScene"]["sceneConfig"];
 
-const a: AiSceneUpdatesOriginalScene__Claude = {
-  id: "as",
-  sceneProps: {
-    duration: 5,
-    background: "red",
-  },
-  components: {
-    text: [
-      {
-        content: "Hello World",
-        animation: "fadeIn",
-        id: "text_component_001",
-      },
-    ],
-  },
-};
-
 export type AITextComponentType = z.infer<typeof TextComponentSchemaWithoutId>;
 export type AIImageComponentType = z.infer<
   typeof ImageComponentSchemaWithoutId

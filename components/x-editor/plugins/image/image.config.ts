@@ -12,7 +12,7 @@ export const defaultImageArgValues: ImageInputProps = {
   duration: 1,
 };
 
-export const imageConfig: AdapterConfig = {
+const imageConfig: AdapterConfig = {
   id: "image",
   pattern: {
     type: "component",

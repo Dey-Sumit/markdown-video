@@ -1,13 +1,9 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ReactMarkdown from "react-markdown";
-import { ArrowUp, Plus } from "lucide-react";
 import { useProjectStore } from "@/store/project-store";
-import { sceneReverseParser } from "@/parsers/reverseParser";
 import { useShikiHighlighter } from "react-shiki";
 
 interface SceneConfigDisplayProps {
