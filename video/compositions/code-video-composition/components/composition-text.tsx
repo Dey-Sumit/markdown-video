@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useProjectStore } from "@/store/project-store";
 import React, { type CSSProperties } from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import type { TextAnimationType } from "../../animation.config";
 
 type AnimationFn = (params: {
   frame: number;
@@ -445,22 +446,6 @@ export const slideFromBehind: AnimationFn = ({
   };
 };
 
-export const AVAILABLE_TEXT_ANIMATIONS = [
-  "fadeInSlideUp",
-  "fadeInSlideDown",
-  "fadeInOnly",
-  "scaleIn",
-  "bounceIn",
-  "flipIn",
-  "zoomOut",
-  "wobble",
-  "wave",
-  // "typewriter",
-  "none",
-  "slideFromBehind",
-] as const;
-
-export type TextAnimationType = (typeof AVAILABLE_TEXT_ANIMATIONS)[number];
 
 const ANIMATION_MAP: Record<TextAnimationType, AnimationFn> = {
   fadeInSlideUp,

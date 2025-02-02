@@ -46,9 +46,10 @@ const Section = ({
   const { opacity, transform } = useAnimatedProperties({
     delay: 2,
     sceneDurationInFrames,
-    animation: "slide-up",
+    animation: "fadeInSlideDown",
     withMotion: false,
   });
+  console.log({ opacity, transform });
 
   return (
     <div

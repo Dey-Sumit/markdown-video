@@ -1,5 +1,5 @@
 // plugins/text/config.ts
-import { AVAILABLE_TEXT_ANIMATIONS } from "@/video/compositions/code-video-composition/components/composition-text";
+import { AVAILABLE_TEXT_ANIMATIONS } from "@/video/compositions/animation.config";
 import type { AdapterConfig } from "../../core/types/adapter.type";
 import { orderPropsConfig } from "../common/props";
 import type { TextInputProps } from "./text.types";
