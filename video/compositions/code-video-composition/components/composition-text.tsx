@@ -513,7 +513,6 @@ export const CompositionText = ({ data }: { data: TextInputProps }) => {
     size: fontSize,
     order,
   } = data;
-  console.log("inside CompositionText", data);
 
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();

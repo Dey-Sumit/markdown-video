@@ -44,14 +44,7 @@ export const useAnimatedProperties = ({
         TRANSITION_DURATION_IN_FRAMES,
       )
     : { transform: "", opacity: undefined };
-  console.log(
-    " animationConfig[animation]",
-    animationConfig[animation],
-    animationConfig,
-    {
-      animation,
-    },
-  );
+ 
 
   // Default opacity logic (only if animation does not define opacity)
   const computedOpacity =

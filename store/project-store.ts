@@ -11,7 +11,7 @@ import {
   DEFAULT_COMPOSITION_STYLES,
   FALLBACK_DURATION_IN_FRAMES,
 } from "@/lib/const";
-import { DEFAULT_PROJECT_TEMPLATE } from "./project.const";
+import { PLAYGROUND_PROJECT_TEMPLATE } from "./project.const";
 import { calculateCompositionDuration } from "@/video/compositions/composition.utils";
 interface InsertSceneOptions {
   position?: "start" | "end";
@@ -71,7 +71,7 @@ export const useProjectStore = create<ProjectStore>()(
         config: {
           content: {
             global: "",
-            sceneLevel: DEFAULT_PROJECT_TEMPLATE,
+            sceneLevel: PLAYGROUND_PROJECT_TEMPLATE,
           },
           styles: DEFAULT_COMPOSITION_STYLES,
         },
@@ -86,6 +86,7 @@ export const useProjectStore = create<ProjectStore>()(
       _pendingChanges: false,
 
       loadProject: async (id: string) => {
+        if (!id) return;
         set((state) => {
           state.isLoading = true;
         });
@@ -106,6 +107,7 @@ export const useProjectStore = create<ProjectStore>()(
             state.error = error as Error;
             state.isLoading = false;
           });
+
           toast.error("Failed to load project");
         }
       },

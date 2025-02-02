@@ -16,6 +16,8 @@ const CompositionSectionRenderer = ({
   if (!value) return null;
 
   const data = sectionWrapperParser.parse(`!section ${value[0]}`);
+  console.log("CompositionSectionRenderer", { data });
+
   if (!data) return null;
   return (
     <Section sectionData={data} sceneDurationInFrames={sceneDurationInFrames} />
@@ -49,7 +51,6 @@ const Section = ({
     animation: "fadeInSlideDown",
     withMotion: false,
   });
-  console.log({ opacity, transform });
 
   return (
     <div

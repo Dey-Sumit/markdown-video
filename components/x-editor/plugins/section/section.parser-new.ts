@@ -37,14 +37,17 @@ class SectionParser implements ElementParser {
   parse(line: string, nestedContent?: string[]): BaseElement {
     const result = { type: "section" };
 
-    // Parse basic attributes
-    const attrPattern = /--([a-zA-Z]+)=(?:"([^"]*)"|(\d+))/g;
+    // Updated pattern to handle quoted strings, numbers, and unquoted values
+    const attrPattern = /--([a-zA-Z]+)=(?:"([^"]*)"|(\d+)|([^-\s]+))/g;
     let match;
 
     while ((match = attrPattern.exec(line)) !== null) {
-      const [, key, stringValue, numberValue] = match;
+      const [, key, quotedValue, numberValue, unquotedValue] = match;
       if (key !== "items") {
-        result[key] = numberValue ? Number(numberValue) : stringValue;
+        // Use the first non-undefined value among quotedValue, numberValue, and unquotedValue
+        const value =
+          quotedValue ?? (numberValue ? Number(numberValue) : unquotedValue);
+        result[key] = value;
       }
     }
 
@@ -133,8 +136,6 @@ class SectionWrapperParser {
   }
 
   parse(input: string): BaseElement {
-    console.log("SectionWrapperParser -> parse -> input", input);
-
     const lines = input
       .split("\n")
       .map((line) => line.trim())
@@ -144,19 +145,6 @@ class SectionWrapperParser {
   }
 }
 
-// Example usage
-const example = `
-!section --cols=2 --rows=3 --items=(
-  !text --content="First item" 
-  !section --cols=1 --items=(
-    !text --content="Nested item"
-    !text --content="Another nested item" --
-  )
-  
-  !text --content="Last item"
-)
-`;
-
-// Test the parser
+// Export the parser
 const sectionWrapperParser = new SectionWrapperParser();
 export default sectionWrapperParser;
