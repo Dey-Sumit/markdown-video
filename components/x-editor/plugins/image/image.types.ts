@@ -1,18 +1,14 @@
+import type { ImageAnimationsType } from "@/video/compositions/code-video-composition/components/composition-image";
+
 // plugins/image/image.types.ts
 export interface ImageInputProps {
   src: string;
-  width: number;
+  width?: number;
   height: number;
-  animation:
-    | "none"
-    | "fadeIn"
-    | "zoomIn"
-    | "slideInLeft"
-    | "slideInRight"
-    | "slideInTop"
-    | "slideInBottom";
+  animation: ImageAnimationsType;
   delay: number;
   duration: number;
+  withMotion?: boolean;
 }
 
 export interface ImageOutputProps extends ImageInputProps {

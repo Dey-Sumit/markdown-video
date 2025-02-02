@@ -116,8 +116,6 @@ function XEditor() {
 
     editor.onKeyDown((e: IKeyboardEvent) => {
       if (e.browserEvent.key === "\\") {
-        console.log("Show command menu");
-
         // Remove any backslash handling logic, just show the menu
         const position = editor.getPosition();
         if (!position) return;

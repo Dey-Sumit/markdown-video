@@ -1,15 +1,17 @@
 // plugins/image/config.ts
+import { IMAGE_ANIMATIONS } from "@/video/compositions/code-video-composition/components/composition-image";
 import type { AdapterConfig } from "../../core/types/adapter.type";
 import type { ImageInputProps } from "./image.types";
 
 // TODO : need to type the default args value as well.
 export const defaultImageArgValues: ImageInputProps = {
   src: "",
-  width: 400,
-  height: 300,
-  animation: "fadeIn",
-  delay: 0,
+  // width: 400,
+  // height: 300,
+  animation: "pop-in",
+  delay: 2,
   duration: 1,
+  height: 800,
 };
 
 const imageConfig: AdapterConfig = {
@@ -88,16 +90,7 @@ const imageConfig: AdapterConfig = {
         {
           type: "enum",
           message: "Invalid animation type",
-          validate: (value) =>
-            [
-              "none",
-              "fadeIn",
-              "zoomIn",
-              "slideInLeft",
-              "slideInRight",
-              "slideInTop",
-              "slideInBottom",
-            ].includes(value),
+          validate: (value) => IMAGE_ANIMATIONS.includes(value),
           severity: "warning",
         },
       ],
