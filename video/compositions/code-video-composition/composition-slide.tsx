@@ -68,24 +68,7 @@ function BaseSlide({ code, codeRef, scene, sceneProps }: BaseSlideProps) {
       }}
     >
       <CompositionTextRenderer value={scene.text} />
-      {/* {newCode && (
-        <div
-          className="h-10 text-center text-2xl text-white"
-          style={{ fontFamily }}
-        >
-          {newCode?.meta}
-        </div>
-      )} */}
-      {/*    {scene.text && <CompositionTextProcessor value={scene.text} />}
-      {section.type === "section" && (
-        <Section data={section.data} type={section.type} />
-      )}
-      */}
-      {/* {contentLayout?.name && (
-        <div className="absolute inset-0">
-          {ComponentLayoutRenderer(contentLayout)}
-        </div>
-      )} */}
+
       {code && (
         <CodeBlockRenderer code={code} codeRef={codeRef} meta={code.meta} />
       )}
@@ -99,15 +82,6 @@ function BaseSlide({ code, codeRef, scene, sceneProps }: BaseSlideProps) {
           value={scene.section}
         />
       )}
-      {/*       {media?.src && (
-        // {media?.src && getMediaType(media.src) === "image" && (
-        <CompositionImage
-          src={media.src}
-          slideDurationInFrames={slideDurationInFrames}
-          mediaAppearanceDelay={convertSecondsToFramerate(media.delay, fps)}
-          withMotion={media.withMotion}
-        />
-      )} */}
     </div>
   );
 }

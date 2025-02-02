@@ -1,10 +1,13 @@
 import type { AdapterConfig } from "../../core/types/adapter.type";
+import { backgroundPropsConfig, orderPropsConfig } from "../common/props";
+import type { SectionInputProps } from "./section.types";
 
-export const defaultSectionArgValues = {
+export const defaultSectionPropValues: SectionInputProps = {
   cols: 1,
   rows: 1,
   gap: 16,
   items: [],
+  
 };
 
 const sectionConfig: AdapterConfig = {
@@ -21,7 +24,7 @@ const sectionConfig: AdapterConfig = {
       name: "cols",
       type: "number",
       description: "Number of columns in the grid",
-      default: defaultSectionArgValues.cols,
+      default: defaultSectionPropValues.cols,
       examples: {
         "1": "Single column - stack items vertically",
         "2": "Two columns - split into halves",
@@ -41,7 +44,7 @@ const sectionConfig: AdapterConfig = {
       type: "number",
       description:
         "Number of rows in the grid (optional, auto-calculated if not specified)",
-      default: defaultSectionArgValues.rows,
+      default: defaultSectionPropValues.rows,
       validations: [
         {
           type: "range",
@@ -55,7 +58,7 @@ const sectionConfig: AdapterConfig = {
       name: "gap",
       type: "number",
       description: "Space between grid items in pixels",
-      default: defaultSectionArgValues.gap,
+      default: defaultSectionPropValues.gap,
       validations: [
         {
           type: "range",
@@ -96,6 +99,12 @@ const sectionConfig: AdapterConfig = {
       description: "Optional footer text below the grid",
       required: false,
     },
+    background: {
+      ...backgroundPropsConfig,
+      required: false,
+      default: "transparent",
+    },
+    order: orderPropsConfig,
   },
 };
 

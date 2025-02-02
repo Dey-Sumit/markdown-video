@@ -25,12 +25,12 @@ interface ValidationRule {
   severity?: "error" | "warning";
 }
 
-export interface ArgCompletionInfo {
+export interface PropCompletionInfo {
   key: string;
-  arg: ArgumentConfig;
+  arg: PropsConfig;
   isRequired: boolean;
 }
-export interface ArgumentConfig {
+export interface PropsConfig {
   name: string;
   type: "string" | "number" | "boolean";
   description?: string;
@@ -50,7 +50,7 @@ export interface AdapterConfig {
   id: string;
   pattern: CommandPattern;
   template: string;
-  arguments: Record<string, ArgumentConfig>;
+  arguments: Record<string, PropsConfig>;
   description?: string;
 }
 interface CommandContext {

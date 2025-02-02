@@ -2,6 +2,7 @@
 import { IMAGE_ANIMATIONS } from "@/video/compositions/code-video-composition/components/composition-image";
 import type { AdapterConfig } from "../../core/types/adapter.type";
 import type { ImageInputProps } from "./image.types";
+import { orderPropsConfig } from "../common/props";
 
 // TODO : need to type the default args value as well.
 export const defaultImageArgValues: ImageInputProps = {
@@ -123,6 +124,7 @@ const imageConfig: AdapterConfig = {
         },
       ],
     },
+    order: orderPropsConfig,
   },
 };
 

@@ -6,9 +6,10 @@ export interface SectionInputProps {
   cols: number;
   rows: number;
   gap: number;
-  items: string; // Raw items string with parentheses
+  items: string[]; // Raw items string with parentheses
   header?: string;
   footer?: string;
+  background?: string;
 }
 
 export interface SectionOutputProps extends Omit<SectionInputProps, "items"> {

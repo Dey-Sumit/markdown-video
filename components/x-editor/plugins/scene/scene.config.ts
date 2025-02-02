@@ -1,6 +1,7 @@
 // components/x-editor/plugins/scene/config-1.ts
 
 import type { AdapterConfig } from "../../core/types/adapter.type";
+import { backgroundPropsConfig } from "../common/props";
 
 export const defaultSceneArgValues = {
   duration: 5,
@@ -47,27 +48,8 @@ export const sceneConfig: AdapterConfig = {
       ],
     },
     background: {
-      name: "background",
-      type: "string",
-      description: "Background color",
-      examples: {
-        transparent: "Default transparent ",
-        white: "White background",
-        black: "Black background",
-        red: "Red background",
-        [`"linear-gradient(40deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)"`]:
-          "Linear gradient ",
-        [`"radial-gradient(circle, #237A57 25%, #093028 100%)"`]:
-          "Radial gradient ",
-        [`https://images.pexels.com/photos/3075993/pexels-photo-3075993.jpeg`]:
-          "Colorful abstract background",
-      },
-      validations: [
-        {
-          type: "enum",
-          message: "Invalid background value",
-        },
-      ],
+      ...backgroundPropsConfig,
+      required: false,
       default: defaultSceneArgValues.background,
     },
     title: {

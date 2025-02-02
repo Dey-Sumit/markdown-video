@@ -10,19 +10,20 @@ export class TextPropsParser {
     this.baseParser = new BaseParser(textConfig, defaultTextArgValues);
   }
 
-  parse(input: string[]): {
-    data: TextOutputProps[];
+  parse(input: string): {
+    data: TextOutputProps;
   } {
     const baseResult = this.baseParser.parse(input);
+    console.log("text parser baseResult", baseResult);
 
     // Convert single input to array if needed
-    const inputArray = Array.isArray(baseResult.data)
-      ? (baseResult.data as TextInputProps[])
-      : [baseResult.data as TextInputProps];
+    // const inputArray = Array.isArray(baseResult.data)
+    //   ? (baseResult.data as TextInputProps[])
+    //   : [baseResult.data as TextInputProps];
 
     // Transform each item
     return {
-      data: inputArray.map(this.transformProps.bind(this)),
+      data: this.transformProps(baseResult.data as TextInputProps),
     };
   }
 

@@ -1,11 +1,7 @@
 // scene.parser.ts
 import BaseParser from "../../core/base/parser";
 import { sceneConfig, defaultSceneArgValues } from "./scene.config";
-import type {
-  SceneInputProps,
-  SceneOutputProps,
-  SceneValidationIssue,
-} from "./scene.types";
+import type { SceneInputProps, SceneOutputProps } from "./scene.types";
 
 export class ScenePropsParser {
   private baseParser: BaseParser<SceneInputProps>;

@@ -1,10 +1,10 @@
 // import sectionParser from "@/components/x-editor/plugins/section/section.parser";
 import React from "react";
-import CompositionTextRenderer, { CompositionText } from "./composition-text";
-import CompositionImageRenderer from "./composition-image";
+import { CompositionText } from "./composition-text";
 import type { SectionOutputProps } from "@/components/x-editor/plugins/section/section.types";
-import parseCustomMarkup from "@/components/x-editor/plugins/section/section.parser-new";
 import sectionWrapperParser from "@/components/x-editor/plugins/section/section.parser-new";
+import { getDerivedBackground } from "@/lib/utils";
+import { useAnimatedProperties } from "../../hooks/use-animated-properties";
 
 const CompositionSectionRenderer = ({
   value,
@@ -17,13 +17,38 @@ const CompositionSectionRenderer = ({
 
   const data = sectionWrapperParser.parse(`!section ${value[0]}`);
   if (!data) return null;
-  return <Section sectionData={data} />;
+  return (
+    <Section sectionData={data} sceneDurationInFrames={sceneDurationInFrames} />
+  );
 };
 
 export default CompositionSectionRenderer;
 
-const Section = ({ sectionData }: { sectionData: SectionOutputProps }) => {
-  const { cols, rows, footer, header, gap = 0, items = [] } = sectionData;
+const Section = ({
+  sectionData,
+  sceneDurationInFrames,
+}: {
+  sectionData: SectionOutputProps;
+
+  sceneDurationInFrames: number;
+}) => {
+  const {
+    cols,
+    rows,
+    footer,
+    header,
+    gap = 0,
+    items = [],
+    background,
+    order,
+  } = sectionData;
+
+  const { opacity, transform } = useAnimatedProperties({
+    delay: 2,
+    sceneDurationInFrames,
+    animation: "slide-up",
+    withMotion: false,
+  });
 
   return (
     <div
@@ -33,6 +58,11 @@ const Section = ({ sectionData }: { sectionData: SectionOutputProps }) => {
         gridTemplateColumns: cols ? `repeat(${cols}, 1fr)` : "auto",
         gridTemplateRows: rows ? `repeat(${rows}, 1fr)` : "auto",
         gap: `${gap}px`,
+        background: getDerivedBackground(background),
+        // animation properties
+        opacity,
+        transform,
+        zIndex: order,
       }}
     >
       {items.map((item, index) => {
@@ -41,9 +71,9 @@ const Section = ({ sectionData }: { sectionData: SectionOutputProps }) => {
             return (
               <Section
                 key={index}
-                //@ts-ignore  : id is missing in nested section | TODO : fix this
+                //@ts-expect-error  : id is missing in nested section | // TODO : fix this
                 sectionData={item}
-
+                sceneDurationInFrames={sceneDurationInFrames}
                 // value={item.data}
                 // sceneDurationInFrames={sceneDurationInFrames}
               />
@@ -52,14 +82,13 @@ const Section = ({ sectionData }: { sectionData: SectionOutputProps }) => {
           case "text": {
             // const textProps = item.data;
 
+            const props: React.ComponentProps<typeof CompositionText> = {
+              data: item,
+            };
+
             return (
-              <div className="relative border-2 border-red-800" key={index}>
-                <CompositionText
-                  text={item.content}
-                  color={item.color}
-                  animationType={item.animation}
-                  delay={item.delay}
-                />
+              <div className="relative" key={index}>
+                <CompositionText {...props} />
               </div>
             );
           }

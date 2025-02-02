@@ -133,6 +133,8 @@ class SectionWrapperParser {
   }
 
   parse(input: string): BaseElement {
+    console.log("SectionWrapperParser -> parse -> input", input);
+
     const lines = input
       .split("\n")
       .map((line) => line.trim())

@@ -1,8 +1,10 @@
 // plugins/text/config.ts
 import { AVAILABLE_TEXT_ANIMATIONS } from "@/video/compositions/code-video-composition/components/composition-text";
 import type { AdapterConfig } from "../../core/types/adapter.type";
+import { orderPropsConfig } from "../common/props";
+import type { TextInputProps } from "./text.types";
 
-export const defaultTextArgValues = {
+export const defaultTextArgValues: TextInputProps = {
   content: "Default Text",
   size: 120,
   weight: "bold",
@@ -11,7 +13,8 @@ export const defaultTextArgValues = {
   blend: "normal",
   delay: 0,
   animation: "fadeInSlideUp",
-  animationApplyTo: "word",
+  order: 1,
+  // animationApplyTo: "word",
 };
 
 const textConfig: AdapterConfig = {
@@ -23,6 +26,7 @@ const textConfig: AdapterConfig = {
   description: "Add text in the scene. Multiple text components can be added.",
   template: 'text --content="${1:Default Text}" --color=${2:white}',
   arguments: {
+    order: orderPropsConfig,
     content: {
       name: "content",
       type: "string",
@@ -156,11 +160,11 @@ const textConfig: AdapterConfig = {
         slideFromBehind: "Slide from behind",
       },
     },
-    animationApplyTo: {
+    /* animationApplyTo: {
       name: "animationApplyTo",
       type: "string",
       description: "Animation target element",
-      default: defaultTextArgValues.animationApplyTo,
+      default: defaultTextArgValues.animation,
       validations: [
         {
           type: "enum",
@@ -169,7 +173,7 @@ const textConfig: AdapterConfig = {
           severity: "warning",
         },
       ],
-    },
+    }, */
   },
 };
 
