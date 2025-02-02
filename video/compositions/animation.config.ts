@@ -1,6 +1,6 @@
 import { interpolate } from "remotion";
 
-export const AVAILABLE_TEXT_ANIMATIONS = [
+export const COMMON_ANIMATIONS = [
   "fadeInSlideUp",
   "fadeInSlideDown",
   "fadeInOnly",
@@ -15,10 +15,10 @@ export const AVAILABLE_TEXT_ANIMATIONS = [
   "slideFromBehind",
 ] as const;
 
-export type TextAnimationType = (typeof AVAILABLE_TEXT_ANIMATIONS)[number];
+export type CommonAnimationType = (typeof COMMON_ANIMATIONS)[number];
 
 export const animationConfig: Record<
-  TextAnimationType,
+  CommonAnimationType,
   (
     frame: number,
     delay: number,

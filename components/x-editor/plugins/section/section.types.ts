@@ -1,5 +1,6 @@
 // section.types.ts
 
+import type { CommonAnimationType } from "@/video/compositions/animation.config";
 import type { TextOutputProps } from "../text/text.types";
 
 export interface SectionInputProps {
@@ -10,6 +11,7 @@ export interface SectionInputProps {
   header?: string;
   footer?: string;
   background?: string;
+  animation?: CommonAnimationType;
 }
 
 export interface SectionOutputProps extends Omit<SectionInputProps, "items"> {

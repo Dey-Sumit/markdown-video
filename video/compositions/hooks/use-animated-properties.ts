@@ -1,6 +1,6 @@
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { convertSecondsToFramerate } from "../composition.utils";
-import { animationConfig, type TextAnimationType } from "../animation.config";
+import { animationConfig, type CommonAnimationType } from "../animation.config";
 
 const TRANSITION_DURATION_IN_FRAMES = 10; // entry and exit duration
 const BUFFER_IN_FRAMES = 15;
@@ -17,7 +17,7 @@ export const useAnimatedProperties = ({
 }: {
   delay: number;
   sceneDurationInFrames: number;
-  animation: TextAnimationType;
+  animation: CommonAnimationType;
   withMotion?: boolean;
 }) => {
   const { fps } = useVideoConfig();

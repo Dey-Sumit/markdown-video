@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useProjectStore } from "@/store/project-store";
 import React, { type CSSProperties } from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import type { TextAnimationType } from "../../animation.config";
+import type { CommonAnimationType } from "../../animation.config";
 
 type AnimationFn = (params: {
   frame: number;
@@ -446,8 +446,7 @@ export const slideFromBehind: AnimationFn = ({
   };
 };
 
-
-const ANIMATION_MAP: Record<TextAnimationType, AnimationFn> = {
+const ANIMATION_MAP: Record<CommonAnimationType, AnimationFn> = {
   fadeInSlideUp,
   fadeInSlideDown,
   fadeInOnly,

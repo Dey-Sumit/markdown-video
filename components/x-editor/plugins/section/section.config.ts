@@ -1,3 +1,4 @@
+import { COMMON_ANIMATIONS } from "@/video/compositions/animation.config";
 import type { AdapterConfig } from "../../core/types/adapter.type";
 import { backgroundPropsConfig, orderPropsConfig } from "../common/props";
 import type { SectionInputProps } from "./section.types";
@@ -7,7 +8,7 @@ export const defaultSectionPropValues: SectionInputProps = {
   rows: 1,
   gap: 16,
   items: [],
-  
+  animation: "fadeInSlideDown",
 };
 
 const sectionConfig: AdapterConfig = {
@@ -105,6 +106,34 @@ const sectionConfig: AdapterConfig = {
       default: "transparent",
     },
     order: orderPropsConfig,
+    animation: {
+      name: "animation",
+      type: "string",
+      description: "Animation type",
+      default: defaultSectionPropValues.animation,
+      validations: [
+        {
+          type: "enum",
+          message: "Invalid animation type",
+          validate: (value) => COMMON_ANIMATIONS.includes(value),
+          severity: "warning",
+        },
+      ],
+      examples: {
+        none: "No animation",
+        fadeInSlideUp: "Fade in and slide up",
+        fadeInSlideDown: "Fade in and slide down",
+        fadeInOnly: "Fade in only",
+        wobble: "Wobble effect",
+        scaleIn: "Scale in",
+        bounceIn: "Bounce in",
+        flipIn: "Flip in",
+        zoomOut: "Zoom out",
+        wave: "Wave effect",
+        // typewriter: "Typewriter effect",
+        slideFromBehind: "Slide from behind",
+      },
+    },
   },
 };
 

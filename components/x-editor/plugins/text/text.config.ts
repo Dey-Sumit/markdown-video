@@ -1,5 +1,5 @@
 // plugins/text/config.ts
-import { AVAILABLE_TEXT_ANIMATIONS } from "@/video/compositions/animation.config";
+import { COMMON_ANIMATIONS } from "@/video/compositions/animation.config";
 import type { AdapterConfig } from "../../core/types/adapter.type";
 import { orderPropsConfig } from "../common/props";
 import type { TextInputProps } from "./text.types";
@@ -141,7 +141,7 @@ const textConfig: AdapterConfig = {
         {
           type: "enum",
           message: "Invalid animation type",
-          validate: (value) => AVAILABLE_TEXT_ANIMATIONS.includes(value),
+          validate: (value) => COMMON_ANIMATIONS.includes(value),
           severity: "warning",
         },
       ],
