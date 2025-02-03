@@ -16,7 +16,6 @@ const CompositionSectionRenderer = ({
   if (!value) return null;
 
   const data = sectionWrapperParser.parse(`!section ${value[0]}`);
-  console.log("CompositionSectionRenderer", { data });
 
   if (!data) return null;
   return (

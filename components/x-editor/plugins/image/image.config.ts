@@ -13,6 +13,7 @@ export const defaultImageArgValues: ImageInputProps = {
   delay: 2,
   duration: 1,
   height: 800,
+  withMotion: true,
 };
 
 const imageConfig: AdapterConfig = {
@@ -123,6 +124,12 @@ const imageConfig: AdapterConfig = {
           severity: "warning",
         },
       ],
+    },
+    withMotion: {
+      name: "withMotion",
+      type: "boolean",
+      default: true,
+      description: "Enable continuous motion",
     },
     order: orderPropsConfig,
   },

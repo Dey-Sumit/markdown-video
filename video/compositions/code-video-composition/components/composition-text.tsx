@@ -89,6 +89,8 @@ export const getAdjustedFrame = (
   duration: number,
 ) => {
   const adjustedFrame = frame - delay; // Apply global delay
+  console.log("getAdjustedFrame", { adjustedFrame });
+
   const startFrame = index * duration; // Optional per-word stagger
 
   // Ensure animation doesn't start before the delay ends
@@ -509,7 +511,7 @@ export const CompositionText = ({ data }: { data: TextInputProps }) => {
     content: text,
     color,
     animation,
-    delay,
+    delay = 0,
     size: fontSize,
     order,
   } = data;
@@ -525,6 +527,7 @@ export const CompositionText = ({ data }: { data: TextInputProps }) => {
   }
 
   const words = text.split(" ");
+  console.log({ frame, delay });
 
   return (
     <Wrapper
@@ -538,7 +541,6 @@ export const CompositionText = ({ data }: { data: TextInputProps }) => {
       <h1
         className="relative px-10 py-0"
         style={{
-          // border: `1px solid ${borderComponent.color}`,
           textAlign: props.align,
         }}
       >
@@ -548,6 +550,7 @@ export const CompositionText = ({ data }: { data: TextInputProps }) => {
               frame: frame - delay, // Apply the delay globally
               fps,
               index, // Use index for stagger effect if needed
+              delay,
             });
 
             return (
