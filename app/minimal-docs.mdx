@@ -2,7 +2,7 @@
 The video is composed of sequential scenes, where each scene represents a distinct segment of your video. These scenes can contain different components eg. code, text overlays, media(image,video,audio), and transitions.
 
 ````markdown
-Scene Directive (`## !!scene`)
+Scene Directive (`# !scene`)
 ├── Scene Props
    ├── Title = Value (`--title={titleText}`)
    ├── Duration = Value (`--duration={timeInSeconds}`)
@@ -26,6 +26,13 @@ Scene Directive (`## !!scene`)
    │   ├── Type = Value (`--type={magic|fade}`)
    │   ├── Direction = Value (`--direction={from-bottom}`)
    │   └── Duration = Value (`--duration={timeInSeconds}`)
+   ├── Section Component (`!section`)
+   │   ├── Rows = Value (`--rows={1-3}`)
+   │   ├── Columns = Value (`--columns={1-3}`)
+   │   ├── Gap = Value (`--gap={1-3}`)
+   │   └── Items = Value (`--items={!text|!media|!section}`)
+   │   └── Duration = Value (`--duration={timeInSeconds}`)
+   │   
    └── Code Component (```js ! ```)
        ├── Family = Value (`--family={fontFamily}`)
        ├── Size = Value (`--size={pixels}`)

@@ -34,13 +34,8 @@ export const sceneConfig: AdapterConfig = {
       validations: [
         {
           type: "required",
-          message: "Duration is required",
-          severity: "error",
-        },
-        {
-          type: "range",
-          message: "Duration must be between 3 and 60 seconds",
-          validate: (value) => Number(value) >= 3 && Number(value) <= 60,
+          message:
+            "Duration is required. Should be greater than any transition on the scene",
           severity: "error",
         },
       ],

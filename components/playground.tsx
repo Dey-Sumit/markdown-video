@@ -18,7 +18,7 @@ const Playground = () => {
   const isMobile = useIsMobile();
   return (
     <section>
-      <div className="mb-10 flex flex-col items-center justify-center gap-8 md:mb-16">
+      <div className="mb-8 flex flex-col items-center justify-center gap-8 md:mb-16">
         <div className={cn("relative flex items-start justify-center gap-8")}>
           <SparklesText
             text="Playground"
@@ -46,9 +46,7 @@ const Playground = () => {
           <div className="absolute -inset-y-4 left-full w-px bg-border md:-inset-y-10" />
 
           <div className="absolute inset-0">
-            <div
-              className={cn("relative h-[90vh] w-full rounded-lg p-px pb-0.5")}
-            >
+            <div className={cn("relative h-[90vh] w-full rounded-lg p-px")}>
               <ResizablePanelGroup
                 direction="horizontal"
                 className="min-h-[200px] bg-black md:min-w-[450px]"
@@ -56,7 +54,7 @@ const Playground = () => {
                 <ResizablePanel
                   defaultSize={50}
                   minSize={20}
-                  className="border-r-0 pt-14"
+                  className="border-r-0"
                 >
                   <ClientSideEditor />
                 </ResizablePanel>

@@ -137,8 +137,7 @@ const textConfig: AdapterConfig = {
         {
           type: "enum",
           message: "Invalid animation type",
-          validate: (value) =>
-            ["fadeInSlideUp", "fadeInSlideDown", "fadeInOnly"].includes(value),
+          validate: (value) => AVAILABLE_TEXT_ANIMATIONS.includes(value),
           severity: "warning",
         },
       ],
