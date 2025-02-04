@@ -1,19 +1,5 @@
+import type { COMMON_ANIMATIONS } from "@/components/x-editor/plugins/text";
 import { interpolate } from "remotion";
-
-export const COMMON_ANIMATIONS = [
-  "fadeInSlideUp",
-  "fadeInSlideDown",
-  "fadeInOnly",
-  "scaleIn",
-  "bounceIn",
-  "flipIn",
-  "zoomOut",
-  "wobble",
-  "wave",
-  // "typewriter",
-  "none",
-  "slideFromBehind",
-] as const;
 
 export type CommonAnimationType = (typeof COMMON_ANIMATIONS)[number];
 

@@ -1,5 +1,5 @@
 // plugins/text/config.ts
-import { COMMON_ANIMATIONS } from "@/video/compositions/animation.config";
+import { COMMON_ANIMATIONS } from ".";
 import type { AdapterConfig } from "../../core/types/adapter.type";
 import { orderPropsConfig } from "../common/props";
 import type { TextInputProps } from "./text.types";

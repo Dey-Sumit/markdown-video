@@ -2,21 +2,7 @@ import imageParser from "@/components/x-editor/plugins/image/image.parser";
 import type { ImageInputProps } from "@/components/x-editor/plugins/image/image.types";
 import { Img, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { convertSecondsToFramerate } from "../../composition.utils";
-
-export const IMAGE_ANIMATIONS = [
-  "fade",
-  "scale",
-  "slide-left",
-  "slide-right",
-  "slide-up",
-  "slide-down",
-  "bounce-in",
-  "spin-in",
-  "flip-in",
-  "zig-zag",
-  "pop-in",
-  "none",
-] as const;
+import type { IMAGE_ANIMATIONS } from "@/components/x-editor/plugins/image";
 
 // Define animation functions in a config object
 const animationConfig: Record<

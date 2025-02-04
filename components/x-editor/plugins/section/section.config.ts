@@ -1,6 +1,6 @@
-import { COMMON_ANIMATIONS } from "@/video/compositions/animation.config";
 import type { AdapterConfig } from "../../core/types/adapter.type";
 import { backgroundPropsConfig, orderPropsConfig } from "../common/props";
+import { COMMON_ANIMATIONS } from "../text";
 import type { SectionInputProps } from "./section.types";
 
 export const defaultSectionPropValues: SectionInputProps = {
