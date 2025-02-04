@@ -527,7 +527,6 @@ export const CompositionText = ({ data }: { data: TextInputProps }) => {
   }
 
   const words = text.split(" ");
-  console.log({ frame, delay });
 
   return (
     <Wrapper

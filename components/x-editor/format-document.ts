@@ -113,16 +113,25 @@ function splitComponents(content: string): string[] {
     if (char === "(") depth++;
     if (char === ")") depth--;
 
+    // Add character to current component
     current += char;
 
-    // Split when we encounter a component boundary (depth === 0 and the next component starts with "!")
-    if (depth === 0 && i + 1 < content.length && content[i + 1] === "!") {
-      components.push(current.trim());
+    // Split on component boundary (when we see a "!" at depth 0)
+    // But only if we're not in the middle of a component
+    if (
+      depth === 0 &&
+      i + 1 < content.length &&
+      content[i + 1] === "!" &&
+      (current.trim().startsWith("!") || current.trim() === "")
+    ) {
+      if (current.trim()) {
+        components.push(current.trim());
+      }
       current = "";
     }
   }
 
-  // Add the last component if it exists
+  // Add final component
   if (current.trim()) {
     components.push(current.trim());
   }
@@ -142,32 +151,29 @@ function formatSectionBlock(content: string, level: number): string[] {
   result.push(`${indent}${header.trim()} --items=(`);
 
   if (!sectionContent) {
-    // If there's no content, close the section
     result.push(`${indent})`);
     return result;
   }
 
-  // Split the content into individual components
-  const components = splitComponents(sectionContent.replace(/\)+$/, ""));
+  // Remove trailing parentheses and split the content into components
+  const strippedContent = sectionContent.replace(/\)+$/, "");
+  const lines = strippedContent.split(/\n|(?=!)/);
 
   // Process each component
-  for (const comp of components) {
-    const trimmed = comp.trim();
-    if (!trimmed) continue;
+  for (let line of lines) {
+    line = line.trim();
+    if (!line) continue;
 
-    if (trimmed.startsWith("!section")) {
-      // Handle nested section
-      const nestedContent = extractNestedSection(trimmed);
-
+    if (line.startsWith("!section")) {
+      const nestedContent = extractNestedSection(line);
       const nestedResult = formatSectionBlock(nestedContent, level + 1);
       result.push(...nestedResult);
-    } else if (trimmed.startsWith("!text")) {
-      // Handle text component
-      result.push(`${indent}  ${trimmed}`);
+    } else if (line.startsWith("!")) {
+      // Handle any component that starts with !
+      result.push(`${indent}  ${line}`);
     }
   }
 
-  // Close the section
   result.push(`${indent})`);
   return result;
 }

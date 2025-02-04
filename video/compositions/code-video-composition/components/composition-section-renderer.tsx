@@ -5,6 +5,9 @@ import type { SectionOutputProps } from "@/components/x-editor/plugins/section/s
 import sectionWrapperParser from "@/components/x-editor/plugins/section/section.parser-new";
 import { getDerivedBackground } from "@/lib/utils";
 import { useAnimatedProperties } from "../../hooks/use-animated-properties";
+import CompositionImageRenderer, {
+  CompositionImage,
+} from "./composition-image";
 
 const CompositionSectionRenderer = ({
   value,
@@ -16,6 +19,7 @@ const CompositionSectionRenderer = ({
   if (!value) return null;
 
   const data = sectionWrapperParser.parse(`!section ${value[0]}`);
+  console.log({ v: `!section ${value[0]}` }, { data });
 
   if (!data) return null;
   return (
@@ -93,13 +97,18 @@ const Section = ({
               </div>
             );
           }
-          // case "image":
-          //   return (
-          //     <CompositionImageRenderer
-          //       key={index}
-          //       sceneDurationInFrames={sceneDurationInFrames}
-          //     />
-          //   );
+          case "image": {
+            const props: React.ComponentProps<typeof CompositionImage> = item;
+            console.log("Image Props", props);
+
+            return (
+              <CompositionImage
+                key={index}
+                {...props}
+                sceneDurationInFrames={sceneDurationInFrames}
+              />
+            );
+          }
           default:
             return null;
         }

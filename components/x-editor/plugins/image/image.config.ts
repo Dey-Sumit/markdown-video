@@ -7,8 +7,7 @@ import { IMAGE_ANIMATIONS } from ".";
 // TODO : need to type the default args value as well.
 export const defaultImageArgValues: ImageInputProps = {
   src: "",
-  // width: 400,
-  // height: 300,
+
   animation: "pop-in",
   delay: 2,
   duration: 1,

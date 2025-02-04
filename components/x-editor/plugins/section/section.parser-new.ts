@@ -8,6 +8,29 @@ interface ElementParser {
   parse(line: string): BaseElement;
 }
 
+class ImageParser implements ElementParser {
+  canParse(line: string): boolean {
+    return line.trim().startsWith("!image");
+  }
+
+  parse(line: string): BaseElement {
+    const result = { type: "image" };
+    // Updated pattern to match SectionParser's pattern
+    const attrPattern = /--([a-zA-Z]+)=(?:"([^"]*)"|(\d+)|([^-\s]+))/g;
+    let match;
+
+    while ((match = attrPattern.exec(line)) !== null) {
+      const [, key, quotedValue, numberValue, unquotedValue] = match;
+      // Use the first non-undefined value among quotedValue, numberValue, and unquotedValue
+      const value =
+        quotedValue ?? (numberValue ? Number(numberValue) : unquotedValue);
+      result[key] = value;
+    }
+
+    return result;
+  }
+}
+
 class TextParser implements ElementParser {
   canParse(line: string): boolean {
     return line.trim().startsWith("!text");
@@ -64,7 +87,7 @@ class SectionWrapperParser {
   private parsers: ElementParser[];
 
   constructor() {
-    this.parsers = [new TextParser()];
+    this.parsers = [new TextParser(), new ImageParser()];
     this.parsers.push(new SectionParser(this));
   }
 

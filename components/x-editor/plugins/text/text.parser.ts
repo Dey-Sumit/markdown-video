@@ -14,7 +14,7 @@ export class TextPropsParser {
     data: TextOutputProps;
   } {
     const baseResult = this.baseParser.parse(input);
-    console.log("text parser baseResult", baseResult);
+
 
     // Convert single input to array if needed
     // const inputArray = Array.isArray(baseResult.data)

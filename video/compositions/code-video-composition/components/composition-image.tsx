@@ -115,10 +115,10 @@ const TRANSITION_DURATION_IN_FRAMES = 10;
 const BUFFER_IN_FRAMES = 15;
 const FALLBACK_STILL_DURATION = 10;
 
-const CompositionImage = ({
+export const CompositionImage = ({
   src,
   sceneDurationInFrames,
-  delay,
+  delay = 0,
   withMotion,
   animation,
   height,
