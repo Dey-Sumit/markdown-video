@@ -1,19 +1,15 @@
 // plugins/image/config.ts
-import { IMAGE_ANIMATIONS } from "@/video/compositions/code-video-composition/components/composition-image";
 import type { AdapterConfig } from "../../core/types/adapter.type";
 import type { ImageInputProps } from "./image.types";
-import { orderPropsConfig } from "../common/props";
 
 // TODO : need to type the default args value as well.
 export const defaultImageArgValues: ImageInputProps = {
   src: "",
-  // width: 400,
-  // height: 300,
-  animation: "pop-in",
-  delay: 2,
+  width: 400,
+  height: 300,
+  animation: "fadeIn",
+  delay: 0,
   duration: 1,
-  height: 800,
-  withMotion: true,
 };
 
 const imageConfig: AdapterConfig = {
@@ -92,7 +88,16 @@ const imageConfig: AdapterConfig = {
         {
           type: "enum",
           message: "Invalid animation type",
-          validate: (value) => IMAGE_ANIMATIONS.includes(value),
+          validate: (value) =>
+            [
+              "none",
+              "fadeIn",
+              "zoomIn",
+              "slideInLeft",
+              "slideInRight",
+              "slideInTop",
+              "slideInBottom",
+            ].includes(value),
           severity: "warning",
         },
       ],
@@ -125,13 +130,6 @@ const imageConfig: AdapterConfig = {
         },
       ],
     },
-    withMotion: {
-      name: "withMotion",
-      type: "boolean",
-      default: true,
-      description: "Enable continuous motion",
-    },
-    order: orderPropsConfig,
   },
 };
 

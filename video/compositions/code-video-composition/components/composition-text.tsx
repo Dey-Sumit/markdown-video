@@ -1,10 +1,7 @@
 import textParser from "@/components/x-editor/plugins/text/text.parser";
-import type { TextInputProps } from "@/components/x-editor/plugins/text/text.types";
-import { cn } from "@/lib/utils";
 import { useProjectStore } from "@/store/project-store";
-import React, { type CSSProperties } from "react";
+import React, { useId, type CSSProperties } from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import type { CommonAnimationType } from "../../animation.config";
 
 type AnimationFn = (params: {
   frame: number;
@@ -89,8 +86,6 @@ export const getAdjustedFrame = (
   duration: number,
 ) => {
   const adjustedFrame = frame - delay; // Apply global delay
-  console.log("getAdjustedFrame", { adjustedFrame });
-
   const startFrame = index * duration; // Optional per-word stagger
 
   // Ensure animation doesn't start before the delay ends
@@ -155,7 +150,7 @@ export const scaleIn: AnimationFn = ({ frame, fps, index, delay = 10 }) => {
 };
 
 // Rotate In
-export const rotateIn: AnimationFn = ({ frame, index, delay = 10 }) => {
+export const rotateIn: AnimationFn = ({ frame, index, fps, delay = 10 }) => {
   const duration = ANIMATION_DURATION_IN_FRAMES;
   const { shouldAnimate, adjustedFrame, startFrame } = getAdjustedFrame(
     frame,
@@ -221,7 +216,7 @@ export const bounceIn: AnimationFn = ({ frame, index, fps, delay = 10 }) => {
 };
 
 // Flip In
-export const flipIn: AnimationFn = ({ frame, index, delay = 10 }) => {
+export const flipIn: AnimationFn = ({ frame, index, fps, delay = 10 }) => {
   const duration = ANIMATION_DURATION_IN_FRAMES;
   const { shouldAnimate, adjustedFrame, startFrame } = getAdjustedFrame(
     frame,
@@ -252,7 +247,7 @@ export const flipIn: AnimationFn = ({ frame, index, delay = 10 }) => {
 };
 
 // Zoom Out
-export const zoomOut: AnimationFn = ({ frame, index, delay = 10 }) => {
+export const zoomOut: AnimationFn = ({ frame, index, fps, delay = 10 }) => {
   const duration = ANIMATION_DURATION_IN_FRAMES;
   const { shouldAnimate, adjustedFrame, startFrame } = getAdjustedFrame(
     frame,
@@ -282,7 +277,7 @@ export const zoomOut: AnimationFn = ({ frame, index, delay = 10 }) => {
   return { opacity, transform: `scale(${scale})` };
 };
 
-export const wave: AnimationFn = ({ frame, index, delay = 15 }) => {
+export const wave: AnimationFn = ({ frame, index, fps, delay = 15 }) => {
   const duration = ANIMATION_DURATION_IN_FRAMES;
   const { shouldAnimate, adjustedFrame, startFrame } = getAdjustedFrame(
     frame,
@@ -308,7 +303,7 @@ export const wave: AnimationFn = ({ frame, index, delay = 15 }) => {
 };
 
 // Wobble
-export const wobble: AnimationFn = ({ frame, index, delay = 10 }) => {
+export const wobble: AnimationFn = ({ frame, index, fps, delay = 10 }) => {
   const duration = ANIMATION_DURATION_IN_FRAMES;
   const { shouldAnimate, adjustedFrame, startFrame } = getAdjustedFrame(
     frame,
@@ -367,7 +362,7 @@ export const fadeInWithColor: AnimationFn = ({ frame, index, delay = 10 }) => {
   };
 };
 
-/* export const typewriter: AnimationFn = ({ frame, index, delay = 10 }) => {
+export const typewriter: AnimationFn = ({ frame, index, delay = 10 }) => {
   const durationPerChar = 10; // Frames to reveal each character
   const adjustedFrame = frame - delay; // Apply global delay
 
@@ -387,7 +382,7 @@ export const fadeInWithColor: AnimationFn = ({ frame, index, delay = 10 }) => {
     transform: "none",
     clipPath: `inset(0 ${100 - visiblePercentage}% 0 0)`, // Reveals text left-to-right
   };
-}; */
+};
 
 export const none: AnimationFn = () => {
   return {
@@ -448,7 +443,24 @@ export const slideFromBehind: AnimationFn = ({
   };
 };
 
-const ANIMATION_MAP: Record<CommonAnimationType, AnimationFn> = {
+export const AVAILABLE_TEXT_ANIMATIONS = [
+  "fadeInSlideUp",
+  "fadeInSlideDown",
+  "fadeInOnly",
+  "scaleIn",
+  "bounceIn",
+  "flipIn",
+  "zoomOut",
+  "wobble",
+  "wave",
+  // "typewriter",
+  "none",
+  "slideFromBehind",
+] as const;
+
+export type TextAnimationType = (typeof AVAILABLE_TEXT_ANIMATIONS)[number];
+
+const ANIMATION_MAP: Record<TextAnimationType, AnimationFn> = {
   fadeInSlideUp,
   fadeInSlideDown,
   fadeInOnly,
@@ -477,21 +489,18 @@ const props: Props = {
 const Wrapper = ({
   children,
   style,
-  className,
 }: {
   children: React.ReactNode;
   style: React.CSSProperties;
-  className?: string;
 }) => {
   return (
     <div
       id="comp-text-wrapper"
-      className={cn(
-        "absolute inset-0 flex w-full flex-col items-center justify-center gap-10 p-2 text-8xl font-extrabold tracking-wide text-white",
-        className,
-      )}
+      className="absolute inset-0 flex w-full flex-col items-center justify-center gap-10 p-2 text-8xl font-extrabold tracking-wide text-white"
       style={{
         ...style,
+        zIndex: 5,
+
         // mixBlendMode: props.blend
       }}
     >
@@ -500,34 +509,68 @@ const Wrapper = ({
   );
 };
 
-export const CompositionText = ({ data }: { data: TextInputProps }) => {
+export const CompositionText = ({
+  animationType = "none",
+  text = "Add Content",
+  applyTo = "word",
+  delay = 0, // Delay for the entire animation to start
+  color = "white",
+  fontSize,
+}: {
+  animationType: TextAnimationType;
+  text?: string;
+  delay?: number; // Delay in frames before starting the animation
+  applyTo?: "word" | "sentence";
+  color?: string;
+  fontSize?: number;
+}) => {
   const {
     currentProject: {
       config: { styles },
     },
+    updateStyles,
   } = useProjectStore();
-
-  const {
-    content: text,
-    color,
-    animation,
-    delay = 0,
-    size: fontSize,
-    order,
-  } = data;
 
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  let animationFn = ANIMATION_MAP[animation]; // Select the animation function
+  let animationFn = ANIMATION_MAP[animationType]; // Select the animation function
 
   if (!animationFn) {
     animationFn = ANIMATION_MAP["none"]; // Default to "none" animation
     // throw new Error(`Unknown animation type: ${animationType}`);
   }
 
+  // If applyTo is "sentence", treat the entire text as one unit
+  if (applyTo === "sentence") {
+    const { opacity, transform, clipPath } = animationFn({
+      frame: frame - delay, // Adjust frame to start after the delay
+      fps,
+      index: 0,
+    });
+
+    return (
+      <Wrapper
+        style={{
+          color,
+          fontSize: `${fontSize}px`,
+        }}
+      >
+        <h1
+          style={{
+            opacity,
+            transform,
+            ...(clipPath && { clipPath }), // Apply clipPath only when defined
+          }}
+        >
+          {text}
+        </h1>
+      </Wrapper>
+    );
+  }
+
+  // Split text into words for "word" animation
   const words = text.split(" ");
-  console.log({ frame, delay });
 
   return (
     <Wrapper
@@ -535,12 +578,12 @@ export const CompositionText = ({ data }: { data: TextInputProps }) => {
         color,
         fontSize: `${fontSize}px`,
         fontFamily: styles.backgroundContainer.fontFamily,
-        zIndex: order,
       }}
     >
       <h1
         className="relative px-10 py-0"
         style={{
+          // border: `1px solid ${borderComponent.color}`,
           textAlign: props.align,
         }}
       >
@@ -550,7 +593,6 @@ export const CompositionText = ({ data }: { data: TextInputProps }) => {
               frame: frame - delay, // Apply the delay globally
               fps,
               index, // Use index for stagger effect if needed
-              delay,
             });
 
             return (
@@ -603,51 +645,56 @@ export const CompositionText = ({ data }: { data: TextInputProps }) => {
   );
 };
 
-const CompositionTextWrapper = ({ value }: { value: string }) => {
-  const { data } = textParser.parse(value);
-
-  return <CompositionText data={data} />;
+const Fancy = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <>
+      {" "}
+      // here we need to create the h1 and updat the styles using react.clone
+      maybe
+      <div
+        className="absolute -left-2 -top-2 size-4"
+        style={{
+          backgroundColor: "red",
+        }}
+      ></div>
+      <div
+        className="absolute -right-2 -top-2 size-4"
+        style={{
+          backgroundColor: "red",
+        }}
+      ></div>
+      <div
+        className="absolute -bottom-2 -left-2 size-4"
+        style={{
+          backgroundColor: "red",
+        }}
+      ></div>
+      <div
+        className="absolute -bottom-2 -right-2 size-4"
+        style={{
+          backgroundColor: "red",
+        }}
+      ></div>
+    </>
+  );
 };
 
-// const Fancy = ({ children }: { children: React.ReactNode }) => {
-//   return (
-//     <>
-//       {/* // here we need to create the h1 and updat the styles using react.clone
-//       maybe */}
-//       <div
-//         className="absolute -left-2 -top-2 size-4"
-//         style={{
-//           backgroundColor: "red",
-//         }}
-//       ></div>
-//       <div
-//         className="absolute -right-2 -top-2 size-4"
-//         style={{
-//           backgroundColor: "red",
-//         }}
-//       ></div>
-//       <div
-//         className="absolute -bottom-2 -left-2 size-4"
-//         style={{
-//           backgroundColor: "red",
-//         }}
-//       ></div>
-//       <div
-//         className="absolute -bottom-2 -right-2 size-4"
-//         style={{
-//           backgroundColor: "red",
-//         }}
-//       ></div>
-//     </>
-//   );
-// };
-
 const CompositionTextRenderer = ({ value }: { value: string[] }) => {
+  const textProps = textParser.parse(value);
+
   // TODO : need to add one more prop to the parser that isValid that matches the minimum criteria
   return (
     <>
-      {value.map((textValue, index) => {
-        return <CompositionTextWrapper value={textValue} key={index} />;
+      {textProps.data.map((textProp) => {
+        return (
+          <CompositionText
+            text={textProp.content}
+            delay={textProp.delayInFrames}
+            fontSize={textProp.size}
+            color={textProp.color}
+            animationType={textProp.animation as TextAnimationType}
+          />
+        );
       })}
     </>
   );

@@ -20,8 +20,7 @@ function formatSceneLine(line: string): string {
 
   // Extract arguments (e.g., --duration=5, --title=scene)
   const args: string[] = [];
-  // const argMatches = line.matchAll(/--(\w+)=([^-\s"][^"]*|"[^"]*")/g);
-  const argMatches = line.matchAll(/--(\w+)=("[^"]*"|[^-\s][^-\s]*)/g);
+  const argMatches = line.matchAll(/--(\w+)=([^-\s"][^"]*|"[^"]*")/g);
 
   for (const match of argMatches) {
     args.push(`--${match[1]}=${match[2]}`);

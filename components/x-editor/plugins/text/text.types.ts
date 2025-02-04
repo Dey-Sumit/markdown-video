@@ -7,8 +7,7 @@ export interface TextInputProps {
   blend: string;
   delay: number;
   animation: string;
-  order?: number;
-  // animationApplyTo: string;
+  animationApplyTo: string;
 }
 
 // Output type (includes computed properties)

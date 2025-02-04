@@ -1,3 +1,5 @@
+import BaseParser from "../../core/base/parser";
+
 interface SectionData {
   cols?: number;
   rows?: number;

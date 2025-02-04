@@ -8,7 +8,7 @@ import { ColorPicker } from "../ui/color-picker";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Slider } from "../ui/slider";
-import { SidebarContent, SidebarHeader } from "../ui/sidebar";
+import { SidebarContent, SidebarHeader, SidebarInput } from "../ui/sidebar";
 import { useProjectStore } from "@/store/project-store";
 import FontPicker from "./font-picker";
 
@@ -80,6 +80,14 @@ export default function BackgroundCustomize() {
     key: keyof BackgroundSettings,
     value: number,
   ) => {
+    console.log("Setting change", key, value, {
+      ...styles,
+      sceneContainer: {
+        ...styles.sceneContainer,
+        [key]: value,
+      },
+    });
+
     updateStyles({
       ...styles,
       sceneContainer: {

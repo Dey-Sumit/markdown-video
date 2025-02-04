@@ -1,6 +1,7 @@
-import type { AdapterConfig, PropsConfig } from "../types/adapter.type";
+import type { AdapterConfig, ArgumentConfig } from "../types/adapter.type";
 import {
   ParserIssueCode,
+  type ParseLocation,
   type ParseResult,
   type ParserIssue,
   type ValidationRule,
@@ -31,7 +32,7 @@ class BaseParser<T extends Record<string, any>> {
   }
 
   private parseMany(inputs: string[]): ParseResult<T[]> {
-    const results = inputs.map((input) => {
+    const results = inputs.map((input, index) => {
       return this.parseOne(input);
     });
 
@@ -137,7 +138,7 @@ class BaseParser<T extends Record<string, any>> {
   private validateValue(
     key: string,
     value: any,
-    config: PropsConfig,
+    config: ArgumentConfig,
   ): ParserIssue[] {
     const issues: ParserIssue[] = [];
 

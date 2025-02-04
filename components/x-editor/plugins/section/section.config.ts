@@ -1,14 +1,10 @@
-import { COMMON_ANIMATIONS } from "@/video/compositions/animation.config";
 import type { AdapterConfig } from "../../core/types/adapter.type";
-import { backgroundPropsConfig, orderPropsConfig } from "../common/props";
-import type { SectionInputProps } from "./section.types";
 
-export const defaultSectionPropValues: SectionInputProps = {
+export const defaultSectionArgValues = {
   cols: 1,
   rows: 1,
   gap: 16,
   items: [],
-  animation: "fadeInSlideDown",
 };
 
 const sectionConfig: AdapterConfig = {
@@ -25,7 +21,7 @@ const sectionConfig: AdapterConfig = {
       name: "cols",
       type: "number",
       description: "Number of columns in the grid",
-      default: defaultSectionPropValues.cols,
+      default: defaultSectionArgValues.cols,
       examples: {
         "1": "Single column - stack items vertically",
         "2": "Two columns - split into halves",
@@ -45,7 +41,7 @@ const sectionConfig: AdapterConfig = {
       type: "number",
       description:
         "Number of rows in the grid (optional, auto-calculated if not specified)",
-      default: defaultSectionPropValues.rows,
+      default: defaultSectionArgValues.rows,
       validations: [
         {
           type: "range",
@@ -59,7 +55,7 @@ const sectionConfig: AdapterConfig = {
       name: "gap",
       type: "number",
       description: "Space between grid items in pixels",
-      default: defaultSectionPropValues.gap,
+      default: defaultSectionArgValues.gap,
       validations: [
         {
           type: "range",
@@ -99,40 +95,6 @@ const sectionConfig: AdapterConfig = {
       type: "string",
       description: "Optional footer text below the grid",
       required: false,
-    },
-    background: {
-      ...backgroundPropsConfig,
-      required: false,
-      default: "transparent",
-    },
-    order: orderPropsConfig,
-    animation: {
-      name: "animation",
-      type: "string",
-      description: "Animation type",
-      default: defaultSectionPropValues.animation,
-      validations: [
-        {
-          type: "enum",
-          message: "Invalid animation type",
-          validate: (value) => COMMON_ANIMATIONS.includes(value),
-          severity: "warning",
-        },
-      ],
-      examples: {
-        none: "No animation",
-        fadeInSlideUp: "Fade in and slide up",
-        fadeInSlideDown: "Fade in and slide down",
-        fadeInOnly: "Fade in only",
-        wobble: "Wobble effect",
-        scaleIn: "Scale in",
-        bounceIn: "Bounce in",
-        flipIn: "Flip in",
-        zoomOut: "Zoom out",
-        wave: "Wave effect",
-        // typewriter: "Typewriter effect",
-        slideFromBehind: "Slide from behind",
-      },
     },
   },
 };

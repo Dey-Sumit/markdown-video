@@ -1,10 +1,8 @@
 // plugins/text/config.ts
-import { COMMON_ANIMATIONS } from "@/video/compositions/animation.config";
+import { AVAILABLE_TEXT_ANIMATIONS } from "@/video/compositions/code-video-composition/components/composition-text";
 import type { AdapterConfig } from "../../core/types/adapter.type";
-import { orderPropsConfig } from "../common/props";
-import type { TextInputProps } from "./text.types";
 
-export const defaultTextArgValues: TextInputProps = {
+export const defaultTextArgValues = {
   content: "Default Text",
   size: 120,
   weight: "bold",
@@ -13,8 +11,7 @@ export const defaultTextArgValues: TextInputProps = {
   blend: "normal",
   delay: 0,
   animation: "fadeInSlideUp",
-  order: 1,
-  // animationApplyTo: "word",
+  animationApplyTo: "word",
 };
 
 const textConfig: AdapterConfig = {
@@ -26,7 +23,6 @@ const textConfig: AdapterConfig = {
   description: "Add text in the scene. Multiple text components can be added.",
   template: 'text --content="${1:Default Text}" --color=${2:white}',
   arguments: {
-    order: orderPropsConfig,
     content: {
       name: "content",
       type: "string",
@@ -141,7 +137,8 @@ const textConfig: AdapterConfig = {
         {
           type: "enum",
           message: "Invalid animation type",
-          validate: (value) => COMMON_ANIMATIONS.includes(value),
+          validate: (value) =>
+            ["fadeInSlideUp", "fadeInSlideDown", "fadeInOnly"].includes(value),
           severity: "warning",
         },
       ],
@@ -160,11 +157,11 @@ const textConfig: AdapterConfig = {
         slideFromBehind: "Slide from behind",
       },
     },
-    /* animationApplyTo: {
+    animationApplyTo: {
       name: "animationApplyTo",
       type: "string",
       description: "Animation target element",
-      default: defaultTextArgValues.animation,
+      default: defaultTextArgValues.animationApplyTo,
       validations: [
         {
           type: "enum",
@@ -173,7 +170,7 @@ const textConfig: AdapterConfig = {
           severity: "warning",
         },
       ],
-    }, */
+    },
   },
 };
 

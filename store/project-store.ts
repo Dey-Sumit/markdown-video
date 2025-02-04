@@ -11,7 +11,7 @@ import {
   DEFAULT_COMPOSITION_STYLES,
   FALLBACK_DURATION_IN_FRAMES,
 } from "@/lib/const";
-import { PLAYGROUND_PROJECT_TEMPLATE } from "./project.const";
+import { DEFAULT_PROJECT_TEMPLATE } from "./project.const";
 import { calculateCompositionDuration } from "@/video/compositions/composition.utils";
 interface InsertSceneOptions {
   position?: "start" | "end";
@@ -20,7 +20,7 @@ interface InsertSceneOptions {
 
 interface ProjectState {
   currentProject: {
-    id: string;
+    id: string | null;
     meta: {
       title: string;
       description: string;
@@ -51,6 +51,7 @@ interface ProjectActions {
   updateStyles: (styles: ProjectStyles) => void;
   updateScenes: (scenes: Scene[]) => void;
   setDuration: (duration: number) => void;
+  clearCurrentProject: () => void;
   insertScene: (options: InsertSceneOptions) => void;
 }
 
@@ -62,7 +63,7 @@ export const useProjectStore = create<ProjectStore>()(
   devtools(
     immer((set, get) => ({
       currentProject: {
-        id: "initial",
+        id: null,
         meta: {
           title: "",
           description: "",
@@ -71,7 +72,7 @@ export const useProjectStore = create<ProjectStore>()(
         config: {
           content: {
             global: "",
-            sceneLevel: PLAYGROUND_PROJECT_TEMPLATE,
+            sceneLevel: DEFAULT_PROJECT_TEMPLATE,
           },
           styles: DEFAULT_COMPOSITION_STYLES,
         },
@@ -86,7 +87,6 @@ export const useProjectStore = create<ProjectStore>()(
       _pendingChanges: false,
 
       loadProject: async (id: string) => {
-        if (!id) return;
         set((state) => {
           state.isLoading = true;
         });
@@ -107,7 +107,6 @@ export const useProjectStore = create<ProjectStore>()(
             state.error = error as Error;
             state.isLoading = false;
           });
-
           toast.error("Failed to load project");
         }
       },
@@ -176,8 +175,7 @@ export const useProjectStore = create<ProjectStore>()(
             });
             toast.success("Changes saved");
           } catch (error) {
-            const _error = error as Error;
-            toast.error(`Failed to save changes: ${_error.message}`);
+            toast.error("Failed to save changes");
           }
         }, AUTO_SAVE_DELAY);
       },
@@ -209,15 +207,12 @@ export const useProjectStore = create<ProjectStore>()(
             });
             toast.success("Styles saved");
           } catch (error) {
-            const _error = error as Error;
-            toast.error(`Failed to save styles: ${_error.message}`);
+            toast.error("Failed to save styles");
           }
         }, AUTO_SAVE_DELAY);
       },
 
       updateScenes: (scenes: Scene[]) => {
-        console.log("Updating scenes", scenes);
-
         set((state) => {
           state.currentProject.scenes = scenes;
           state.currentProject.durationInFrames =
@@ -252,10 +247,39 @@ export const useProjectStore = create<ProjectStore>()(
             });
             toast.success("Duration updated");
           } catch (error) {
-            const _error = error as Error;
-            toast.error(`Failed to update duration: ${_error.message}`);
+            toast.error("Failed to update duration");
           }
         }, AUTO_SAVE_DELAY);
+      },
+
+      clearCurrentProject: () => {
+        if (saveTimeout) {
+          clearTimeout(saveTimeout);
+        }
+
+        set((state) => {
+          state.currentProject = {
+            id: null,
+            meta: {
+              title: "",
+              description: "",
+              category: "",
+            },
+            config: {
+              content: {
+                global: "",
+                sceneLevel: "",
+              },
+              styles: DEFAULT_COMPOSITION_STYLES,
+            },
+            scenes: [],
+            durationInFrames: FALLBACK_DURATION_IN_FRAMES,
+            createdAt: new Date(),
+            lastModified: new Date(),
+          };
+          state.error = null;
+          state._pendingChanges = false;
+        });
       },
 
       insertScene: (options: InsertSceneOptions) => {

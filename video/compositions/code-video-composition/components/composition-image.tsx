@@ -1,26 +1,21 @@
 import imageParser from "@/components/x-editor/plugins/image/image.parser";
-import type { ImageInputProps } from "@/components/x-editor/plugins/image/image.types";
-import { Img, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
-import { convertSecondsToFramerate } from "../../composition.utils";
-
-export const IMAGE_ANIMATIONS = [
-  "fade",
-  "scale",
-  "slide-left",
-  "slide-right",
-  "slide-up",
-  "slide-down",
-  "bounce-in",
-  "spin-in",
-  "flip-in",
-  "zig-zag",
-  "pop-in",
-  "none",
-] as const;
+import type { ImageOutputProps } from "@/components/x-editor/plugins/image/image.types";
+import { cn } from "@/lib/utils";
+import { Img, interpolate, useCurrentFrame } from "remotion";
 
 // Define animation functions in a config object
 const animationConfig: Record<
-  (typeof IMAGE_ANIMATIONS)[number],
+  | "fade"
+  | "scale"
+  | "slide-left"
+  | "slide-right"
+  | "slide-up"
+  | "slide-down"
+  | "bounce-in"
+  | "spin-in"
+  | "flip-in"
+  | "zig-zag"
+  | "pop-in",
   (
     frame: number,
     mediaAppearanceDelay: number,
@@ -34,11 +29,9 @@ const animationConfig: Record<
     });
     return `scale(${scale})`;
   },
-  none: () => "",
   "slide-left": (frame, delay, duration) => {
     const translateX = interpolate(
       frame,
-
       [delay, delay + duration],
       [200, 0], // Slide in from right
       { extrapolateRight: "clamp" },
@@ -123,48 +116,49 @@ const animationConfig: Record<
   },
 } as const;
 
-export type ImageAnimationsType = keyof typeof animationConfig;
-
-const TRANSITION_DURATION_IN_FRAMES = 10;
-const BUFFER_IN_FRAMES = 15;
-const FALLBACK_STILL_DURATION = 10;
-
 const CompositionImage = ({
   src,
   sceneDurationInFrames,
-  delay,
+  mediaAppearanceDelay,
   withMotion,
-  animation,
-  height,
-  width,
-}: ImageInputProps & {
+  animationType = "pop-in",
+}: {
+  src: string;
   sceneDurationInFrames: number;
+  mediaAppearanceDelay: number;
+  withMotion?: boolean;
+  animationType?: keyof typeof animationConfig; // Limit to defined animations
 }) => {
-  const { fps } = useVideoConfig();
-  const delayInFrames = convertSecondsToFramerate(delay, fps);
-
   const frame = useCurrentFrame();
+
+  const TRANSITION_DURATION_IN_FRAMES = 10;
+  const BUFFER_IN_FRAMES = 15;
+  const FALLBACK_STILL_DURATION = 10;
 
   const stillDuration =
     sceneDurationInFrames -
-    (delayInFrames + 2 * TRANSITION_DURATION_IN_FRAMES) -
+    (mediaAppearanceDelay + 2 * TRANSITION_DURATION_IN_FRAMES) -
     BUFFER_IN_FRAMES;
 
   const refinedStillDuration =
     stillDuration <= 0 ? FALLBACK_STILL_DURATION : stillDuration;
 
   const isInActiveRange =
-    frame >= delayInFrames + TRANSITION_DURATION_IN_FRAMES &&
+    frame >= mediaAppearanceDelay + TRANSITION_DURATION_IN_FRAMES &&
     frame <=
-      delayInFrames + TRANSITION_DURATION_IN_FRAMES + refinedStillDuration;
+      mediaAppearanceDelay +
+        TRANSITION_DURATION_IN_FRAMES +
+        refinedStillDuration;
 
   const opacity = interpolate(
     frame,
     [
-      delayInFrames,
-      delayInFrames + TRANSITION_DURATION_IN_FRAMES,
-      delayInFrames + TRANSITION_DURATION_IN_FRAMES + refinedStillDuration,
-      delayInFrames +
+      mediaAppearanceDelay,
+      mediaAppearanceDelay + TRANSITION_DURATION_IN_FRAMES,
+      mediaAppearanceDelay +
+        TRANSITION_DURATION_IN_FRAMES +
+        refinedStillDuration,
+      mediaAppearanceDelay +
         TRANSITION_DURATION_IN_FRAMES +
         refinedStillDuration +
         TRANSITION_DURATION_IN_FRAMES,
@@ -174,10 +168,10 @@ const CompositionImage = ({
   );
 
   // Fetch animation transform from config
-  const transformFn = animationConfig[animation] || (() => "");
+  const transformFn = animationConfig[animationType] || (() => "");
   let transform = transformFn(
     frame,
-    delayInFrames,
+    mediaAppearanceDelay,
     TRANSITION_DURATION_IN_FRAMES,
   );
 
@@ -197,46 +191,66 @@ const CompositionImage = ({
       }}
       className="absolute inset-0 flex items-center justify-center backdrop-blur-lg"
     >
-      <div className="flex h-full w-full items-center justify-center">
-        <Img
-          style={{
-            transform,
-            height,
-            width,
-          }}
-          src={src}
-          className="h-auto max-h-full w-auto rounded-2xl border-4 border-gray-700 object-cover shadow-2xl"
-          onError={(e) => {
-            console.log("Error loading image", e);
-          }}
-        />
-      </div>
+      <Img
+        style={{
+          transform,
+        }}
+        src={src}
+        className="h-[60%] w-[60%] rounded-2xl border-4 border-white shadow-2xl"
+        onError={(e) => {
+          console.log("Error loading image", e);
+        }}
+      />
     </div>
   );
 };
 
 interface CompositionImageRendererProps {
-  value: string[];
+  value: string | string[];
   sceneDurationInFrames?: number;
 }
-
 const CompositionImageRenderer = ({
   value,
   sceneDurationInFrames = 150, // default 5 seconds at 30fps
-}: CompositionImageRendererProps) => {
+}: {
+  value: string[];
+  sceneDurationInFrames?: number;
+}) => {
   // Parse all image props from the array of directives
   const parsedProps = imageParser.parse(value);
+
+  // Map animation types from parser to component
+  const mapAnimationType = (animation: ImageOutputProps["animation"]) => {
+    const animationMap = {
+      none: "none",
+      fadeIn: "fade-in",
+      zoomIn: "pop-in",
+      slideInLeft: "slide-left",
+      slideInRight: "slide-right",
+      slideInTop: "slide-up",
+      slideInBottom: "slide-down",
+    } as const;
+
+    return animationMap[animation] || "pop-in";
+  };
 
   return (
     <>
       {parsedProps.data.map((imageProp, index) => {
+        // if (!parsedProps.isValid[index]) {
+        //   console.warn(`Invalid image props at index ${index}:`, imageProp);
+        //   return null;
+        // }
         if (!imageProp || !imageProp.src) return null;
 
         return (
           <CompositionImage
-            key={index}
-            {...imageProp}
+            key={imageProp.id}
+            src={imageProp.src}
             sceneDurationInFrames={sceneDurationInFrames}
+            mediaAppearanceDelay={imageProp.delayInFrames}
+            withMotion={false}
+            animationType={mapAnimationType(imageProp.animation)}
           />
         );
       })}

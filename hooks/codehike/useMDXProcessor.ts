@@ -69,10 +69,9 @@ export const useMdxProcessor = () => {
               .optional(), */
           }),
         );
+        console.log({ scenes });
 
         if (!cancelled) {
-          console.log("about to update scenes", scenes);
-
           updateScenes(scenes);
         }
       } catch (err) {

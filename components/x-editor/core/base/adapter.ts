@@ -8,7 +8,7 @@ import type {
 } from "monaco-editor";
 import type {
   AdapterConfig,
-  PropCompletionInfo,
+  ArgCompletionInfo,
   BaseAdapter,
   CommandContext,
 } from "../types/adapter.type";
@@ -231,10 +231,7 @@ export abstract class AbstractAdapter implements BaseAdapter {
     ];
   }
 
-  private sortCompletions(
-    a: PropCompletionInfo,
-    b: PropCompletionInfo,
-  ): number {
+  private sortCompletions(a: ArgCompletionInfo, b: ArgCompletionInfo): number {
     if (a.isRequired !== b.isRequired) return a.isRequired ? -1 : 1;
     return a.key.localeCompare(b.key);
   }
@@ -250,7 +247,7 @@ export abstract class AbstractAdapter implements BaseAdapter {
     const startColumn = position.column - (match[1]?.length || 0);
 
     // Include all args (used or not) and mark required
-    const args: PropCompletionInfo[] = Object.entries(this.config.arguments)
+    const args: ArgCompletionInfo[] = Object.entries(this.config.arguments)
       .map(([key, arg]) => ({
         key,
         arg,
