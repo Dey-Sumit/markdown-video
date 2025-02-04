@@ -68,7 +68,7 @@ const AIChat = () => {
 
       <form
         onSubmit={handleFormSubmit}
-        className="absolute bottom-0 w-full border-t border-neutral-800 bg-black p-4"
+        className="absolute bottom-0 w-full border-t border-neutral-800 p-4"
       >
         <div className="flex items-center gap-2">
           <Input

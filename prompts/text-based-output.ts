@@ -230,8 +230,10 @@ ${COMPONENT_STRUCTURE}
 ${SCENE_NAMING}
 ${TRANSITION_RULES}
 
+# Always give the markdown or the text wrapped in 4 backticks. as there might be a codeblock that will be wrapped in 3 backticks
+
 ## Example Video Script
-\`\`\`
+\`\`\`\`
 # !scene --duration=2
   !text --content="Making Video Should be" --color=white
 
@@ -255,7 +257,7 @@ ${TRANSITION_RULES}
   !section --cols=1 --gap=16 --order=2 --background="linear-gradient(40deg, #093028 0%, #237A57 100%)" --items=(
     !text --content="like the one you are seeing right now"
   )
-\`\`\`
+\`\`\`\`
 
 
 ${SECTION_GUIDE}

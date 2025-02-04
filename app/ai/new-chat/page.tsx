@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, type FormEvent, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 // import { Plus, Globe, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChatMessage } from "./chat-message";
 import { Textarea } from "@/components/ui/textarea";
+import { useChat } from "ai/react";
+import { SendHorizontal } from "lucide-react";
 
 async function* mockStreamingContent() {
   const content = `Here's an example of a code block without a specified language:
@@ -38,14 +40,20 @@ function formatUser(user: User): string {
 }
 
 export default function Home() {
-  const [messages, setMessages] = useState<
-    Array<{ role: "user" | "assistant"; content: string }>
-  >([]);
-  const [inputValue, setInputValue] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const { messages, input, handleInputChange, handleSubmit, isLoading, stop } =
+    useChat({
+      api: "/api/text-output",
+      onToolCall: async ({ toolCall }) => {
+        console.log("Tool Call", toolCall.toolName);
+      },
+      maxSteps: 2,
+      onFinish: () => setIsStreaming(false),
+    });
 
   useEffect(() => {
     const scrollToBottom = () => {
@@ -61,9 +69,17 @@ export default function Home() {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
-  }, [inputValue]);
+  }, []);
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleFormSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsStreaming(true);
+      handleSubmit(e);
+    },
+    [handleSubmit],
+  );
+  /*   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
 
@@ -88,7 +104,7 @@ export default function Home() {
     }
 
     setIsStreaming(false);
-  };
+  }; */
 
   return (
     <div className="flex h-screen flex-col bg-[#121212] text-zinc-50">
@@ -105,22 +121,25 @@ export default function Home() {
             />
           ))}
           {isStreaming && (
-            <div className="flex items-center space-x-2">
-              <div className="h-2 w-2 animate-pulse rounded-full bg-blue-500"></div>
-              <div className="h-2 w-2 animate-pulse rounded-full bg-blue-500 delay-75"></div>
-              <div className="h-2 w-2 animate-pulse rounded-full bg-blue-500 delay-150"></div>
+            <div className="ml-8 flex gap-2">
+              <span className="text-base">Generating</span>
+              <div className="flex items-center space-x-2">
+                <div className="size-1.5 animate-pulse rounded-full bg-gray-300"></div>
+                <div className="size-1.5 animate-pulse rounded-full bg-gray-300 delay-300"></div>
+                <div className="size-1.5 animate-pulse rounded-full bg-gray-300 delay-700"></div>
+              </div>
             </div>
           )}
           <div ref={messagesEndRef} />
         </div>
       </div>
-      <div className="border-zinc-800 p-4">
+      <div className="bg-transparent p-4 pt-0 shadow-2xl">
         <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-2">
           <div className="relative">
             <Textarea
               ref={textareaRef}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              value={input}
+              onChange={handleInputChange}
               placeholder="Message"
               className="w-full resize-none overflow-hidden rounded-xl bg-[#2A2A2A] px-4 py-3 pr-12 text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-0"
               onKeyDown={(e) => {
@@ -134,21 +153,11 @@ export default function Home() {
             <Button
               type="submit"
               size="icon"
-              className="absolute bottom-2 right-2 h-8 w-8 rounded-lg"
-              disabled={isStreaming}
+              className="group absolute bottom-2 right-2 grid place-items-center rounded-lg p-1.5"
+              onClick={isStreaming ? stop : handleFormSubmit}
+              disabled={isLoading || !input}
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M1.33337 14.6667L15.3334 8.00004L1.33337 1.33337V6.66671L11.3334 8.00004L1.33337 9.33337V14.6667Z"
-                  fill="currentColor"
-                />
-              </svg>
+              <SendHorizontal className="" strokeWidth={1.5} size={20} />
             </Button>
           </div>
         </form>

@@ -2,10 +2,11 @@ import type React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MarkdownFormatter } from "./markdown-formatter";
 import { cn } from "@/utils/cn";
+import type { Message } from "ai";
 
 interface ChatMessageProps {
   content: string;
-  role: "user" | "assistant";
+  role: Message["role"];
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({ content, role }) => {

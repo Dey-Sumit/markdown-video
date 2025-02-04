@@ -66,9 +66,6 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, value }) => {
             whiteSpace: "pre-wrap",
             wordBreak: "break-word",
           }}
-          lineProps={{
-            style: { whiteSpace: "pre-wrap" },
-          }}
           wrapLines={true}
           wrapLongLines={true}
         >

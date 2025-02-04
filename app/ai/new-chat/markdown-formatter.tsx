@@ -14,6 +14,7 @@ export const MarkdownFormatter: React.FC<MarkdownFormatterProps> = ({
   return (
     <div className="prose prose-sm prose-invert max-w-none">
       <ReactMarkdown
+        className="gap-y-4"
         components={{
           code({ node, inline, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || "");
@@ -34,7 +35,7 @@ export const MarkdownFormatter: React.FC<MarkdownFormatterProps> = ({
           },
           // Prevent <p> from wrapping <pre>
           p({ children }) {
-            return <div className="mb-4">{children}</div>;
+            return <div className="">{children}</div>;
           },
           // Custom handling for pre to avoid nesting issues
           pre({ children }) {
