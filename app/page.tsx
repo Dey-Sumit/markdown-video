@@ -10,6 +10,7 @@ import Playground from "@/components/playground";
 
 import { Caveat } from "next/font/google";
 import { RainbowButton } from "@/components/ui/rainbow-button";
+import Link from "next/link";
 
 // If loading a variable font, you don't need to specify the font weight
 const caveat = Caveat({
@@ -61,14 +62,29 @@ const LandingPage = () => {
               complex video editing tools. Make stunning code walkthrough videos
               just by writing a simple markdown. It&#39;s magic .
             </p>
-
-            <a href="#waitlist">
-              <RainbowButton className="flex items-center justify-center rounded-full bg-white px-3 py-2 text-primary sm:py-3 md:px-5">
-                🧑‍🍳 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-gray-300" /> Join
-                the waitlist
-                <ChevronRight className="ml-1 size-5 text-primary transition-transform duration-300 ease-in-out group-hover:translate-x-0.5 sm:size-6" />
-              </RainbowButton>
-            </a>
+            <div className="flex flex-col gap-4 md:flex-row">
+              <a href="#waitlist">
+                <RainbowButton className="flex items-center justify-center rounded-full bg-white px-3 py-2 text-primary sm:py-3 md:px-5">
+                  🧑‍🍳 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-gray-300" />{" "}
+                  Join the waitlist
+                  <ChevronRight className="ml-1 size-5 text-primary transition-transform duration-300 ease-in-out group-hover:translate-x-0.5 sm:size-6" />
+                </RainbowButton>
+              </a>
+              <Link href="/projects/11">
+                <RainbowButton
+                  className={cn(
+                    "flex items-center justify-center rounded-full px-3 py-2 text-primary sm:py-3 md:px-5 dark:bg-transparent",
+                    "hover:bg-transparent",
+                    "border-2 text-white dark:bg-[linear-gradient(transparent,transparent)]",
+                  )}
+                >
+                  ✨
+                  <hr className="mx-2 h-4 w-[1px] shrink-0 bg-gray-300" /> Sneak
+                  Peek
+                  <ChevronRight className="ml-1 size-5 text-white transition-transform duration-300 ease-in-out group-hover:translate-x-0.5 sm:size-6" />
+                </RainbowButton>
+              </Link>
+            </div>
           </div>
           <ContainerScroll />
         </div>
