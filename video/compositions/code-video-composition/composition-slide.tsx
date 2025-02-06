@@ -76,7 +76,7 @@ function BaseSlide({ code, codeRef, scene, sceneProps }: BaseSlideProps) {
         value={scene.image}
         sceneDurationInFrames={sceneProps.durationInFrames}
       />
-      {scene.section && (
+      {scene.section?.length > 0 && (
         <CompositionSectionRenderer
           sceneDurationInFrames={sceneProps.durationInFrames}
           value={scene.section}

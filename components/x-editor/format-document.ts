@@ -1,4 +1,10 @@
 export function formatDocument(content: string): string {
+  // First encode any problematic URL patterns
+  content = content
+    .split("\n")
+    .map((line) => encodeUrlPatterns(line))
+    .join("\n");
+
   const squeezedContent = preprocessContent(content);
 
   const lines = squeezedContent.trim().split("\n");
@@ -12,6 +18,26 @@ export function formatDocument(content: string): string {
 
   // Join the formatted scenes with double newlines
   return formattedScenes.join("\n\n");
+}
+
+function encodeUrlPatterns(line: string): string {
+  // Only process lines that contain quotes
+  if (!line.includes('"')) return line;
+
+  // Find content within quotes
+  return line.replace(/"([^"]+)"/g, (match, quotedContent) => {
+    // Replace ._something_ patterns with encoded version
+    const encodedContent = quotedContent.replace(
+      /\._([^_\s.]+)_\./g,
+      (match) => {
+        // Get the content between dots and underscores
+        const content = match.slice(2, -2); // Remove ._ from start and _. from end
+        return `.%5F${content}%5F.`; // Add back dots but encode the underscores
+      },
+    );
+
+    return `"${encodedContent}"`;
+  });
 }
 
 function formatSceneLine(line: string): string {
@@ -101,42 +127,6 @@ function extractNestedSection(content: string): string {
   const result = content.slice(0, i + 1);
 
   return result;
-}
-
-function splitComponents(content: string): string[] {
-  const components: string[] = [];
-  let current = "";
-  let depth = 0;
-
-  for (let i = 0; i < content.length; i++) {
-    const char = content[i];
-    if (char === "(") depth++;
-    if (char === ")") depth--;
-
-    // Add character to current component
-    current += char;
-
-    // Split on component boundary (when we see a "!" at depth 0)
-    // But only if we're not in the middle of a component
-    if (
-      depth === 0 &&
-      i + 1 < content.length &&
-      content[i + 1] === "!" &&
-      (current.trim().startsWith("!") || current.trim() === "")
-    ) {
-      if (current.trim()) {
-        components.push(current.trim());
-      }
-      current = "";
-    }
-  }
-
-  // Add final component
-  if (current.trim()) {
-    components.push(current.trim());
-  }
-
-  return components;
 }
 
 function formatSectionBlock(content: string, level: number): string[] {

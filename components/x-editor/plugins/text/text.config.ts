@@ -98,7 +98,8 @@ const textConfig: AdapterConfig = {
         {
           type: "pattern",
           message: "Invalid color format",
-          pattern: "^(black|white|red|blue|green|yellow|gradient-\\w+-\\w+)$",
+          pattern:
+            "^(#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)|rgba\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*[0-1](\\.\\d+)?\\s*\\)|hsl\\(\\s*\\d+\\s*,\\s*\\d+%\\s*,\\s*\\d+%\\s*\\)|hsla\\(\\s*\\d+\\s*,\\s*\\d+%\\s*,\\s*\\d+%\\s*,\\s*[0-1](\\.\\d+)?\\s*\\)|[a-zA-Z]+|gradient-\\w+-\\w+|linear-gradient\\([^)]+\\))$",
           severity: "warning",
         },
       ],

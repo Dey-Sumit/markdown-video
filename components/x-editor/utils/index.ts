@@ -61,7 +61,6 @@ export const configureJSX = (monaco: Monaco) => {
     },
   };
 
-  //@ts-ignore
   monaco.languages.setMonarchTokensProvider("jsx", monarchTokens);
 };
 

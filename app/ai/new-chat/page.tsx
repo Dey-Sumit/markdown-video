@@ -7,8 +7,9 @@ import { ChatMessage } from "./chat-message";
 import { Textarea } from "@/components/ui/textarea";
 import { useChat } from "ai/react";
 import { SendHorizontal } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-async function* mockStreamingContent() {
+/* async function* mockStreamingContent() {
   const content = `Here's an example of a code block without a specified language:
 
 \`\`\`
@@ -37,9 +38,45 @@ function formatUser(user: User): string {
     yield chunk + " ";
     await new Promise((resolve) => setTimeout(resolve, 50));
   }
-}
+} */
 
-export default function Home() {
+const MESSAGES = [
+  {
+    id: "qNCF3YjebmcBmqDm",
+    createdAt: "2025-02-06T21:36:58.502Z",
+    role: "user",
+    content: "hey",
+  },
+  {
+    id: "msg-jOfO5gyisrqdOgR9la37hXXl",
+    role: "assistant",
+    content:
+      "I'm your video editor assistant. Let's focus on creating your video instead. Would you like help with creating or modifying a video scene?",
+    createdAt: "2025-02-06T21:37:03.663Z",
+    revisionId: "RwnUNI64PQma7PmC",
+  },
+  {
+    id: "HSUUSyOuwNmgaorR",
+    createdAt: "2025-02-06T21:38:06.977Z",
+    role: "user",
+    content:
+      "Create a video on top 5 hollywood movies . It should contain the name, director and the poster (on right) in a section . each scene should include a movie. add one intro and outro as well",
+  },
+  {
+    id: "msg-hkU8bcbdhzISTcKg5X22goyY",
+    role: "assistant",
+    content:
+      'Here’s the video script for your request:\n\n````\n# !scene --title=intro --duration=3 --background="linear-gradient(45deg, #1a1a1a, #2c2c2c)"\n  !text --content="Top 5 Hollywood Movies" --color=white --size=140 --animation=fadeInSlideUp\n  !text --content="A Cinematic Journey" --color=#ffd700 --size=80 --delay=1\n\n# !scene --title=movie-1 --duration=5 --background="linear-gradient(45deg, #2c2c2c, #1a1a1a)"\n  !section --cols=2 --gap=20 --items=(\n    !text --content="The Godfather\\nDirected by Francis Ford Coppola" --color=white --size=60\n    !image --src="https://upload.wikimedia.org/wikipedia/en/1/1c/Godfather_ver1.jpg" --animation=slide --delay=1\n  )\n\n# !scene --title=movie-2 --duration=5 --background="linear-gradient(45deg, #1a1a1a, #2c2c2c)"\n  !section --cols=2 --gap=20 --items=(\n    !text --content="The Shawshank Redemption\\nDirected by Frank Darabont" --color=white --size=60\n    !image --src="https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg" --animation=slide --delay=1\n  )\n\n# !scene --title=movie-3 --duration=5 --background="linear-gradient(45deg, #2c2c2c, #1a1a1a)"\n  !section --cols=2 --gap=20 --items=(\n    !text --content="The Dark Knight\\nDirected by Christopher Nolan" --color=white --size=60\n    !image --src="https://upload.wikimedia.org/wikipedia/en/1/1c/The_Dark_Knight_%282008_film%29.jpg" --animation=slide --delay=1\n  )\n\n# !scene --title=movie-4 --duration=5 --background="linear-gradient(45deg, #1a1a1a, #2c2c2c)"\n  !section --cols=2 --gap=20 --items=(\n    !text --content="Inception\\nDirected by Christopher Nolan" --color=white --size=60\n    !image --src="https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg" --animation=slide --delay=1\n  )\n\n# !scene --title=movie-5 --duration=5 --background="linear-gradient(45deg, #2c2c2c, #1a1a1a)"\n  !section --cols=2 --gap=20 --items=(\n    !text --content="Pulp Fiction\\nDirected by Quentin Tarantino" --color=white --size=60\n    !image --src="https://upload.wikimedia.org/wikipedia/en/3/3b/Pulp_Fiction_%281994%29_poster.jpg" --animation=slide --delay=1\n  )\n\n# !scene --title=outro --duration=3 --background="linear-gradient(45deg, #1a1a1a, #2c2c2c)"\n  !text --content="Thanks for Watching!" --color=white --size=140 --animation=fadeInSlideUp\n  !text --content="Which one is your favorite?" --color=#ffd700 --size=80 --delay=1\n````\n\n### Key Features:\n- **Intro Scene:** Sets the tone with a gradient background and animated text.\n- **Movie Scenes:** Each movie has its own scene with a 2-column layout (text on the left, poster on the right).\n- **Outro Scene:** Ends with a thank-you message and a question to engage viewers.\n\nLet me know if you\'d like to adjust anything!',
+    createdAt: "2025-02-06T21:38:09.982Z",
+    revisionId: "MkNZCzkRosLtvcbm",
+  },
+];
+
+export default function AIChatComponent({
+  renderAs = "page",
+}: {
+  renderAs?: "page" | "component";
+}) {
   const [isStreaming, setIsStreaming] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -73,6 +110,8 @@ export default function Home() {
 
   const handleFormSubmit = useCallback(
     (e: React.FormEvent) => {
+      console.log("Form Submit");
+
       e.preventDefault();
       setIsStreaming(true);
       handleSubmit(e);
@@ -107,12 +146,14 @@ export default function Home() {
   }; */
 
   return (
-    <div className="flex h-screen flex-col bg-[#121212] text-zinc-50">
-      <div
-        ref={chatContainerRef}
-        className="flex-1 overflow-y-auto overflow-x-hidden p-4"
-      >
-        <div className="mx-auto w-full max-w-3xl space-y-4">
+    <div
+      className={cn("flex flex-col bg-[#121212] text-zinc-50", {
+        "h-screen": renderAs === "page",
+        "h-full": renderAs === "component",
+      })}
+    >
+      <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4">
+        <div className="mx-auto max-w-2xl space-y-4">
           {messages.map((message, index) => (
             <ChatMessage
               key={index}
@@ -121,12 +162,12 @@ export default function Home() {
             />
           ))}
           {isStreaming && (
-            <div className="ml-8 flex gap-2">
-              <span className="text-base">Generating</span>
+            <div className="ml-14 flex gap-2 text-gray-300">
+              <span className="text-sm">cooking</span>
               <div className="flex items-center space-x-2">
-                <div className="size-1.5 animate-pulse rounded-full bg-gray-300"></div>
-                <div className="size-1.5 animate-pulse rounded-full bg-gray-300 delay-300"></div>
-                <div className="size-1.5 animate-pulse rounded-full bg-gray-300 delay-700"></div>
+                <div className="size-1 animate-pulse rounded-full bg-gray-300"></div>
+                <div className="size-1 animate-pulse rounded-full bg-gray-300 delay-300"></div>
+                <div className="size-1 animate-pulse rounded-full bg-gray-300 delay-700"></div>
               </div>
             </div>
           )}
@@ -144,8 +185,7 @@ export default function Home() {
               className="w-full resize-none overflow-hidden rounded-xl bg-[#2A2A2A] px-4 py-3 pr-12 text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-0"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSubmit(e);
+                  handleFormSubmit(e);
                 }
               }}
               rows={1}

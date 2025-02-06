@@ -49,7 +49,7 @@ const Section = ({
   } = sectionData;
 
   const { opacity, transform } = useAnimatedProperties({
-    delay: 2,
+    delay: 0,
     sceneDurationInFrames,
     animation: "fadeInSlideDown",
     withMotion: false,
@@ -57,7 +57,7 @@ const Section = ({
 
   return (
     <div
-      className="h-full w-full"
+      className="relative h-full w-full"
       style={{
         display: "grid",
         gridTemplateColumns: cols ? `repeat(${cols}, 1fr)` : "auto",
@@ -102,11 +102,13 @@ const Section = ({
             console.log("Image Props", props);
 
             return (
-              <CompositionImage
-                key={index}
-                {...props}
-                sceneDurationInFrames={sceneDurationInFrames}
-              />
+              <div className="relative" key={index}>
+                <CompositionImage
+                  key={index}
+                  {...props}
+                  sceneDurationInFrames={sceneDurationInFrames}
+                />
+              </div>
             );
           }
           default:

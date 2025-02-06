@@ -1,5 +1,5 @@
 // components/x-editor/core/registry.ts
-import type { Monaco, OnMount } from "@monaco-editor/react";
+import type { Monaco } from "@monaco-editor/react";
 import type { BaseAdapter } from "./types/adapter.type";
 import type { editor, IDisposable, languages } from "monaco-editor";
 import { EDITOR_LANGUAGE } from "../const";
@@ -9,10 +9,33 @@ interface FoldingRange {
   kind?: languages.FoldingRangeKind;
 }
 
+/* const configureMonacoLanguage = (monaco: Monaco) => {
+  monaco.languages.setMonarchTokensProvider(EDITOR_LANGUAGE, {
+    tokenizer: {
+      root: [
+        // Handle the entire quoted string content as a single token
+        [/(--\w+=)(".*?")/, ["argument", "string"]],
+
+        // Command tokens
+        [/![\w-]+/, "keyword"],
+
+        // Argument names (when not part of the full argument pattern above)
+        [/--[\w-]+/, "argument"],
+
+        // Only apply markdown emphasis outside of quotes and command arguments
+        [/(?<!["\\])[_](.*?)[_](?!["\\])/, "emphasis"],
+      ],
+    },
+  });
+}; */
+
 export class PluginRegistry {
   private plugins: Map<string, BaseAdapter> = new Map();
 
-  constructor(private readonly monaco: Monaco) {}
+  constructor(private readonly monaco: Monaco) {
+    // Configure language when registry is initialized
+    //  configureMonacoLanguage(monaco);
+  }
 
   register(plugin: BaseAdapter): void {
     this.plugins.set(plugin.config.id, plugin);
@@ -208,11 +231,11 @@ export class PluginRegistry {
 
         const isEmptyLine = (ln: number) =>
           model.getLineContent(ln).trim() === "";
-        const findNextNonEmpty = (from: number): number => {
-          let ln = from;
-          while (ln <= lineCount && isEmptyLine(ln)) ln++;
-          return ln;
-        };
+        // const findNextNonEmpty = (from: number): number => {
+        //   let ln = from;
+        //   while (ln <= lineCount && isEmptyLine(ln)) ln++;
+        //   return ln;
+        // };
         const findPrevNonEmpty = (from: number): number => {
           let ln = from;
           while (ln > 0 && isEmptyLine(ln)) ln--;

@@ -45,3 +45,31 @@ export const orderPropsConfig: PropsConfig = {
     4: "Fourth item in the scene",
   },
 };
+
+export const delayPropsConfig: PropsConfig = {
+  name: "delay",
+  type: "number",
+  description: "Animation delay in seconds",
+  validations: [
+    {
+      type: "range",
+      message: "Delay must be between 0 and 10 seconds",
+      validate: (value) => Number(value) >= 0 && Number(value) <= 10,
+      severity: "warning",
+    },
+  ],
+};
+
+export const durationPropsConfig: PropsConfig = {
+  name: "duration",
+  type: "number",
+  description: "Animation duration in seconds",
+  validations: [
+    {
+      type: "range",
+      message: "Duration must be between 0.1 and 5 seconds",
+      validate: (value) => Number(value) >= 0.1 && Number(value) <= 5,
+      severity: "warning",
+    },
+  ],
+};

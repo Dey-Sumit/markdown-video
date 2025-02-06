@@ -24,7 +24,7 @@ const imageConfig: AdapterConfig = {
   description:
     "Add an image to the scene with optional animations and styling.",
   template:
-    'image --src="${1:https://fakeimg.pl/450x400/?text=DUMMY-IMAGE}" --width=${2:400} --height=${3:300}',
+    'image --src="${1:https://m.media-amazon.com/images/M/MV5BMDFkYTc0MGEtZmNhMC00ZDIzLWFmNTEtODM1ZmRlYWMwMWFmXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg}" --height=${3:800}',
   arguments: {
     src: {
       name: "src",

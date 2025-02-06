@@ -292,3 +292,8 @@
     transform: scale(1.0);
   }
 }
+
+.bg-dot-pattern {
+    background-image: radial-gradient(circle at 3px 3px,hsl(var(--muted)) 2px,transparent 0);
+    background-size: 24px 24px;
+}

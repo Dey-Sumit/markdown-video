@@ -20,6 +20,12 @@ export const monacoCustomOptions: editor.IStandaloneEditorConstructionOptions =
     tabCompletion: "on",
     wordWrap: "on",
     renderWhitespace: "selection",
+    // wrappingStrategy: "advanced",
+    // // Set a very large word wrap column to effectively prevent wrapping
+    // wordWrapColumn: 1000000,
+    // // Prevent breaking within quoted strings
+    // wordWrapBreakBeforeCharacters: "",
+    // wordWrapBreakAfterCharacters: "",
     guides: {
       bracketPairs: true,
       indentation: true,

@@ -1,5 +1,9 @@
 import type { AdapterConfig } from "../../core/types/adapter.type";
-import { backgroundPropsConfig, orderPropsConfig } from "../common/props";
+import {
+  backgroundPropsConfig,
+  delayPropsConfig,
+  orderPropsConfig,
+} from "../common/props";
 import { COMMON_ANIMATIONS } from "../text";
 import type { SectionInputProps } from "./section.types";
 
@@ -133,6 +137,13 @@ const sectionConfig: AdapterConfig = {
         // typewriter: "Typewriter effect",
         slideFromBehind: "Slide from behind",
       },
+    },
+    delay: {
+      ...delayPropsConfig,
+      default: 0,
+    },
+    duration: {
+      ...delayPropsConfig,
     },
   },
 };
