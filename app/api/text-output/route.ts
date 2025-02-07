@@ -5,8 +5,8 @@ import { deepseek } from "@ai-sdk/deepseek";
 import SYSTEM_PROMPT from "@/prompts/text-based-output";
 import { anthropic } from "@ai-sdk/anthropic";
 
-//const model = anthropic("claude-3-5-sonnet-latest");
-const model = deepseek("deepseek-chat");
+const model = anthropic("claude-3-5-sonnet-latest");
+// const model = deepseek("deepseek-chat");
 
 export async function POST(request: Request) {
   const { messages } = await request.json();
@@ -28,7 +28,6 @@ export async function POST(request: Request) {
   return result.toDataStreamResponse({
     getErrorMessage: errorHandler,
     sendUsage: true,
-    
   });
 }
 
