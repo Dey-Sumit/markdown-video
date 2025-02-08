@@ -16,6 +16,7 @@ import { ProjectSidebar2 } from "@/components/project-sidebar-2";
 import ClientXPlayer from "@/components/x-editor/dynamic-x-player";
 import AIChat from "@/components/chat";
 import AIChatComponent from "@/app/ai/new-chat/page";
+import AiChatFAB from "@/app/ai/new-chat/ai-chat-fab";
 
 function Page() {
   return (
@@ -73,8 +74,16 @@ function Page() {
 
           <p className="font-mono text-sm font-medium">markdown video </p>
         </header>
-        <div className="h-full w-full overflow-hidden">
-          <ResizablePanelGroup
+        <div className="flex h-full w-full overflow-hidden">
+          <div className="relative flex-[0.7]">
+            <ClientSideEditor />
+            <AiChatFAB />
+          </div>
+          <div className="flex-[0.3]">
+            <ClientXPlayer />
+          </div>
+
+          {/* <ResizablePanelGroup
             direction="horizontal"
             className="rounded-lg md:min-w-[450px]"
           >
@@ -89,14 +98,11 @@ function Page() {
                 </ResizablePanel>
                 <ResizableHandle withHandle />
                 <ResizablePanel defaultSize={20} minSize={20}>
-                  {/* <div className="h-full w-full overflow-auto overscroll-contain">
-                    <div className="h-full w-[500px] bg-gray-900 p-10">HEY</div>
-                  </div> */}
                   <AIChatComponent renderAs="component" />
                 </ResizablePanel>
               </ResizablePanelGroup>
             </ResizablePanel>
-          </ResizablePanelGroup>
+          </ResizablePanelGroup> */}
         </div>
       </SidebarInset>
     </SidebarProvider>

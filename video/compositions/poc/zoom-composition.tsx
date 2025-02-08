@@ -87,7 +87,7 @@ export const MyVideo: React.FC = () => {
         component={ZoomIntoPosition}
         durationInFrames={120} // Total duration of the composition
         fps={30}
-        width={1920}
+        width={720}
         height={1080}
         defaultProps={{
           zoomLevel: 2, // Zoom 2x

@@ -5,7 +5,7 @@ export const FALLBACK_COMPOSITION_DURATION_IN_SECONDS = 5;
 export const compositionMetaData = {
   fps: 30,
   height: 1080,
-  width: 1920,
+  width: 720,
 };
 
 export const FALLBACK_PROPS_RAW_FORMAT = {

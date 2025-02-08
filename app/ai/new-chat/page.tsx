@@ -174,26 +174,26 @@ export default function AIChatComponent({
           <div ref={messagesEndRef} />
         </div>
       </div>
-      <div className="bg-transparent p-4 pt-0 shadow-2xl">
-        <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-2">
+      <div className="bg-transparent p-2 pt-0 shadow-2xl">
+        <form onSubmit={handleSubmit} className="mx-auto space-y-2">
           <div className="relative">
             <Textarea
               ref={textareaRef}
               value={input}
               onChange={handleInputChange}
               placeholder="Message"
-              className="w-full resize-none overflow-hidden rounded-xl bg-[#2A2A2A] px-4 py-3 pr-12 text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-0"
+              className="w-full resize-none overflow-hidden rounded-lg bg-[#2A2A2A] px-4 py-3 pr-12 text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-0"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   handleFormSubmit(e);
                 }
               }}
-              rows={1}
+              rows={3}
             />
             <Button
               type="submit"
               size="icon"
-              className="group absolute bottom-2 right-2 grid place-items-center rounded-lg p-1.5"
+              className="group absolute bottom-2 right-2 grid place-items-center rounded-md p-1.5"
               onClick={isStreaming ? stop : handleFormSubmit}
               disabled={isLoading || !input}
             >

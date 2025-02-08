@@ -13,7 +13,7 @@ export const defaultTextArgValues: TextInputProps = {
   blend: "normal",
   delay: 0,
   animation: "fadeInSlideUp",
-  order: 1,
+  order: 0,
   // animationApplyTo: "word",
 };
 
