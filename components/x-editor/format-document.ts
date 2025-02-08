@@ -46,7 +46,6 @@ function formatSceneLine(line: string): string {
 
   // Extract arguments (e.g., --duration=5, --title=scene)
   const args: string[] = [];
-  // const argMatches = line.matchAll(/--(\w+)=([^-\s"][^"]*|"[^"]*")/g);
   const argMatches = line.matchAll(/--(\w+)=("[^"]*"|[^-\s][^-\s]*)/g);
 
   for (const match of argMatches) {
@@ -129,6 +128,33 @@ function extractNestedSection(content: string): string {
   return result;
 }
 
+function splitComponents(content: string): string[] {
+  const components: string[] = [];
+  let current = "";
+  let depth = 0;
+
+  for (let i = 0; i < content.length; i++) {
+    const char = content[i];
+    if (char === "(") depth++;
+    if (char === ")") depth--;
+
+    current += char;
+
+    // Split when we encounter a component boundary (depth === 0 and the next component starts with "!")
+    if (depth === 0 && i + 1 < content.length && content[i + 1] === "!") {
+      components.push(current.trim());
+      current = "";
+    }
+  }
+
+  // Add the last component if it exists
+  if (current.trim()) {
+    components.push(current.trim());
+  }
+
+  return components;
+}
+
 function formatSectionBlock(content: string, level: number): string[] {
   const indent = "  ".repeat(level);
   const result: string[] = [];
@@ -145,25 +171,26 @@ function formatSectionBlock(content: string, level: number): string[] {
     return result;
   }
 
-  // Remove trailing parentheses and split the content into components
-  const strippedContent = sectionContent.replace(/\)+$/, "");
-  const lines = strippedContent.split(/\n|(?=!)/);
+  // Split the content into individual components
+  const components = splitComponents(sectionContent.replace(/\)+$/, ""));
 
   // Process each component
-  for (let line of lines) {
-    line = line.trim();
-    if (!line) continue;
+  for (const comp of components) {
+    const trimmed = comp.trim();
+    if (!trimmed) continue;
 
-    if (line.startsWith("!section")) {
-      const nestedContent = extractNestedSection(line);
+    if (trimmed.startsWith("!section")) {
+      // Handle nested section
+      const nestedContent = extractNestedSection(trimmed);
       const nestedResult = formatSectionBlock(nestedContent, level + 1);
       result.push(...nestedResult);
-    } else if (line.startsWith("!")) {
-      // Handle any component that starts with !
-      result.push(`${indent}  ${line}`);
+    } else {
+      // Handle all other components (text, image, etc.)
+      result.push(`${indent}  ${trimmed}`);
     }
   }
 
+  // Close the section
   result.push(`${indent})`);
   return result;
 }
