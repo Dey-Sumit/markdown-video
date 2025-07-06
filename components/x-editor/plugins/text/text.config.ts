@@ -1,5 +1,6 @@
 // plugins/text/config.ts
 import { AVAILABLE_TEXT_ANIMATIONS } from "@/video/compositions/code-video-composition/components/composition-text";
+import { COMMON_ANIMATIONS } from ".";
 import type { AdapterConfig } from "../../core/types/adapter.type";
 
 export const defaultTextArgValues = {
@@ -11,7 +12,8 @@ export const defaultTextArgValues = {
   blend: "normal",
   delay: 0,
   animation: "fadeInSlideUp",
-  animationApplyTo: "word",
+  order: 0,
+  // animationApplyTo: "word",
 };
 
 const textConfig: AdapterConfig = {
@@ -94,7 +96,8 @@ const textConfig: AdapterConfig = {
         {
           type: "pattern",
           message: "Invalid color format",
-          pattern: "^(black|white|red|blue|green|yellow|gradient-\\w+-\\w+)$",
+          pattern:
+            "^(#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)|rgba\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*[0-1](\\.\\d+)?\\s*\\)|hsl\\(\\s*\\d+\\s*,\\s*\\d+%\\s*,\\s*\\d+%\\s*\\)|hsla\\(\\s*\\d+\\s*,\\s*\\d+%\\s*,\\s*\\d+%\\s*,\\s*[0-1](\\.\\d+)?\\s*\\)|[a-zA-Z]+|gradient-\\w+-\\w+|linear-gradient\\([^)]+\\))$",
           severity: "warning",
         },
       ],

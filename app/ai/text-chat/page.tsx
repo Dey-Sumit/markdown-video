@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import type { Message } from "ai";
 import { useChat } from "ai/react";
 import { Loader2, Square, Send } from "lucide-react";
+import { MarkdownFormatter } from "./components/markdown-formatter";
 
 const AIChat = () => {
   const [isStreaming, setIsStreaming] = useState(false);
@@ -22,7 +23,7 @@ const AIChat = () => {
     stop,
     append,
   } = useChat({
-    api: "/api/chat-claude",
+    api: "/api/text-output",
     onToolCall: async ({ toolCall }) => {
       console.log("Tool Call", toolCall.toolName);
     },
@@ -57,7 +58,9 @@ const AIChat = () => {
         <div className="space-y-4">
           {messages.map((m: Message) => (
             <div key={m.id} className="space-y-2">
-              <ChatMessage message={m} append={append} />
+              <MarkdownFormatter content={m.content} />
+              {/* {m.content} */}
+              {/* <ChatMessage message={m} append={append} /> */}
             </div>
           ))}
         </div>
@@ -65,7 +68,7 @@ const AIChat = () => {
 
       <form
         onSubmit={handleFormSubmit}
-        className="absolute bottom-0 w-full border-t border-neutral-800 bg-black p-4"
+        className="absolute bottom-0 w-full border-t border-neutral-800 p-4"
       >
         <div className="flex items-center gap-2">
           <Input

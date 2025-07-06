@@ -9,6 +9,7 @@ export interface SectionInputProps {
   items: string; // Raw items string with parentheses
   header?: string;
   footer?: string;
+  animation?: string;
 }
 
 export interface SectionOutputProps extends Omit<SectionInputProps, "items"> {

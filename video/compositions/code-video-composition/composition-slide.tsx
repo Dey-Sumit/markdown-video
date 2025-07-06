@@ -1,20 +1,14 @@
-import { Pre, type HighlightedCode } from "codehike/code";
+import { type HighlightedCode } from "codehike/code";
 
 import { cn, getDerivedBackground } from "@/lib/utils";
 import { loadFont } from "@remotion/google-fonts/FiraCode";
-import {
-  tokenTransitions,
-  useTokenTransitions,
-} from "./annotations/token-transitions";
+import { useTokenTransitions } from "./annotations/token-transitions";
 import { type Scene } from "./types.composition";
-import { highlight } from "./annotations/highlight";
-import { getMediaType } from "@/utils/utils";
-import CompositionImage from "./components/composition-image";
 import { useVideoConfig } from "remotion";
 
-import ComponentLayoutRenderer from "./components/compone-layout-renderer";
-import { sectionParser } from "@/parsers/SectionParser";
-import Section from "./components/_composition-section";
+// import ComponentLayoutRenderer from "./components/compone-layout-renderer";
+// import { sectionParser } from "@/parsers/SectionParser";
+// import Section from "./components/_composition-section";
 import type { SceneOutputProps } from "@/components/x-editor/plugins/scene/scene.types";
 import CompositionTextRenderer from "./components/composition-text";
 import CodeBlockRenderer from "./components/composition-code";
@@ -127,21 +121,12 @@ function BaseSlide({
         value={scene.image}
         sceneDurationInFrames={sceneProps.durationInFrames}
       />
-
-      <CompositionSectionRenderer
-        sceneDurationInFrames={sceneProps.durationInFrames}
-        value={scene.section}
-      />
-
-      {/*       {media?.src && (
-        // {media?.src && getMediaType(media.src) === "image" && (
-        <CompositionImage
-          src={media.src}
-          slideDurationInFrames={slideDurationInFrames}
-          mediaAppearanceDelay={convertSecondsToFramerate(media.delay, fps)}
-          withMotion={media.withMotion}
+      {scene.section?.length > 0 && (
+        <CompositionSectionRenderer
+          sceneDurationInFrames={sceneProps.durationInFrames}
+          value={scene.section}
         />
-      )} */}
+      )}
     </div>
   );
 }

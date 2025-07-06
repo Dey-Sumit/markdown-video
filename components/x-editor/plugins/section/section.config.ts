@@ -1,4 +1,6 @@
+import { AVAILABLE_TEXT_ANIMATIONS } from "@/video/compositions/code-video-composition/components/composition-text";
 import type { AdapterConfig } from "../../core/types/adapter.type";
+import { backgroundPropsConfig, orderPropsConfig } from "../common/props";
 
 export const defaultSectionArgValues = {
   cols: 1,
@@ -95,6 +97,40 @@ const sectionConfig: AdapterConfig = {
       type: "string",
       description: "Optional footer text below the grid",
       required: false,
+    },
+    background: {
+      ...backgroundPropsConfig,
+      required: false,
+      default: "transparent",
+    },
+    order: orderPropsConfig,
+    animation: {
+      name: "animation",
+      type: "string",
+      description: "Animation type",
+      // default: defaultSectionArgValues.,
+      validations: [
+        {
+          type: "enum",
+          message: "Invalid animation type",
+          validate: (value) => AVAILABLE_TEXT_ANIMATIONS.includes(value),
+          severity: "warning",
+        },
+      ],
+      examples: {
+        none: "No animation",
+        fadeInSlideUp: "Fade in and slide up",
+        fadeInSlideDown: "Fade in and slide down",
+        fadeInOnly: "Fade in only",
+        wobble: "Wobble effect",
+        scaleIn: "Scale in",
+        bounceIn: "Bounce in",
+        flipIn: "Flip in",
+        zoomOut: "Zoom out",
+        wave: "Wave effect",
+        // typewriter: "Typewriter effect",
+        slideFromBehind: "Slide from behind",
+      },
     },
   },
 };

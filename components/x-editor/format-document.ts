@@ -1,4 +1,10 @@
 export function formatDocument(content: string): string {
+  // First encode any problematic URL patterns
+  content = content
+    .split("\n")
+    .map((line) => encodeUrlPatterns(line))
+    .join("\n");
+
   const squeezedContent = preprocessContent(content);
 
   const lines = squeezedContent.trim().split("\n");
@@ -14,13 +20,33 @@ export function formatDocument(content: string): string {
   return formattedScenes.join("\n\n");
 }
 
+function encodeUrlPatterns(line: string): string {
+  // Only process lines that contain quotes
+  if (!line.includes('"')) return line;
+
+  // Find content within quotes
+  return line.replace(/"([^"]+)"/g, (match, quotedContent) => {
+    // Replace ._something_ patterns with encoded version
+    const encodedContent = quotedContent.replace(
+      /\._([^_\s.]+)_\./g,
+      (match) => {
+        // Get the content between dots and underscores
+        const content = match.slice(2, -2); // Remove ._ from start and _. from end
+        return `.%5F${content}%5F.`; // Add back dots but encode the underscores
+      },
+    );
+
+    return `"${encodedContent}"`;
+  });
+}
+
 function formatSceneLine(line: string): string {
   const sceneMatch = line.match(/^#\s*!scene\b/);
   if (!sceneMatch) return line; // If it's not a scene header, return as-is
 
   // Extract arguments (e.g., --duration=5, --title=scene)
   const args: string[] = [];
-  const argMatches = line.matchAll(/--(\w+)=([^-\s"][^"]*|"[^"]*")/g);
+  const argMatches = line.matchAll(/--(\w+)=("[^"]*"|[^-\s][^-\s]*)/g);
 
   for (const match of argMatches) {
     args.push(`--${match[1]}=${match[2]}`);
@@ -141,7 +167,6 @@ function formatSectionBlock(content: string, level: number): string[] {
   result.push(`${indent}${header.trim()} --items=(`);
 
   if (!sectionContent) {
-    // If there's no content, close the section
     result.push(`${indent})`);
     return result;
   }
@@ -157,11 +182,10 @@ function formatSectionBlock(content: string, level: number): string[] {
     if (trimmed.startsWith("!section")) {
       // Handle nested section
       const nestedContent = extractNestedSection(trimmed);
-
       const nestedResult = formatSectionBlock(nestedContent, level + 1);
       result.push(...nestedResult);
-    } else if (trimmed.startsWith("!text")) {
-      // Handle text component
+    } else {
+      // Handle all other components (text, image, etc.)
       result.push(`${indent}  ${trimmed}`);
     }
   }

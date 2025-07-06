@@ -52,9 +52,12 @@ const CodeVideoComposition = ({
 
   return (
     <AbsoluteFill
-      style={{
-        background: createGradient(gradient.colors, gradient.angle),
-      }}
+      style={
+        {
+          // background: createGradient(gradient.colors, gradient.angle),
+        }
+      }
+      className="bg-dot-pattern"
     >
       <div
         className="_shadow-2xl absolute !h-auto !w-auto overflow-hidden border border-gray-600"

@@ -1,6 +1,5 @@
 import imageParser from "@/components/x-editor/plugins/image/image.parser";
 import type { ImageOutputProps } from "@/components/x-editor/plugins/image/image.types";
-import { cn } from "@/lib/utils";
 import { Img, interpolate, useCurrentFrame } from "remotion";
 
 // Define animation functions in a config object
@@ -116,12 +115,15 @@ const animationConfig: Record<
   },
 } as const;
 
-const CompositionImage = ({
+export type ImageAnimationsType = keyof typeof animationConfig;
+
+export const CompositionImage = ({
   src,
   sceneDurationInFrames,
-  mediaAppearanceDelay,
+  delay = 0,
   withMotion,
   animationType = "pop-in",
+  mediaAppearanceDelay,
 }: {
   src: string;
   sceneDurationInFrames: number;

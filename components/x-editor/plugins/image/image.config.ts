@@ -1,15 +1,18 @@
 // plugins/image/config.ts
 import type { AdapterConfig } from "../../core/types/adapter.type";
 import type { ImageInputProps } from "./image.types";
+import { orderPropsConfig } from "../common/props";
+import { IMAGE_ANIMATIONS } from ".";
 
 // TODO : need to type the default args value as well.
 export const defaultImageArgValues: ImageInputProps = {
   src: "",
+
+  animation: "fadeIn",
+  delay: 2,
+  duration: 1,
   width: 400,
   height: 300,
-  animation: "fadeIn",
-  delay: 0,
-  duration: 1,
 };
 
 const imageConfig: AdapterConfig = {
@@ -21,7 +24,7 @@ const imageConfig: AdapterConfig = {
   description:
     "Add an image to the scene with optional animations and styling.",
   template:
-    'image --src="${1:https://fakeimg.pl/450x400/?text=DUMMY-IMAGE}" --width=${2:400} --height=${3:300}',
+    'image --src="${1:https://m.media-amazon.com/images/M/MV5BMDFkYTc0MGEtZmNhMC00ZDIzLWFmNTEtODM1ZmRlYWMwMWFmXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg}" --height=${3:800}',
   arguments: {
     src: {
       name: "src",

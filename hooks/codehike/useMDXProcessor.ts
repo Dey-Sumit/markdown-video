@@ -56,6 +56,7 @@ export const useMdxProcessor = () => {
         const { content: compiledContent, error: compileError } =
           await compileAndRun(combinedContent);
         if (compileError) throw new Error(compileError);
+        console.log({ compiledContent });
 
         const { scene: scenes } = parseRoot(
           compiledContent!,

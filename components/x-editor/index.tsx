@@ -225,7 +225,7 @@ function XEditor() {
                   variant="outline"
                   onClick={() => setActiveFile(fileName)}
                   size="sm"
-                  className={`${activeFile === fileName ? "bg-accent" : ""} rounded-none border-y-0`}
+                  className={`${activeFile === fileName ? "bg-accent" : ""} rounded-none border-0`}
                 >
                   {fileName}
                 </Button>
